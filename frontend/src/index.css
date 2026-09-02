@@ -1,0 +1,246 @@
+:root {
+  --bg-cream: #FDFBF7;
+  --bg-card: #FFFFFF;
+  --bg-card-subtle: #F7F4EE;
+  
+  --sage-green: #7C9A82;
+  --sage-dark: #58755E;
+  --sage-light: #EBF2EC;
+  
+  --soft-lavender: #B8A7D9;
+  --lavender-dark: #7A66A3;
+  --lavender-light: #F2EFF9;
+  
+  --muted-peach: #F4C3B2;
+  --peach-dark: #C87862;
+  --peach-light: #FDF3F0;
+
+  --forest-green: #1C3B2B;
+  --text-primary: #1C3B2B;
+  --text-muted: #536B5C;
+  --text-light: #7E9687;
+  
+  --border-color: #E6E0D4;
+  --shadow-soft: 0 10px 30px rgba(28, 59, 43, 0.06);
+  --shadow-hover: 0 15px 35px rgba(28, 59, 43, 0.12);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
+
+  --font-base-size: 16px;
+  --font-heading: 'Outfit', -apple-system, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+}
+
+/* Accessibility Font Size Classes */
+html.font-normal {
+  font-size: 16px;
+}
+html.font-large {
+  font-size: 19px;
+}
+html.font-xlarge {
+  font-size: 22px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-cream);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--forest-green);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* Common Layout Elements */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content-layout {
+  display: flex;
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+  gap: 1.5rem;
+}
+
+.page-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Cards & Container Elements */
+.garden-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.garden-card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.garden-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+/* Button Styles - High Accessibility Target Sizes */
+.btn-primary {
+  background-color: var(--sage-dark);
+  color: #FFFFFF;
+  border: none;
+  padding: 0.9rem 1.75rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 14px rgba(88, 117, 94, 0.3);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--forest-green);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(28, 59, 43, 0.35);
+}
+
+.btn-secondary {
+  background-color: var(--sage-light);
+  color: var(--sage-dark);
+  border: 1.5px solid var(--sage-green);
+  padding: 0.85rem 1.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background-color: var(--sage-green);
+  color: #FFFFFF;
+}
+
+.btn-peach {
+  background-color: var(--peach-dark);
+  color: #FFFFFF;
+  border: none;
+  padding: 0.9rem 1.75rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 14px rgba(200, 120, 98, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-peach:hover {
+  background-color: #B56550;
+  transform: translateY(-2px);
+}
+
+.btn-lavender {
+  background-color: var(--lavender-dark);
+  color: #FFFFFF;
+  border: none;
+  padding: 0.9rem 1.75rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: all 0.2s ease;
+}
+
+.btn-lavender:hover {
+  background-color: #65528C;
+  transform: translateY(-2px);
+}
+
+/* Badges & Tags */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.badge-sage {
+  background: var(--sage-light);
+  color: var(--sage-dark);
+}
+
+.badge-peach {
+  background: var(--peach-light);
+  color: var(--peach-dark);
+}
+
+.badge-lavender {
+  background: var(--lavender-light);
+  color: var(--lavender-dark);
+}
+
+/* Simple Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulseGentle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+.animate-pulse-gentle {
+  animation: pulseGentle 2.5s infinite ease-in-out;
+}
