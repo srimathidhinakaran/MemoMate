@@ -49,15 +49,12 @@ const LiveActivityFeed = () => {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <div style={{
+          <div className="icon-box" style={{
             width: 40,
             height: 40,
             borderRadius: '10px',
             backgroundColor: 'rgba(56, 189, 248, 0.15)',
-            border: '1px solid rgba(56, 189, 248, 0.35)',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'center'
+            border: '1px solid rgba(56, 189, 248, 0.35)'
           }}>
             <Radio size={22} color="#38BDF8" />
           </div>
@@ -94,7 +91,7 @@ const LiveActivityFeed = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{
+              <div className="icon-box" style={{
                 width: 32,
                 height: 32,
                 borderRadius: '8px',
@@ -102,10 +99,7 @@ const LiveActivityFeed = () => {
                 color: '#38BDF8',
                 fontWeight: 800,
                 fontSize: '0.8rem',
-                fontFamily: 'var(--font-esports)',
-                display: 'flex',
-                alignItems: 'center',
-                justify: 'center'
+                fontFamily: 'var(--font-esports)'
               }}>
                 {act.initials}
               </div>

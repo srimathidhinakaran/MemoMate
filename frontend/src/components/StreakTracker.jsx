@@ -30,15 +30,11 @@ const StreakTracker = () => {
       {/* Card Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{
+          <div className="icon-box" style={{
             width: 44,
             height: 44,
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #FF4E50 0%, #FFD700 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'center',
-            boxShadow: '0 0 15px rgba(255, 78, 80, 0.4)'
+            background: 'linear-gradient(135deg, #FB923C 0%, #FBBF24 100%)'
           }}>
             <Flame size={26} fill="#050B14" color="#050B14" />
           </div>

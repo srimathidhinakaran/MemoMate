@@ -103,14 +103,11 @@ const DynamicGreetingHero = () => {
                 cursor: 'pointer'
               }}
             >
-              <div style={{
+              <div className="icon-box" style={{
                 width: '100%',
                 height: '100%',
                 backgroundColor: '#090C15',
-                borderRadius: '14px',
-                display: 'flex',
-                alignItems: 'center',
-                justify: 'center'
+                borderRadius: '14px'
               }}>
                 <Crown size={34} color="#FFD700" />
               </div>

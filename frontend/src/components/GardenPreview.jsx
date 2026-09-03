@@ -157,14 +157,11 @@ const GardenPreview = () => {
     }}>
       <div className="garden-card-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{
+          <div className="icon-box" style={{
             width: 44,
             height: 44,
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #00E676 0%, #00F2FE 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'center'
+            background: 'linear-gradient(135deg, #34D399 0%, #38BDF8 100%)'
           }}>
             <Trees size={24} color="#050B14" />
           </div>

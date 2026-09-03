@@ -42,9 +42,17 @@ export const AuthProvider = ({ children }) => {
   const [highestStreak, setHighestStreak] = useState(() => Number(localStorage.getItem('memomate_highest_streak')) || streak);
   const [streakFreeze, setStreakFreeze] = useState(true);
 
-  // Currency & Gamification XP & Gems
-  const [xpPoints, setXpPoints] = useState(() => Number(localStorage.getItem('memomate_xp')) || 250);
-  const [gems, setGems] = useState(() => Number(localStorage.getItem('memomate_gems')) || 100);
+  // Currency & Gamification XP & Gems (Start at 0 XP for dynamic progression)
+  const [xpPoints, setXpPoints] = useState(() => {
+    const saved = localStorage.getItem('memomate_xp');
+    return saved !== null ? Number(saved) : 0;
+  });
+  
+  const [gems, setGems] = useState(() => {
+    const saved = localStorage.getItem('memomate_gems');
+    return saved !== null ? Number(saved) : 10;
+  });
+
   const [league, setLeague] = useState('Emerald League');
   const [unlockedItems, setUnlockedItems] = useState(() => {
     const saved = localStorage.getItem('memomate_unlocked_items');
@@ -52,9 +60,9 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [dailyQuests, setDailyQuests] = useState([
-    { id: 'quest_1', title: 'Complete 2 Cognitive Missions', target: 2, current: 1, rewardXp: 50, rewardGems: 15, completed: false },
-    { id: 'quest_2', title: 'Score over 80 in 3D Focus', target: 1, current: 1, rewardXp: 75, rewardGems: 25, completed: true },
-    { id: 'quest_3', title: 'Maintain your Daily Workout Streak', target: 1, current: 1, rewardXp: 40, rewardGems: 10, completed: false }
+    { id: 'quest_1', title: 'Complete 2 Cognitive Missions', target: 2, current: 0, rewardXp: 50, rewardGems: 15, completed: false },
+    { id: 'quest_2', title: 'Score over 80 in 3D Focus', target: 1, current: 0, rewardXp: 75, rewardGems: 25, completed: false },
+    { id: 'quest_3', title: 'Maintain your Daily Workout Streak', target: 1, current: 1, rewardXp: 40, rewardGems: 10, completed: true }
   ]);
   
   const [recentScoreToast, setRecentScoreToast] = useState(null);
@@ -85,11 +93,11 @@ export const AuthProvider = ({ children }) => {
   const [garden, setGarden] = useState(() => {
     const savedGdn = localStorage.getItem('memomate_garden');
     return savedGdn ? JSON.parse(savedGdn) : {
-      plants: 3,
-      flowers: 5,
-      trees: 2,
+      plants: 1,
+      flowers: 2,
+      trees: 1,
       streak: streak,
-      totalActivities: 8
+      totalActivities: 1
     };
   });
 
@@ -147,6 +155,11 @@ export const AuthProvider = ({ children }) => {
       setToken(data.token);
       localStorage.setItem('memomate_token', data.token);
       localStorage.setItem('memomate_user', JSON.stringify(data.user));
+      // Reset XP to 0 for fresh account
+      setXpPoints(0);
+      setGems(10);
+      localStorage.setItem('memomate_xp', '0');
+      localStorage.setItem('memomate_gems', '10');
       return data;
     } finally {
       setLoading(false);
@@ -226,7 +239,7 @@ export const AuthProvider = ({ children }) => {
 
   const completeDailyStreakCheckin = () => {
     if (lastCheckin === todayStr) {
-      alert("You have already checked in for today! 🔥 Keep playing missions to earn XP.");
+      alert("You have already checked in for today! 🔥 Keep playing exercises to earn XP.");
       return;
     }
 
@@ -260,7 +273,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('memomate_unlocked_items', JSON.stringify(updatedItems));
 
       setActiveRewardModal({
-        title: 'Armory Item Unlocked! 🛡️',
+        title: 'Item Unlocked! 🛡️',
         desc: `You unlocked ${itemId.replace('_', ' ')} in your account!`,
         icon: '🎁',
         xp: 30,
