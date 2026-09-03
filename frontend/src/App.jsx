@@ -34,12 +34,22 @@ const App = () => {
       <Navbar />
 
       {isAuthPage || !user ? (
-        <main style={{ flex: 1 }}>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
+        <main style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justify: 'center',
+          width: '100%',
+          minHeight: 'calc(100vh - 100px)',
+          padding: '2rem 1rem'
+        }}>
+          <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </div>
         </main>
       ) : (
         <div className="main-content-layout">

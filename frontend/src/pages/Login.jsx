@@ -31,15 +31,16 @@ const Login = () => {
 
   return (
     <div style={{
-      minHeight: 'calc(100vh - 120px)',
+      width: '100%',
       display: 'flex',
       alignItems: 'center',
       justify: 'center',
-      padding: '2rem 1rem'
+      padding: '1.5rem 1rem'
     }}>
       <div className="garden-card animate-fade-in" style={{
         maxWidth: 440,
         width: '100%',
+        margin: '0 auto',
         padding: '2.5rem 2.2rem',
         border: '1px solid #30363D',
         backgroundColor: '#161B22',
