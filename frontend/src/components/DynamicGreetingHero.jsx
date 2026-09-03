@@ -133,7 +133,7 @@ const DynamicGreetingHero = () => {
                 fontFamily: 'var(--font-heading)',
                 letterSpacing: '-0.02em'
               }}>
-                {greetingConfig.title}, <span style={{ color: '#00F2FE' }}>{user?.name || 'Meena'}</span>
+                {greetingConfig.title}, <span style={{ color: '#00F2FE' }}>{user?.name || 'Player'}</span>
               </h1>
             </div>
           </div>

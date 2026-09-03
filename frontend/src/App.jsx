@@ -23,12 +23,17 @@ const App = () => {
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
+  // Enforce auth requirement: if user is not logged in, force navigation to /login
+  if (!user && !isAuthPage) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <div className="app-container">
       <AccessibilityBar />
       <Navbar />
 
-      {isAuthPage ? (
+      {isAuthPage || !user ? (
         <main style={{ flex: 1 }}>
           <Routes>
             <Route path="/login" element={<Login />} />
