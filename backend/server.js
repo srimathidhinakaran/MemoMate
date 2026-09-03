@@ -21,6 +21,7 @@ const cognitiveRoutes = require('./routes/cognitiveRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const gardenRoutes = require('./routes/gardenRoutes');
 const caregiverRoutes = require('./routes/caregiverRoutes');
+const gamificationRoutes = require('./routes/gamificationRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/sessions', sessionRoutes);
@@ -28,6 +29,7 @@ app.use('/api/cognitive', cognitiveRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/garden', gardenRoutes);
 app.use('/api/caregiver', caregiverRoutes);
+app.use('/api/gamification', gamificationRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({

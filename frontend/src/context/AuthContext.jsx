@@ -25,9 +25,24 @@ export const AuthProvider = ({ children }) => {
   // Audio / Voice Assistance toggle
   const [voiceAssistance, setVoiceAssistance] = useState(false);
 
-  // Gamification XP & Level State
+  // Duolingo Gamification XP, Gems, Streak & League State
   const [xpPoints, setXpPoints] = useState(() => Number(localStorage.getItem('memomate_xp')) || 850);
+  const [gems, setGems] = useState(() => Number(localStorage.getItem('memomate_gems')) || 140);
+  const [streak, setStreak] = useState(() => Number(localStorage.getItem('memomate_streak')) || 5);
+  const [highestStreak, setHighestStreak] = useState(() => Number(localStorage.getItem('memomate_highest_streak')) || 12);
+  const [streakFreeze, setStreakFreeze] = useState(true);
+  const [league, setLeague] = useState('Emerald League');
+  const [unlockedItems, setUnlockedItems] = useState(() => {
+    const saved = localStorage.getItem('memomate_unlocked_items');
+    return saved ? JSON.parse(saved) : ['golden_sunflower'];
+  });
+  const [dailyQuests, setDailyQuests] = useState([
+    { id: 'quest_1', title: 'Complete 2 Cognitive Sessions', target: 2, current: 1, rewardXp: 50, rewardGems: 15, completed: false },
+    { id: 'quest_2', title: 'Score over 80 in 3D Focus', target: 1, current: 1, rewardXp: 75, rewardGems: 25, completed: true },
+    { id: 'quest_3', title: 'Maintain your Daily Streak', target: 1, current: 1, rewardXp: 40, rewardGems: 10, completed: true }
+  ]);
   const [recentScoreToast, setRecentScoreToast] = useState(null);
+  const [activeRewardModal, setActiveRewardModal] = useState(null);
 
   // Global Cognitive State (Loaded from localStorage if updated!)
   const [profile, setProfile] = useState(() => {
@@ -63,7 +78,7 @@ export const AuthProvider = ({ children }) => {
   });
 
   const level = Math.floor(xpPoints / 300) + 1;
-  const levelTitle = level === 1 ? 'Garden Seedling 🌱' : (level === 2 ? 'Memory Explorer 🌸' : (level === 3 ? 'Focus Master 🌳' : 'Cognitive Champion 👑'));
+  const levelTitle = level === 1 ? 'Garden Seedling 🌱' : (level === 2 ? 'Memory Explorer 🌸' : (level === 3 ? 'Focus Master 🌳' : (level === 4 ? 'Mind Master ⚡' : 'Cognitive Legend 👑')));
 
   useEffect(() => {
     document.documentElement.className = fontSize;
@@ -146,12 +161,44 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('memomate_garden', JSON.stringify(sessionResult.garden));
     }
 
-    // Dynamic XP Calculation
+    // Dynamic XP & Gems Calculation with Streak Multiplier
     const earnedScore = sessionResult.session?.score || 85;
-    const gainedXp = Math.round(earnedScore * 1.5);
+    const streakBonusMultiplier = streak >= 5 ? 1.25 : 1.0;
+    const gainedXp = Math.round(earnedScore * 1.5 * streakBonusMultiplier);
+    const gainedGems = Math.round(earnedScore * 0.25);
+    
     const newXp = xpPoints + gainedXp;
+    const newGems = gems + gainedGems;
+    
+    const oldLevel = Math.floor(xpPoints / 300) + 1;
+    const newLevel = Math.floor(newXp / 300) + 1;
+
     setXpPoints(newXp);
+    setGems(newGems);
     localStorage.setItem('memomate_xp', newXp);
+    localStorage.setItem('memomate_gems', newGems);
+
+    // Update Quests progress
+    setDailyQuests((prev) =>
+      prev.map((q) => {
+        if (q.id === 'quest_1' && !q.completed) {
+          const updatedCur = q.current + 1;
+          return { ...q, current: updatedCur, completed: updatedCur >= q.target };
+        }
+        return q;
+      })
+    );
+
+    // Level-up celebratory trigger
+    if (newLevel > oldLevel) {
+      setActiveRewardModal({
+        title: `Level Up! Level ${newLevel}`,
+        desc: `Congratulations! You reached Level ${newLevel} (${levelTitle}). You unlocked new Memory Garden shop perks!`,
+        icon: '👑',
+        xp: gainedXp,
+        gems: 50
+      });
+    }
 
     // Toast alert for dynamic score update
     setRecentScoreToast({
@@ -161,6 +208,61 @@ export const AuthProvider = ({ children }) => {
     });
 
     setTimeout(() => setRecentScoreToast(null), 5000);
+  };
+
+  const completeDailyStreakCheckin = () => {
+    const newStreak = streak + 1;
+    const newGems = gems + 20;
+    setStreak(newStreak);
+    setGems(newGems);
+    if (newStreak > highestStreak) setHighestStreak(newStreak);
+    localStorage.setItem('memomate_streak', newStreak);
+    localStorage.setItem('memomate_gems', newGems);
+    localStorage.setItem('memomate_highest_streak', Math.max(newStreak, highestStreak));
+
+    setActiveRewardModal({
+      title: 'Daily Streak Checked In! 🔥',
+      desc: `You maintained a ${newStreak}-day workout streak! Your 1.25x XP multiplier is active.`,
+      icon: '🔥',
+      xp: 50,
+      gems: 20
+    });
+  };
+
+  const buyShopItem = (itemId, cost) => {
+    if (gems >= cost && !unlockedItems.includes(itemId)) {
+      const newGems = gems - cost;
+      const updatedItems = [...unlockedItems, itemId];
+      setGems(newGems);
+      setUnlockedItems(updatedItems);
+      localStorage.setItem('memomate_gems', newGems);
+      localStorage.setItem('memomate_unlocked_items', JSON.stringify(updatedItems));
+
+      setActiveRewardModal({
+        title: 'Garden Perk Unlocked! 🌻',
+        desc: `You unlocked ${itemId.replace('_', ' ')} in your interactive 3D Memory Garden!`,
+        icon: '🎁',
+        xp: 30,
+        gems: 0
+      });
+    }
+  };
+
+  const claimQuestReward = (questId) => {
+    setDailyQuests((prev) =>
+      prev.map((q) => {
+        if (q.id === questId && !q.completed) {
+          const newXp = xpPoints + q.rewardXp;
+          const newGems = gems + q.rewardGems;
+          setXpPoints(newXp);
+          setGems(newGems);
+          localStorage.setItem('memomate_xp', newXp);
+          localStorage.setItem('memomate_gems', newGems);
+          return { ...q, completed: true, current: q.target };
+        }
+        return q;
+      })
+    );
   };
 
   const speakText = (text) => {
@@ -194,9 +296,21 @@ export const AuthProvider = ({ children }) => {
       setGarden,
       updateStateFromSession,
       xpPoints,
+      gems,
+      streak,
+      highestStreak,
+      streakFreeze,
+      league,
+      unlockedItems,
+      dailyQuests,
       level,
       levelTitle,
-      recentScoreToast
+      recentScoreToast,
+      activeRewardModal,
+      setActiveRewardModal,
+      completeDailyStreakCheckin,
+      buyShopItem,
+      claimQuestReward
     }}>
       {children}
     </AuthContext.Provider>

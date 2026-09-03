@@ -8,6 +8,7 @@ import Sidebar from './components/Sidebar';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import UserDashboard from './pages/UserDashboard';
+import LeaderboardPage from './pages/LeaderboardPage';
 import Assessment from './pages/Assessment';
 import AIAnalysis from './pages/AIAnalysis';
 import CognitivePathPage from './pages/CognitivePathPage';
@@ -42,6 +43,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<UserDashboard />} />
+              <Route path="/leaderboard" element={<LeaderboardPage />} />
               <Route path="/assessment" element={<Assessment />} />
               <Route path="/analysis" element={<AIAnalysis />} />
               <Route path="/path" element={<CognitivePathPage />} />

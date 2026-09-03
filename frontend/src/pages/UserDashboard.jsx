@@ -1,61 +1,42 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import DynamicGreetingHero from '../components/DynamicGreetingHero';
+import LiveActivityFeed from '../components/LiveActivityFeed';
+import StreakTracker from '../components/StreakTracker';
+import DailyQuestsCard from '../components/DailyQuestsCard';
+import LeaderboardCard from '../components/LeaderboardCard';
+import RewardShopCard from '../components/RewardShopCard';
 import CognitiveScoreCard from '../components/CognitiveScoreCard';
 import RecommendationCard from '../components/RecommendationCard';
 import CognitivePath from '../components/CognitivePath';
 import GardenPreview from '../components/GardenPreview';
-import { Sun, Sparkles } from 'lucide-react';
+import RewardUnlockModal from '../components/RewardUnlockModal';
 
 const UserDashboard = () => {
-  const { user, profile, recommendation } = useAuth();
+  const { profile, recommendation, activeRewardModal, setActiveRewardModal } = useAuth();
 
   return (
-    <div className="page-view animate-fade-in">
-      {/* Header Banner */}
-      <div style={{
-        backgroundColor: '#FFFFFF',
-        borderRadius: '24px',
-        padding: '1.75rem 2rem',
-        border: '1px solid #E6E0D4',
-        boxShadow: '0 10px 30px rgba(28, 59, 43, 0.04)',
-        display: 'flex',
-        alignItems: 'center',
-        justify: 'space-between',
-        flexWrap: 'wrap',
-        gap: '1rem'
-      }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
-            <Sun size={26} color="#C87862" />
-            <h1 style={{ fontSize: '2rem', color: '#1C3B2B' }}>
-              Good Morning, {user?.name || 'Meena'}
-            </h1>
-          </div>
-          <p style={{ color: '#536B5C', fontSize: '1.05rem' }}>
-            Age: {user?.age || 68} | Focus Area: Tailored cognitive training and engagement.
-          </p>
-        </div>
+    <div className="page-view animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      {/* 1. Dynamic Time-Aware Hero Greeting */}
+      <DynamicGreetingHero />
 
-        <div style={{
-          backgroundColor: '#F7F4EE',
-          padding: '0.75rem 1.25rem',
-          borderRadius: '16px',
-          border: '1px solid #E6E0D4',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.6rem'
-        }}>
-          <Sparkles size={20} color="#58755E" />
-          <span style={{ fontWeight: 700, color: '#1C3B2B', fontSize: '0.95rem' }}>
-            Adaptive Learning Pipeline Active
-          </span>
-        </div>
+      {/* 2. Live Cognitive Telemetry Ticker Stream */}
+      <LiveActivityFeed />
+
+      {/* 3. Daily Streak Maintenance & Quests */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+        gap: '1.5rem'
+      }}>
+        <StreakTracker />
+        <DailyQuestsCard />
       </div>
 
-      {/* 4 Cognitive Metrics Cards */}
+      {/* 4. Current Cognitive Profile Score Cards */}
       <div>
-        <h2 style={{ fontSize: '1.35rem', marginBottom: '0.85rem', color: '#1C3B2B' }}>
-          Current Cognitive Profile
+        <h2 style={{ fontSize: '1.35rem', marginBottom: '0.85rem', color: '#F8FAFC', fontWeight: 900, fontFamily: 'var(--font-heading)' }}>
+          Current Cognitive Profile & Metrics
         </h2>
         <CognitiveScoreCard
           memory={profile?.memoryScore || 82}
@@ -65,10 +46,16 @@ const UserDashboard = () => {
         />
       </div>
 
-      {/* Adaptive Recommendation Card */}
+      {/* 5. Adaptive AI Recommendation Card */}
       <RecommendationCard recommendation={recommendation} />
 
-      {/* Two Column Grid for Path & Garden Preview */}
+      {/* 6. Emerald League Leaderboard Widget */}
+      <LeaderboardCard />
+
+      {/* 7. Rewards Shop & Unlocks */}
+      <RewardShopCard />
+
+      {/* 8. Personalized Cognitive Path & 3D Garden Preview */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
@@ -77,6 +64,14 @@ const UserDashboard = () => {
         <CognitivePath recommendation={recommendation} />
         <GardenPreview />
       </div>
+
+      {/* 9. Celebratory Reward Unlock Modal */}
+      {activeRewardModal && (
+        <RewardUnlockModal
+          reward={activeRewardModal}
+          onClose={() => setActiveRewardModal(null)}
+        />
+      )}
     </div>
   );
 };

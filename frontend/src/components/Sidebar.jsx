@@ -1,41 +1,46 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Gamepad2, Sparkles, GitCommit, LineChart, Trees, HeartHandshake, Sprout } from 'lucide-react';
+import { soundFx } from '../utils/soundEffects';
+import { LayoutDashboard, Gamepad2, Trophy, Sparkles, GitCommit, LineChart, Trees, HeartHandshake, Swords } from 'lucide-react';
 
 const Sidebar = () => {
   const { voiceAssistance, speakText } = useAuth();
 
   const handleNav = (label) => {
+    soundFx.playClick();
     if (voiceAssistance) {
       speakText(`Opening ${label}`);
     }
   };
 
   const navItems = [
-    { path: '/dashboard', label: 'Home Dashboard', icon: LayoutDashboard },
-    { path: '/assessment', label: 'Cognitive Activities', icon: Gamepad2 },
-    { path: '/analysis', label: 'AI Performance Analysis', icon: Sparkles },
-    { path: '/path', label: 'Personalized Path', icon: GitCommit },
-    { path: '/progress', label: 'Progress & Trends', icon: LineChart },
-    { path: '/garden', label: 'Memory Garden', icon: Trees },
-    { path: '/caregiver', label: 'Caregiver Dashboard', icon: HeartHandshake }
+    { path: '/dashboard', label: 'Arena Dashboard', icon: LayoutDashboard },
+    { path: '/leaderboard', label: 'League Podium 🏆', icon: Trophy },
+    { path: '/assessment', label: 'Cognitive Missions', icon: Gamepad2 },
+    { path: '/analysis', label: 'Groq AI Analysis', icon: Sparkles },
+    { path: '/path', label: 'Battle Roadmap', icon: GitCommit },
+    { path: '/progress', label: 'Metrics & Trends', icon: LineChart },
+    { path: '/garden', label: '3D Memory Garden', icon: Trees },
+    { path: '/caregiver', label: 'Caregiver Portal', icon: HeartHandshake }
   ];
 
   return (
     <aside style={{
-      width: 260,
-      backgroundColor: '#FFFFFF',
-      borderRadius: '24px',
+      width: 270,
+      backgroundColor: 'rgba(15, 20, 36, 0.92)',
+      backdropFilter: 'blur(16px)',
+      borderRadius: '20px',
       padding: '1.25rem 0.85rem',
-      border: '1px solid #E6E0D4',
-      boxShadow: '0 10px 30px rgba(28, 59, 43, 0.04)',
+      border: '1px solid rgba(0, 242, 254, 0.2)',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
       display: 'flex',
       flexDirection: 'column',
-      gap: '0.5rem'
+      gap: '0.4rem',
+      height: 'fit-content'
     }}>
-      <div style={{ padding: '0.5rem 0.85rem', fontSize: '0.8rem', fontWeight: 700, color: '#7E9687', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-        Navigation
+      <div style={{ padding: '0.4rem 0.85rem', fontSize: '0.75rem', fontWeight: 800, fontFamily: 'var(--font-esports)', color: '#00F2FE', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+        NAVIGATION HUD
       </div>
 
       {navItems.map((item) => {
@@ -50,14 +55,16 @@ const Sidebar = () => {
               alignItems: 'center',
               gap: '0.85rem',
               padding: '0.85rem 1rem',
-              borderRadius: '16px',
+              borderRadius: '14px',
               textDecoration: 'none',
-              fontWeight: 600,
-              fontSize: '0.98rem',
-              color: isActive ? '#FFFFFF' : '#1C3B2B',
-              backgroundColor: isActive ? '#58755E' : 'transparent',
-              transition: 'all 0.2s ease',
-              boxShadow: isActive ? '0 4px 12px rgba(88, 117, 94, 0.3)' : 'none'
+              fontWeight: 800,
+              fontSize: '0.9rem',
+              fontFamily: 'var(--font-heading)',
+              color: isActive ? '#050B14' : '#94A3B8',
+              background: isActive ? 'linear-gradient(135deg, #00F2FE 0%, #00A3C4 100%)' : 'transparent',
+              border: isActive ? 'none' : '1px solid transparent',
+              boxShadow: isActive ? '0 0 20px rgba(0, 242, 254, 0.5)' : 'none',
+              transition: 'all 0.2s ease'
             })}
           >
             <Icon size={20} />
@@ -66,13 +73,13 @@ const Sidebar = () => {
         );
       })}
 
-      <div style={{ marginTop: 'auto', padding: '1rem', backgroundColor: '#F7F4EE', borderRadius: '16px', border: '1px solid #E6E0D4' }}>
-        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1C3B2B', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          <Sprout size={16} color="#58755E" />
-          <span>Memory Garden</span>
+      <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: 'rgba(0, 242, 254, 0.06)', borderRadius: '14px', border: '1px solid rgba(0, 242, 254, 0.2)' }}>
+        <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#F8FAFC', display: 'flex', alignItems: 'center', gap: '0.4rem', fontFamily: 'var(--font-esports)' }}>
+          <Swords size={16} color="#FFD700" />
+          <span>COGNITIVE ARENA</span>
         </div>
-        <div style={{ fontSize: '0.8rem', color: '#536B5C', marginTop: '0.2rem' }}>
-          Completed sessions support your cognitive path and garden progress.
+        <div style={{ fontSize: '0.78rem', color: '#94A3B8', marginTop: '0.3rem', lineHeight: 1.4 }}>
+          Complete daily missions to maintain your streak & unlock Battle Pass rewards.
         </div>
       </div>
     </aside>

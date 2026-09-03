@@ -1,41 +1,42 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Target, Clock, Lock, ArrowDown } from 'lucide-react';
+import { soundFx } from '../utils/soundEffects';
+import { CheckCircle2, Target, Clock, Lock, ArrowDown, MapPin } from 'lucide-react';
 
 const CognitivePath = ({ recommendation }) => {
-  const targetActivity = recommendation?.recommendedActivity || '3D Focus Search';
+  const targetActivity = recommendation?.recommendedActivity || '3D Focus Search 🎯';
 
   const steps = [
     {
-      title: 'Memory Match',
+      title: '3D Memory Match 🎨',
       status: 'completed',
       category: 'Memory',
-      badgeText: 'Completed',
-      desc: 'Score: 82 / 100 — Completed earlier today',
-      route: '/assessment?game=3d-memory'
+      badgeText: 'COMPLETED',
+      desc: 'Score: 85 / 100 — Session completed earlier today',
+      route: '/assessment?game=memory'
     },
     {
       title: targetActivity,
       status: 'current',
       category: recommendation?.weakArea || 'Attention',
-      badgeText: 'Current Focus',
-      desc: `Recommended next activity based on your metric profile`,
-      route: '/assessment?game=3d-target'
+      badgeText: 'CURRENT FOCUS MISSION',
+      desc: `Recommended next battle mission based on AI telemetry`,
+      route: '/assessment?game=attention'
     },
     {
-      title: 'Number Recall',
+      title: 'Number Recall 🔢',
       status: 'next',
       category: 'Recall',
-      badgeText: 'Next Up',
-      desc: 'Sequence memory exercise',
+      badgeText: 'NEXT STAGE',
+      desc: 'Sequence memory recall exercise',
       route: '/assessment?game=number'
     },
     {
-      title: 'Pattern Recall',
+      title: 'Pattern Recall 🧩',
       status: 'upcoming',
       category: 'Pattern Memory',
-      badgeText: 'Upcoming Stage',
-      desc: 'Grid visualization challenge',
+      badgeText: 'UPCOMING STAGE',
+      desc: 'Grid spatial visualization challenge',
       route: '/assessment?game=pattern'
     }
   ];
@@ -43,14 +44,23 @@ const CognitivePath = ({ recommendation }) => {
   return (
     <div className="garden-card animate-fade-in">
       <div className="garden-card-header">
-        <div>
-          <h3 style={{ fontSize: '1.35rem', color: '#1C3B2B' }}>Today's Cognitive Path</h3>
-          <p style={{ fontSize: '0.9rem', color: '#536B5C' }}>
-            Your sequence dynamically adapts based on your latest performance scores.
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <MapPin size={22} color="#00F2FE" />
+          <div>
+            <h3 style={{ fontSize: '1.25rem', color: '#F8FAFC', fontWeight: 900, fontFamily: 'var(--font-heading)' }}>
+              BATTLE PATH ROADMAP
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
+              YOUR COGNITIVE SEQUENCE ADAPTS DYNAMICALLY TO REAL-TIME SCORES
+            </p>
+          </div>
         </div>
-        <Link to="/path" style={{ color: '#58755E', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none' }}>
-          View Timeline →
+        <Link 
+          to="/path" 
+          onClick={() => soundFx.playClick()}
+          style={{ color: '#00F2FE', fontWeight: 800, fontFamily: 'var(--font-esports)', fontSize: '0.85rem', textDecoration: 'none' }}
+        >
+          FULL ROADMAP →
         </Link>
       </div>
 
@@ -65,53 +75,59 @@ const CognitivePath = ({ recommendation }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '1.25rem',
-                backgroundColor: isCurrent ? '#FDF3F0' : isCompleted ? '#F7F4EE' : '#FFFFFF',
-                border: isCurrent ? '2px solid #F4C3B2' : '1px solid #E6E0D4',
+                backgroundColor: isCurrent ? 'rgba(255, 78, 80, 0.12)' : isCompleted ? 'rgba(0, 230, 118, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+                border: isCurrent ? '1px solid #FF4E50' : isCompleted ? '1px solid rgba(0, 230, 118, 0.4)' : '1px solid rgba(255, 255, 255, 0.1)',
                 padding: '1.2rem 1.4rem',
                 borderRadius: '18px',
-                boxShadow: isCurrent ? '0 8px 24px rgba(200, 120, 98, 0.12)' : 'none',
-                transition: 'all 0.2s ease'
+                boxShadow: isCurrent ? '0 0 25px rgba(255, 78, 80, 0.3)' : 'none',
+                transition: 'all 0.25s ease'
               }}>
                 <div style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  backgroundColor: isCompleted ? '#EBF2EC' : isCurrent ? '#FDF3F0' : '#F7F4EE',
+                  width: 46,
+                  height: 46,
+                  borderRadius: '12px',
+                  background: isCompleted ? 'linear-gradient(135deg, #00E676 0%, #00F2FE 100%)' : isCurrent ? 'linear-gradient(135deg, #FF4E50 0%, #FFD700 100%)' : 'rgba(255, 255, 255, 0.1)',
                   display: 'flex',
                   alignItems: 'center',
                   justify: 'center',
-                  flexShrink: 0
+                  flexShrink: 0,
+                  boxShadow: isCurrent ? '0 0 15px rgba(255, 78, 80, 0.5)' : 'none'
                 }}>
-                  {isCompleted && <CheckCircle2 size={24} color="#58755E" />}
-                  {isCurrent && <Target size={24} color="#C87862" className="animate-pulse-gentle" />}
-                  {step.status === 'next' && <Clock size={22} color="#7A66A3" />}
-                  {step.status === 'upcoming' && <Lock size={20} color="#7E9687" />}
+                  {isCompleted && <CheckCircle2 size={24} color="#050B14" />}
+                  {isCurrent && <Target size={24} color="#050B14" />}
+                  {step.status === 'next' && <Clock size={22} color="#00F2FE" />}
+                  {step.status === 'upcoming' && <Lock size={20} color="#94A3B8" />}
                 </div>
 
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
-                    <span style={{ fontSize: '1.15rem', fontWeight: 700, color: '#1C3B2B' }}>
+                    <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#F8FAFC', fontFamily: 'var(--font-heading)' }}>
                       {step.title}
                     </span>
-                    <span className={`badge ${isCompleted ? 'badge-sage' : isCurrent ? 'badge-peach' : 'badge-lavender'}`}>
+                    <span className={`badge ${isCompleted ? 'badge-sage' : isCurrent ? 'badge-flame' : 'badge-cyan'}`}>
                       {step.badgeText}
                     </span>
                   </div>
-                  <div style={{ fontSize: '0.88rem', color: '#536B5C' }}>
+                  <div style={{ fontSize: '0.88rem', color: '#94A3B8', fontWeight: 600 }}>
                     {step.desc}
                   </div>
                 </div>
 
                 {isCurrent && (
-                  <Link to={step.route} className="btn-peach" style={{ padding: '0.5rem 1.1rem', fontSize: '0.9rem', textDecoration: 'none' }}>
-                    Play Now
+                  <Link 
+                    to={step.route} 
+                    onClick={() => soundFx.playLevelUp()}
+                    className="btn-flame" 
+                    style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', textDecoration: 'none' }}
+                  >
+                    PLAY MISSION
                   </Link>
                 )}
               </div>
 
               {idx < steps.length - 1 && (
                 <div style={{ display: 'flex', justifyContent: 'center', margin: '-0.4rem 0' }}>
-                  <ArrowDown size={20} color={isCurrent ? '#C87862' : '#7E9687'} />
+                  <ArrowDown size={20} color={isCurrent ? '#FF4E50' : '#00F2FE'} />
                 </div>
               )}
             </React.Fragment>

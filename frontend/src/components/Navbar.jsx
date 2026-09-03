@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Sprout, UserCheck, LogOut, ShieldCheck, Award, Sparkles } from 'lucide-react';
+import { soundFx } from '../utils/soundEffects';
+import { Sprout, UserCheck, LogOut, ShieldCheck, Award, Sparkles, Flame, Gem, Trophy, Volume2, VolumeX, Swords } from 'lucide-react';
 
 const Navbar = () => {
-  const { user, logout, speakText, voiceAssistance, xpPoints, level, levelTitle, recentScoreToast } = useAuth();
+  const { user, logout, speakText, voiceAssistance, xpPoints, level, streak, gems, recentScoreToast } = useAuth();
   const navigate = useNavigate();
+  const [soundEnabled, setSoundEnabled] = useState(soundFx.enabled);
 
   const handleNavClick = (text) => {
+    soundFx.playClick();
     if (voiceAssistance) {
       speakText(text);
     }
   };
 
+  const toggleSound = () => {
+    const newState = soundFx.toggleSound();
+    setSoundEnabled(newState);
+    if (newState) soundFx.playClick();
+  };
+
   const toggleRole = () => {
+    soundFx.playClick();
     if (user?.role === 'caregiver') {
       navigate('/dashboard');
     } else {
@@ -24,92 +34,197 @@ const Navbar = () => {
   return (
     <>
       <nav style={{
-        backgroundColor: '#FFFFFF',
-        borderBottom: '1px solid #E6E0D4',
-        padding: '0.9rem 2rem',
-        boxShadow: '0 4px 20px rgba(28, 59, 43, 0.04)',
+        backgroundColor: 'rgba(9, 12, 21, 0.92)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(0, 242, 254, 0.2)',
+        padding: '0.8rem 2rem',
         position: 'sticky',
         top: 0,
-        zIndex: 50
+        zIndex: 50,
+        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.6)'
       }}>
         <div style={{
-          maxWidth: 1400,
+          maxWidth: 1440,
           margin: '0 auto',
           display: 'flex',
           alignItems: 'center',
-          justify: 'space-between'
+          justifyContent: 'space-between'
         }}>
-          {/* Brand Logo & Tagline */}
-          <Link to={user?.role === 'caregiver' ? '/caregiver' : '/dashboard'} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+          {/* Esports Brand Logo & Tagline */}
+          <Link 
+            to={user?.role === 'caregiver' ? '/caregiver' : '/dashboard'} 
+            onClick={() => handleNavClick('Home')}
+            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem' }}
+          >
             <div style={{
               width: 44,
               height: 44,
-              borderRadius: '50%',
-              backgroundColor: '#EBF2EC',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #00F2FE 0%, #A855F7 100%)',
               display: 'flex',
               alignItems: 'center',
-              justify: 'center'
+              justifyContent: 'center',
+              boxShadow: '0 0 15px rgba(0, 242, 254, 0.5)',
+              transform: 'rotate(-5deg)'
             }}>
-              <Sprout size={26} color="#58755E" />
+              <Swords size={26} color="#050B14" />
             </div>
             <div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#1C3B2B', letterSpacing: '-0.5px' }}>
+              <div style={{ 
+                fontSize: '1.4rem', 
+                fontWeight: 900, 
+                fontFamily: 'var(--font-esports)', 
+                color: '#F8FAFC', 
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                background: 'linear-gradient(90deg, #FFFFFF 0%, #00F2FE 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>
                 MemoMate
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#536B5C', fontWeight: 500 }}>
-                Cognitive Gaming & Memory Assistance Platform
+              <div style={{ fontSize: '0.75rem', color: '#00F2FE', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                Cognitive Arena • Season 1
               </div>
             </div>
           </Link>
 
-          {/* User Info & Gamification Status */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {/* User Info & Battle Pass Currency Status */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             {user && user.role === 'elderly' && (
-              <div style={{
+              <>
+                {/* Streak Flame */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  backgroundColor: 'rgba(255, 78, 80, 0.12)',
+                  padding: '0.4rem 0.85rem',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(255, 78, 80, 0.4)',
+                  fontSize: '0.85rem',
+                  fontWeight: 800,
+                  fontFamily: 'var(--font-esports)',
+                  color: '#FF4E50',
+                  boxShadow: '0 0 12px rgba(255, 78, 80, 0.3)'
+                }}>
+                  <Flame size={18} fill="#FF4E50" />
+                  <span>{streak || 5} DAYS</span>
+                </div>
+
+                {/* Gems */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  backgroundColor: 'rgba(0, 242, 254, 0.12)',
+                  padding: '0.4rem 0.85rem',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(0, 242, 254, 0.4)',
+                  fontSize: '0.85rem',
+                  fontWeight: 800,
+                  fontFamily: 'var(--font-esports)',
+                  color: '#00F2FE',
+                  boxShadow: '0 0 12px rgba(0, 242, 254, 0.3)'
+                }}>
+                  <Gem size={18} fill="#00F2FE" />
+                  <span>{gems || 140}</span>
+                </div>
+
+                {/* Level & XP */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  backgroundColor: 'rgba(255, 215, 0, 0.12)',
+                  padding: '0.4rem 0.85rem',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(255, 215, 0, 0.4)',
+                  fontSize: '0.85rem',
+                  fontWeight: 800,
+                  fontFamily: 'var(--font-esports)',
+                  color: '#FFD700',
+                  boxShadow: '0 0 12px rgba(255, 215, 0, 0.3)'
+                }}>
+                  <Award size={18} color="#FFD700" />
+                  <span>LVL {level} ({xpPoints} XP)</span>
+                </div>
+
+                {/* Quick Leaderboard Link */}
+                <Link
+                  to="/leaderboard"
+                  onClick={() => handleNavClick('Leaderboard')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    backgroundColor: 'rgba(0, 230, 118, 0.12)',
+                    padding: '0.4rem 0.85rem',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(0, 230, 118, 0.4)',
+                    fontSize: '0.85rem',
+                    fontWeight: 800,
+                    fontFamily: 'var(--font-esports)',
+                    color: '#00E676',
+                    textDecoration: 'none',
+                    boxShadow: '0 0 12px rgba(0, 230, 118, 0.3)'
+                  }}
+                >
+                  <Trophy size={18} />
+                  <span>EMERALD #3</span>
+                </Link>
+              </>
+            )}
+
+            {/* Sound FX Toggle Button */}
+            <button
+              onClick={toggleSound}
+              style={{
+                background: soundEnabled ? 'rgba(0, 242, 254, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                border: soundEnabled ? '1px solid #00F2FE' : '1px solid rgba(255, 255, 255, 0.2)',
+                color: soundEnabled ? '#00F2FE' : '#64748B',
+                borderRadius: '10px',
+                padding: '0.45rem 0.75rem',
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
-                backgroundColor: '#FDF3F0',
-                padding: '0.4rem 0.85rem',
-                borderRadius: 9999,
-                border: '1px solid #F4C3B2',
-                fontSize: '0.85rem',
+                gap: '0.4rem',
+                fontSize: '0.8rem',
                 fontWeight: 700,
-                color: '#C87862'
-              }}>
-                <Award size={16} />
-                <span>Level {level}: {levelTitle} ({xpPoints} XP)</span>
-              </div>
-            )}
+                transition: 'all 0.2s ease'
+              }}
+              title={soundEnabled ? "Mute Audio SFX" : "Enable Audio SFX"}
+            >
+              {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+              <span>{soundEnabled ? 'SFX ON' : 'SFX OFF'}</span>
+            </button>
 
             {user && (
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.6rem',
-                backgroundColor: '#F7F4EE',
-                padding: '0.45rem 1rem',
-                borderRadius: 9999,
-                border: '1px solid #E6E0D4'
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                padding: '0.45rem 0.9rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
               }}>
-                <UserCheck size={18} color="#58755E" />
-                <span style={{ fontWeight: 600, color: '#1C3B2B' }}>
+                <UserCheck size={18} color="#00F2FE" />
+                <span style={{ fontWeight: 700, color: '#F8FAFC', fontSize: '0.9rem' }}>
                   {user.name} ({user.age} yrs)
                 </span>
-                <span className={`badge ${user.role === 'caregiver' ? 'badge-lavender' : 'badge-sage'}`}>
-                  {user.role === 'caregiver' ? 'Caregiver' : 'Patient'}
+                <span className={`badge ${user.role === 'caregiver' ? 'badge-purple' : 'badge-cyan'}`}>
+                  {user.role === 'caregiver' ? 'Caregiver' : 'Hero Player'}
                 </span>
               </div>
             )}
 
-            {/* Quick Role Switch for Hackathon Demonstration */}
+            {/* Quick Role Switch Button */}
             <button
-              onClick={() => {
-                toggleRole();
-                handleNavClick('Switching view');
-              }}
+              onClick={toggleRole}
               className="btn-secondary"
-              style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}
+              style={{ padding: '0.45rem 0.9rem', fontSize: '0.8rem' }}
             >
               <ShieldCheck size={16} />
               <span>{user?.role === 'caregiver' ? 'Patient View' : 'Caregiver View'}</span>
@@ -118,6 +233,7 @@ const Navbar = () => {
             {user && (
               <button
                 onClick={() => {
+                  soundFx.playClick();
                   logout();
                   navigate('/login');
                 }}
@@ -125,11 +241,12 @@ const Navbar = () => {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: '#C87862',
+                  color: '#FF4E50',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  fontWeight: 600,
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
                   padding: '0.5rem'
                 }}
                 title="Log out"
@@ -142,17 +259,17 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Dynamic Score Toast Alert */}
+      {/* Dynamic Gaming Score Toast Alert */}
       {recentScoreToast && (
         <div style={{
           position: 'fixed',
           bottom: 24,
           right: 24,
-          backgroundColor: '#FFFFFF',
-          border: '2px solid #7C9A82',
-          borderRadius: '20px',
-          padding: '1.1rem 1.4rem',
-          boxShadow: '0 15px 35px rgba(28, 59, 43, 0.2)',
+          backgroundColor: '#0F1424',
+          border: '2px solid #00F2FE',
+          borderRadius: '16px',
+          padding: '1.2rem 1.6rem',
+          boxShadow: '0 0 30px rgba(0, 242, 254, 0.4)',
           zIndex: 100,
           display: 'flex',
           alignItems: 'center',
@@ -160,22 +277,22 @@ const Navbar = () => {
           animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
         }}>
           <div style={{
-            width: 44,
-            height: 44,
-            borderRadius: '50%',
-            backgroundColor: '#EBF2EC',
+            width: 48,
+            height: 48,
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #00F2FE 0%, #FFD700 100%)',
             display: 'flex',
             alignItems: 'center',
             justify: 'center'
           }}>
-            <Sparkles size={24} color="#58755E" />
+            <Sparkles size={26} color="#050B14" />
           </div>
           <div>
-            <div style={{ fontWeight: 800, color: '#1C3B2B', fontSize: '1.05rem' }}>
-              Cognitive Profile Updated
+            <div style={{ fontWeight: 800, color: '#F8FAFC', fontSize: '1.05rem', fontFamily: 'var(--font-esports)' }}>
+              MISSION VICTORY!
             </div>
-            <div style={{ fontSize: '0.9rem', color: '#536B5C' }}>
-              {recentScoreToast.activity}: <strong>+{recentScoreToast.score} pts</strong> | <strong>+{recentScoreToast.xp} XP</strong>
+            <div style={{ fontSize: '0.9rem', color: '#00F2FE', fontWeight: 600 }}>
+              {recentScoreToast.activity}: <strong style={{ color: '#FFD700' }}>+{recentScoreToast.score} PTS</strong> | <strong style={{ color: '#FF4E50' }}>+{recentScoreToast.xp} XP</strong>
             </div>
           </div>
         </div>

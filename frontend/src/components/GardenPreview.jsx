@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { soundFx } from '../utils/soundEffects';
 import { gardenAPI } from '../services/api';
 import { Trees, Droplets, Sparkles, Flame } from 'lucide-react';
 
@@ -9,6 +10,7 @@ const GardenPreview = () => {
   const [watering, setWatering] = useState(false);
 
   const handleWater = async () => {
+    soundFx.playXpGain();
     setWatering(true);
     if (voiceAssistance) {
       speakText("Watering your memory garden! Plants are blooming.");
@@ -20,40 +22,45 @@ const GardenPreview = () => {
 
   return (
     <div className="garden-card animate-fade-in" style={{
-      background: 'linear-gradient(135deg, #F7F4EE 0%, #EBF2EC 100%)',
-      border: '1.5px solid #7C9A82'
+      background: 'linear-gradient(135deg, rgba(0, 242, 254, 0.08) 0%, rgba(15, 20, 36, 0.95) 100%)',
+      border: '1px solid rgba(0, 242, 254, 0.3)',
+      boxShadow: '0 0 25px rgba(0, 242, 254, 0.15)'
     }}>
       <div className="garden-card-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
           <div style={{
-            width: 38,
-            height: 38,
-            borderRadius: '10px',
-            backgroundColor: '#FFFFFF',
+            width: 42,
+            height: 42,
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #00E676 0%, #00F2FE 100%)',
             display: 'flex',
             alignItems: 'center',
             justify: 'center'
           }}>
-            <Trees size={22} color="#58755E" />
+            <Trees size={24} color="#050B14" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.2rem', color: '#1C3B2B' }}>Meena's Memory Garden 🌱</h3>
-            <span style={{ fontSize: '0.82rem', color: '#536B5C' }}>Visualizing cognitive engagement & activity streak</span>
+            <h3 style={{ fontSize: '1.25rem', color: '#F8FAFC', fontWeight: 900, fontFamily: 'var(--font-heading)' }}>
+              MEMOMATE 3D GARDEN 🌱
+            </h3>
+            <span style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
+              VISUALIZING COGNITIVE ENGAGEMENT & STREAK BLOOMS
+            </span>
           </div>
         </div>
 
-        <span className="badge badge-sage" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-          <Flame size={16} color="#C87862" />
-          <span>{garden?.streak || 4} Day Streak!</span>
+        <span className="badge badge-cyan" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+          <Flame size={16} color="#FF4E50" fill="#FF4E50" />
+          <span>{garden?.streak || 4} DAY STREAK</span>
         </span>
       </div>
 
       {/* Visual Garden Elements Showcase */}
       <div style={{
-        backgroundColor: '#FFFFFF',
-        borderRadius: '18px',
-        padding: '1.25rem',
-        border: '1px solid #E6E0D4',
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        borderRadius: '16px',
+        padding: '1.4rem',
+        border: '1px solid rgba(0, 242, 254, 0.2)',
         marginBottom: '1rem',
         textAlign: 'center',
         position: 'relative',
@@ -64,7 +71,7 @@ const GardenPreview = () => {
           letterSpacing: '0.8rem',
           margin: '0.5rem 0',
           transition: 'transform 0.3s ease',
-          transform: watering ? 'scale(1.15) translateY(-4px)' : 'scale(1)'
+          transform: watering ? 'scale(1.2) translateY(-4px)' : 'scale(1)'
         }}>
           🌱 🌸 🌳 🦋 ☀️ 🌸 🌱
         </div>
@@ -72,23 +79,24 @@ const GardenPreview = () => {
         <div style={{
           display: 'flex',
           justify: 'space-around',
-          marginTop: '0.75rem',
-          paddingTop: '0.75rem',
-          borderTop: '1px dashed #E6E0D4',
-          fontSize: '0.9rem',
-          fontWeight: 600
+          marginTop: '0.85rem',
+          paddingTop: '0.85rem',
+          borderTop: '1px dashed rgba(255, 255, 255, 0.1)',
+          fontSize: '0.88rem',
+          fontWeight: 800,
+          fontFamily: 'var(--font-esports)'
         }}>
           <div>
-            <span style={{ color: '#58755E' }}>Plants: </span>
-            <span style={{ fontWeight: 800 }}>{garden?.plants || 3}</span>
+            <span style={{ color: '#00E676' }}>PLANTS: </span>
+            <span style={{ color: '#F8FAFC' }}>{garden?.plants || 3}</span>
           </div>
           <div>
-            <span style={{ color: '#7A66A3' }}>Flowers: </span>
-            <span style={{ fontWeight: 800 }}>{garden?.flowers || 5}</span>
+            <span style={{ color: '#A855F7' }}>FLOWERS: </span>
+            <span style={{ color: '#F8FAFC' }}>{garden?.flowers || 5}</span>
           </div>
           <div>
-            <span style={{ color: '#3B7A8C' }}>Trees: </span>
-            <span style={{ fontWeight: 800 }}>{garden?.trees || 2}</span>
+            <span style={{ color: '#00F2FE' }}>TREES: </span>
+            <span style={{ color: '#F8FAFC' }}>{garden?.trees || 2}</span>
           </div>
         </div>
       </div>
@@ -98,14 +106,18 @@ const GardenPreview = () => {
           onClick={handleWater}
           disabled={watering}
           className="btn-secondary"
-          style={{ padding: '0.6rem 1.2rem', fontSize: '0.9rem' }}
+          style={{ padding: '0.65rem 1.2rem', fontSize: '0.85rem' }}
         >
-          <Droplets size={18} color="#3B7A8C" className={watering ? 'animate-pulse-gentle' : ''} />
-          <span>{watering ? 'Watering Garden...' : 'Water Garden Today 💦'}</span>
+          <Droplets size={18} color="#00F2FE" className={watering ? 'animate-pulse-glow' : ''} />
+          <span>{watering ? 'WATERING GARDEN...' : 'WATER GARDEN TODAY 💦'}</span>
         </button>
 
-        <Link to="/garden" style={{ color: '#58755E', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>
-          Explore Virtual Garden →
+        <Link 
+          to="/garden" 
+          onClick={() => soundFx.playClick()}
+          style={{ color: '#00F2FE', fontWeight: 800, fontFamily: 'var(--font-esports)', fontSize: '0.85rem', textDecoration: 'none' }}
+        >
+          EXPLORE 3D GARDEN →
         </Link>
       </div>
     </div>
