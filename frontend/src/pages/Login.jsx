@@ -19,13 +19,14 @@ const Login = () => {
       setError('');
       const data = await login({ email, password });
       soundFx.playLevelUp();
-      if (data.user.role === 'caregiver') {
+      if (data?.user?.role === 'caregiver') {
         navigate('/caregiver');
       } else {
         navigate('/dashboard');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      console.error("Login auth failure:", err);
+      setError(err.response?.data?.message || 'Invalid email or password. Please register an account first.');
     }
   };
 
@@ -46,24 +47,25 @@ const Login = () => {
         backgroundColor: '#161B22',
         boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)'
       }}>
-        {/* Clean Professional Header */}
+        {/* Perfectly Centered Brain Emblem */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{
-            width: 60,
-            height: 60,
-            borderRadius: '16px',
+            width: 56,
+            height: 56,
+            borderRadius: '14px',
             backgroundColor: 'rgba(56, 189, 248, 0.15)',
             border: '1px solid rgba(56, 189, 248, 0.35)',
             display: 'flex',
             alignItems: 'center',
             justify: 'center',
-            margin: '0 auto 1rem'
+            margin: '0 auto 1.1rem',
+            padding: 0
           }}>
-            <Brain size={32} color="#38BDF8" />
+            <Brain size={30} color="#38BDF8" style={{ display: 'block' }} />
           </div>
 
           <h1 style={{
-            fontSize: '2rem',
+            fontSize: '1.9rem',
             color: '#FFFFFF',
             fontWeight: 800,
             fontFamily: 'var(--font-heading)',
@@ -72,7 +74,7 @@ const Login = () => {
             Welcome Back
           </h1>
           <p style={{ fontSize: '0.9rem', color: '#9198A1', marginTop: '0.4rem', lineHeight: 1.4 }}>
-            Sign in to continue your memory exercises & 3D games
+            Sign in with your registered email to continue
           </p>
         </div>
 
@@ -85,7 +87,7 @@ const Login = () => {
             borderRadius: '10px',
             marginBottom: '1.25rem',
             fontSize: '0.88rem',
-            fontWeight: 700,
+            fontWeight: 600,
             textAlign: 'center'
           }}>
             {error}
@@ -146,7 +148,7 @@ const Login = () => {
           </div>
 
           <button type="submit" disabled={loading} className="btn-primary" style={{ padding: '0.9rem', width: '100%', marginTop: '0.5rem' }}>
-            <span>{loading ? 'Signing in...' : 'Sign In'}</span>
+            <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
             <ArrowRight size={18} />
           </button>
         </form>

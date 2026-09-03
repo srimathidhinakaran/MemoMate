@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
   /* High-Contrast User-Friendly Slate Dark Theme */
@@ -11,39 +11,33 @@
   /* User-Friendly Accents */
   --neon-cyan: #38BDF8;
   --neon-cyan-dark: #0284C7;
-  --neon-cyan-glow: 0 0 15px rgba(56, 189, 248, 0.35);
   
   --battle-gold: #FBBF24;
   --battle-gold-dark: #D97706;
-  --battle-gold-glow: 0 0 15px rgba(251, 191, 36, 0.35);
   
   --flame-orange: #FB923C;
   --flame-orange-dark: #EA580C;
-  --flame-orange-glow: 0 0 15px rgba(251, 146, 60, 0.35);
   
   --mystic-violet: #C084FC;
-  --mystic-violet-glow: 0 0 15px rgba(192, 132, 252, 0.35);
-  
   --emerald-rank: #34D399;
-  --emerald-rank-glow: 0 0 15px rgba(52, 211, 153, 0.35);
 
   --text-primary: #FFFFFF;
   --text-secondary: #E2E8F0;
   --text-muted: #9198A1;
   
   --border-color: #30363D;
-  --border-cyber: #30363D;
   
   --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.5);
   --shadow-hover: 0 15px 35px rgba(56, 189, 248, 0.15);
   
-  --radius-lg: 18px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
 
-  --font-esports: 'Orbitron', sans-serif;
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Plus Jakarta Sans', sans-serif;
+  /* Standard Ultra-Readable Typography for All Users */
+  --font-esports: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
 }
 
 /* Accessibility Font Size Classes */
@@ -70,9 +64,8 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text-primary);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 /* Global Layout & Alignment Classes */
@@ -112,6 +105,15 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
 }
 
+/* Centered Icon Box Helper */
+.icon-box-center {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 0;
+}
+
 /* Container Cards */
 .garden-card {
   background: var(--bg-card);
@@ -129,7 +131,6 @@ h1, h2, h3, h4, h5, h6 {
 .garden-card:hover {
   transform: translateY(-2px);
   border-color: #484F58;
-  box-shadow: var(--shadow-hover);
 }
 
 .garden-card-header {
@@ -177,10 +178,8 @@ select option {
   border: none;
   padding: 0.8rem 1.6rem;
   font-size: 0.95rem;
-  font-weight: 800;
+  font-weight: 700;
   font-family: var(--font-heading);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   border-radius: var(--radius-md);
   cursor: pointer;
   display: inline-flex;
@@ -196,7 +195,6 @@ select option {
 .btn-primary:hover {
   background: linear-gradient(135deg, #0369A1 0%, #075985 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
 }
 
 .btn-secondary {
@@ -205,7 +203,7 @@ select option {
   border: 1px solid #30363D;
   padding: 0.75rem 1.4rem;
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 600;
   font-family: var(--font-heading);
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -231,10 +229,8 @@ select option {
   border: none;
   padding: 0.8rem 1.6rem;
   font-size: 0.95rem;
-  font-weight: 800;
+  font-weight: 700;
   font-family: var(--font-heading);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   border-radius: var(--radius-md);
   cursor: pointer;
   display: inline-flex;
@@ -249,7 +245,6 @@ select option {
 .btn-flame:hover {
   background: linear-gradient(135deg, #C2410C 0%, #9A3412 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.5);
 }
 
 /* Badges & Rank Tags */
@@ -259,11 +254,9 @@ select option {
   gap: 0.35rem;
   padding: 0.35rem 0.8rem;
   border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  font-weight: 800;
-  font-family: var(--font-esports);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
   white-space: nowrap;
 }
 
