@@ -8,7 +8,7 @@ import PatternRecall from '../games/PatternRecall';
 import WordRecall from '../games/WordRecall';
 import ThreeMemoryGardenCanvas from '../components/ThreeMemoryGardenCanvas';
 import { soundFx } from '../utils/soundEffects';
-import { Brain, Target, RotateCcw, Zap, BookOpen, Layers, ArrowLeft, Box, Sparkles, Swords } from 'lucide-react';
+import { Brain, Target, RotateCcw, Zap, BookOpen, Layers, ArrowLeft, Box, Sparkles, Gamepad2 } from 'lucide-react';
 
 const Assessment = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,7 +20,7 @@ const Assessment = () => {
       title: '3D Memory Match',
       category: '3D Spatial Memory',
       icon: Box,
-      color: '#00F2FE',
+      color: '#38BDF8',
       desc: 'Interactive 3D Three.js WebGL Wooden Block Flip game with 3D color matching.',
       badge: '3D WEBGL'
     },
@@ -29,7 +29,7 @@ const Assessment = () => {
       title: '3D Focus Search',
       category: '3D Visual Focus',
       icon: Target,
-      color: '#FF4E50',
+      color: '#FB923C',
       desc: 'Interactive 3D Meadow Target Search using Three.js raycasting to find target gems.',
       badge: '3D WEBGL'
     },
@@ -38,7 +38,7 @@ const Assessment = () => {
       title: '3D Reaction Orbs',
       category: '3D Spatial Speed',
       icon: Zap,
-      color: '#FFD700',
+      color: '#FBBF24',
       desc: 'Orbiting WebGL 3D Target Orbs measuring real-time 3D spatial reaction speed in milliseconds.',
       badge: '3D WEBGL'
     },
@@ -47,7 +47,7 @@ const Assessment = () => {
       title: '3D Number Crystals',
       category: 'Sequence Recall',
       icon: RotateCcw,
-      color: '#A855F7',
+      color: '#C084FC',
       desc: 'Floating 3D Three.js WebGL numbered crystal dodecahedrons for sequence memorization.',
       badge: '3D WEBGL'
     },
@@ -56,7 +56,7 @@ const Assessment = () => {
       title: '3D Holographic Matrix',
       category: 'Pattern Memory',
       icon: Layers,
-      color: '#00E676',
+      color: '#34D399',
       desc: '3D grid matrix of illuminated WebGL cubes to reinforce spatial pattern recognition.',
       badge: '3D WEBGL'
     },
@@ -65,7 +65,7 @@ const Assessment = () => {
       title: '3D Cyber Word Spheres',
       category: 'Regional Memory',
       icon: BookOpen,
-      color: '#00F2FE',
+      color: '#38BDF8',
       desc: 'Revolving 3D Three.js WebGL word spheres for regional garden item recall.',
       badge: '3D WEBGL'
     }
@@ -88,7 +88,7 @@ const Assessment = () => {
           style={{ width: 'fit-content', padding: '0.6rem 1.25rem', fontSize: '0.85rem' }}
         >
           <ArrowLeft size={18} />
-          <span>BACK TO COGNITIVE ARENA HUB</span>
+          <span>BACK TO EXERCISE HUB</span>
         </button>
 
         {currentGame === '3d-memory' && <ThreeDFlowerMatch />}
@@ -105,13 +105,15 @@ const Assessment = () => {
     <div className="page-view animate-fade-in" style={{ gap: '1.5rem' }}>
       <div className="garden-card">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
-          <Swords size={28} color="#00F2FE" />
-          <h1 style={{ fontSize: '2rem', color: '#F8FAFC', fontWeight: 900, fontFamily: 'var(--font-heading)', margin: 0 }}>
-            3D THREE.JS COGNITIVE ARENA HUB
+          <div className="icon-box" style={{ width: 44, height: 44, borderRadius: '12px', backgroundColor: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.35)' }}>
+            <Brain size={26} color="#38BDF8" />
+          </div>
+          <h1 style={{ fontSize: '1.9rem', color: '#FFFFFF', fontWeight: 800, fontFamily: 'var(--font-heading)', margin: 0 }}>
+            3D COGNITIVE EXERCISE HUB
           </h1>
         </div>
-        <p style={{ color: '#94A3B8', fontSize: '1.05rem' }}>
-          Select a 100% 3D Three.js WebGL interactive mission below. Real-time performance metrics automatically update your Groq AI Model & MongoDB Atlas database.
+        <p style={{ color: '#9198A1', fontSize: '0.95rem', lineHeight: 1.5 }}>
+          Select a 100% 3D Three.js WebGL interactive exercise below. Real-time performance metrics automatically update your AI analysis & MongoDB database.
         </p>
       </div>
 
@@ -141,39 +143,38 @@ const Assessment = () => {
               </span>
 
               <div>
-                <div style={{
-                  width: 50,
-                  height: 50,
+                {/* 100% Dead-Centered Icon Box */}
+                <div className="icon-box" style={{
+                  width: 48,
+                  height: 48,
                   borderRadius: '14px',
-                  background: `linear-gradient(135deg, ${g.color}25 0%, rgba(15, 20, 36, 0.9) 100%)`,
+                  backgroundColor: 'rgba(56, 189, 248, 0.15)',
                   border: `1px solid ${g.color}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justify: 'center',
                   marginBottom: '1rem'
                 }}>
-                  <Icon size={26} color={g.color} />
+                  <Icon size={24} color={g.color} />
                 </div>
 
-                <div className="badge badge-purple" style={{ marginBottom: '0.5rem', fontSize: '0.7rem' }}>
+                <div className="badge badge-purple" style={{ marginBottom: '0.5rem', fontSize: '0.75rem' }}>
                   {g.category}
                 </div>
 
-                <h3 style={{ fontSize: '1.35rem', color: '#F8FAFC', fontWeight: 900, marginBottom: '0.4rem', fontFamily: 'var(--font-heading)' }}>
+                <h3 style={{ fontSize: '1.3rem', color: '#FFFFFF', fontWeight: 800, marginBottom: '0.4rem', fontFamily: 'var(--font-heading)' }}>
                   {g.title}
                 </h3>
 
-                <p style={{ color: '#94A3B8', fontSize: '0.92rem', lineHeight: 1.5, marginBottom: '1.4rem' }}>
+                <p style={{ color: '#9198A1', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '1.4rem' }}>
                   {g.desc}
                 </p>
               </div>
 
               <button
                 onClick={() => handleLaunchGame(g.id)}
-                className="btn-flame"
-                style={{ width: '100%' }}
+                className="btn-primary"
+                style={{ width: '100%', padding: '0.85rem' }}
               >
-                <span>LAUNCH 3D MISSION</span>
+                <Gamepad2 size={18} />
+                <span>START 3D GAME</span>
               </button>
             </div>
           );
