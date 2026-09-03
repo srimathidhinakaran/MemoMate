@@ -105,13 +105,22 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
 }
 
-/* Centered Icon Box Helper */
-.icon-box-center {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  line-height: 0;
+/* 100% Dead-Centered SVG Icon Box Utility */
+.icon-box {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  line-height: 0 !important;
+}
+
+.icon-box svg {
+  display: block !important;
+  margin: auto !important;
+  flex-shrink: 0 !important;
 }
 
 /* Container Cards */

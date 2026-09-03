@@ -55,15 +55,12 @@ const Navbar = () => {
             onClick={() => handleNavClick('Home')}
             style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem' }}
           >
-            <div style={{
+            <div className="icon-box" style={{
               width: 44,
               height: 44,
               borderRadius: '12px',
               backgroundColor: 'rgba(56, 189, 248, 0.15)',
-              border: '1px solid rgba(56, 189, 248, 0.35)',
-              display: 'flex',
-              alignItems: 'center',
-              justify: 'center'
+              border: '1px solid rgba(56, 189, 248, 0.35)'
             }}>
               <Brain size={26} color="#38BDF8" />
             </div>

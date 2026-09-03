@@ -47,21 +47,17 @@ const Login = () => {
         backgroundColor: '#161B22',
         boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)'
       }}>
-        {/* Perfectly Centered Brain Emblem */}
+        {/* Perfectly Dead-Centered Brain Emblem */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{
+          <div className="icon-box" style={{
             width: 56,
             height: 56,
             borderRadius: '14px',
             backgroundColor: 'rgba(56, 189, 248, 0.15)',
             border: '1px solid rgba(56, 189, 248, 0.35)',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'center',
-            margin: '0 auto 1.1rem',
-            padding: 0
+            margin: '0 auto 1.1rem'
           }}>
-            <Brain size={30} color="#38BDF8" style={{ display: 'block' }} />
+            <Brain size={30} color="#38BDF8" />
           </div>
 
           <h1 style={{
