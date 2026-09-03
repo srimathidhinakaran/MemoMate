@@ -4,9 +4,9 @@
   /* Esports Obsidian Dark Theme */
   --bg-obsidian: #090C15;
   --bg-dark-surface: #0F1424;
-  --bg-card: rgba(18, 25, 44, 0.85);
-  --bg-card-hover: rgba(28, 38, 66, 0.92);
-  --bg-card-subtle: rgba(255, 255, 255, 0.03);
+  --bg-card: rgba(18, 25, 44, 0.88);
+  --bg-card-hover: rgba(28, 38, 66, 0.95);
+  --bg-card-subtle: rgba(255, 255, 255, 0.04);
   
   /* Cyber Gaming Accents */
   --neon-cyan: #00F2FE;
@@ -29,7 +29,7 @@
 
   --text-primary: #F8FAFC;
   --text-secondary: #CBD5E1;
-  --text-muted: #64748B;
+  --text-muted: #94A3B8;
   
   --border-color: rgba(255, 255, 255, 0.08);
   --border-cyber: rgba(0, 242, 254, 0.25);
@@ -66,7 +66,7 @@ body {
   background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-body);
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   overflow-x: hidden;
@@ -76,10 +76,11 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text-primary);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
 }
 
-/* Common Layout Elements */
+/* Global Layout & Alignment Classes */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -101,6 +102,19 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Cyber Cards & Battle Pass Container Elements */
@@ -109,12 +123,14 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-radius: var(--radius-lg);
-  padding: 1.75rem;
+  padding: 1.6rem 1.8rem;
   border: 1px solid var(--border-cyber);
   box-shadow: var(--shadow-soft);
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
 }
 
 .garden-card::before {
@@ -129,7 +145,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .garden-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   border-color: rgba(0, 242, 254, 0.5);
   box-shadow: var(--shadow-hover);
 }
@@ -139,6 +155,8 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.25rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 /* High-Octane Esports Cyber Buttons */
@@ -146,52 +164,37 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-cyan-dark) 100%);
   color: #050B14;
   border: none;
-  padding: 0.85rem 1.75rem;
-  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
   font-weight: 800;
   font-family: var(--font-heading);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   border-radius: var(--radius-md);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   box-shadow: var(--neon-cyan-glow);
   transition: all 0.25s ease;
   text-decoration: none;
   position: relative;
   overflow: hidden;
-}
-
-.btn-primary::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transform: rotate(30deg) translateY(-100%);
-  transition: transform 0.6s ease;
-}
-
-.btn-primary:hover::after {
-  transform: rotate(30deg) translateY(100%);
+  white-space: nowrap;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 0 30px rgba(0, 242, 254, 0.8);
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.8);
 }
 
 .btn-secondary {
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0.85rem 1.6rem;
-  font-size: 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.75rem 1.4rem;
+  font-size: 0.9rem;
   font-weight: 700;
   font-family: var(--font-heading);
   border-radius: var(--radius-md);
@@ -202,6 +205,7 @@ h1, h2, h3, h4, h5, h6 {
   gap: 0.5rem;
   transition: all 0.25s ease;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .btn-secondary:hover {
@@ -211,83 +215,60 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-2px);
 }
 
-.btn-peach, .btn-flame {
+.btn-flame {
   background: linear-gradient(135deg, var(--flame-orange) 0%, var(--flame-orange-dark) 100%);
   color: #FFFFFF;
   border: none;
-  padding: 0.85rem 1.75rem;
-  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
   font-weight: 800;
   font-family: var(--font-heading);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   border-radius: var(--radius-md);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   box-shadow: var(--flame-orange-glow);
   transition: all 0.25s ease;
+  white-space: nowrap;
 }
 
-.btn-peach:hover, .btn-flame:hover {
+.btn-flame:hover {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 0 30px rgba(255, 78, 80, 0.8);
-}
-
-.btn-lavender, .btn-gold {
-  background: linear-gradient(135deg, var(--battle-gold) 0%, var(--battle-gold-dark) 100%);
-  color: #0A0A00;
-  border: none;
-  padding: 0.85rem 1.75rem;
-  font-size: 1rem;
-  font-weight: 800;
-  font-family: var(--font-heading);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  box-shadow: var(--battle-gold-glow);
-  transition: all 0.25s ease;
-}
-
-.btn-lavender:hover, .btn-gold:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+  box-shadow: 0 0 25px rgba(255, 78, 80, 0.8);
 }
 
 /* Battle Badges & Rank Tags */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.9rem;
-  border-radius: 9999px;
-  font-size: 0.85rem;
+  gap: 0.35rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
   font-weight: 800;
   font-family: var(--font-esports);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.badge-sage, .badge-cyan {
+.badge-cyan {
   background: rgba(0, 242, 254, 0.12);
   color: var(--neon-cyan);
   border: 1px solid rgba(0, 242, 254, 0.3);
 }
 
-.badge-peach, .badge-flame {
+.badge-flame {
   background: rgba(255, 78, 80, 0.12);
   color: var(--flame-orange);
   border: 1px solid rgba(255, 78, 80, 0.3);
 }
 
-.badge-lavender, .badge-purple {
+.badge-purple {
   background: rgba(168, 85, 247, 0.12);
   color: var(--mystic-violet);
   border: 1px solid rgba(168, 85, 247, 0.3);
@@ -301,32 +282,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); }
-  50% { box-shadow: 0 0 35px rgba(0, 242, 254, 0.8); }
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 2.5s infinite ease-in-out;
-}
-
-@keyframes borderRotate {
-  0% { border-color: rgba(0, 242, 254, 0.4); }
-  33% { border-color: rgba(255, 215, 0, 0.4); }
-  66% { border-color: rgba(255, 78, 80, 0.4); }
-  100% { border-color: rgba(0, 242, 254, 0.4); }
-}
-
-.animate-cyber-border {
-  animation: borderRotate 6s infinite linear;
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Custom Scrollbar for Gaming UI */

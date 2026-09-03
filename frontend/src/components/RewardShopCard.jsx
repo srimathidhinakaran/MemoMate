@@ -9,7 +9,7 @@ const RewardShopCard = () => {
   const shopItems = [
     {
       id: 'golden_sunflower',
-      title: 'Cyber Golden Sunflower 🌻',
+      title: 'Cyber Golden Sunflower',
       desc: 'Unlocks dynamic glowing 3D golden sunflowers in your interactive Memory Garden.',
       cost: 50,
       icon: Sprout,
@@ -17,7 +17,7 @@ const RewardShopCard = () => {
     },
     {
       id: 'ai_llama_booster',
-      title: 'Groq Llama-3 AI Crystal 🤖',
+      title: 'Groq Llama-3 AI Crystal',
       desc: 'Boosts cognitive analysis precision with instant Groq neural telemetry.',
       cost: 80,
       icon: Cpu,
@@ -25,7 +25,7 @@ const RewardShopCard = () => {
     },
     {
       id: 'streak_freeze',
-      title: 'Streak Freeze Shield 🛡️',
+      title: 'Streak Freeze Shield',
       desc: 'Protects your daily workout streak for 1 day if a session is missed.',
       cost: 40,
       icon: ShieldCheck,
@@ -33,7 +33,7 @@ const RewardShopCard = () => {
     },
     {
       id: 'heroic_crest',
-      title: 'Heroic Memory Crest 👑',
+      title: 'Heroic Memory Crest',
       desc: 'Displays legendary Heroic golden rank aura on profile & global leaderboard.',
       cost: 120,
       icon: Crown,
