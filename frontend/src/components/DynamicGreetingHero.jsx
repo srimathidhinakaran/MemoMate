@@ -52,9 +52,9 @@ const DynamicGreetingHero = () => {
   const timeFormatted = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   const dateFormatted = time.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
 
-  // XP Progress Calculation for Level 3 -> Level 4 (850 / 1000)
-  const nextLevelXp = 1000;
-  const currentXpInLevel = xpPoints || 850;
+  // XP Progress Calculation per Level (300 XP per Level)
+  const nextLevelXp = 300;
+  const currentXpInLevel = (xpPoints || 0) % 300;
   const progressPercent = Math.min(100, Math.round((currentXpInLevel / nextLevelXp) * 100));
 
   return (
