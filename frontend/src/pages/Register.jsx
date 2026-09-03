@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
-import { Swords, ArrowRight } from 'lucide-react';
+import { Brain, ArrowRight } from 'lucide-react';
 
 const Register = () => {
   const { register, loading } = useAuth();
@@ -49,20 +49,20 @@ const Register = () => {
         backgroundColor: '#161B22',
         boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)'
       }}>
-        {/* Header */}
+        {/* Clean Professional Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
           <div style={{
             width: 60,
             height: 60,
             borderRadius: '16px',
-            background: 'linear-gradient(135deg, #0284C7 0%, #38BDF8 100%)',
+            backgroundColor: 'rgba(56, 189, 248, 0.15)',
+            border: '1px solid rgba(56, 189, 248, 0.35)',
             display: 'flex',
             alignItems: 'center',
             justify: 'center',
-            margin: '0 auto 1rem',
-            boxShadow: '0 4px 16px rgba(2, 132, 199, 0.4)'
+            margin: '0 auto 1rem'
           }}>
-            <Swords size={30} color="#FFFFFF" />
+            <Brain size={32} color="#38BDF8" />
           </div>
 
           <h1 style={{

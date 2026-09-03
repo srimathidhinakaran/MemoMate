@@ -3,11 +3,11 @@ import { soundFx } from '../utils/soundEffects';
 import { Activity, Zap, Flame, Award, Clock, Radio, Sparkles } from 'lucide-react';
 
 const INITIAL_ACTIVITIES = [
-  { id: 1, user: 'Aarav Patel', action: 'completed 3D Focus Search', score: 92, time: '2m ago', type: 'workout', initials: 'AP' },
-  { id: 2, user: 'Sunita Sharma', action: 'reached a 9-Day Streak', score: null, time: '5m ago', type: 'streak', initials: 'SS' },
-  { id: 3, user: 'Meena (You)', action: 'completed 3D Memory Match', score: 85, time: '12m ago', type: 'workout', initials: 'M' },
-  { id: 4, user: 'Ramesh Kumar', action: 'promoted to Emerald League', score: null, time: '24m ago', type: 'league', initials: 'RK' },
-  { id: 5, user: 'Anita Roy', action: 'completed Pattern Recall', score: 88, time: '41m ago', type: 'workout', initials: 'AR' }
+  { id: 1, user: 'Aarav Patel', action: 'completed 3D Focus Search', score: 92, time: '2m ago', initials: 'AP' },
+  { id: 2, user: 'Sunita Sharma', action: 'reached a 9-Day Streak', score: null, time: '5m ago', initials: 'SS' },
+  { id: 3, user: 'Patient Member', action: 'completed 3D Memory Match', score: 85, time: '12m ago', initials: 'PM' },
+  { id: 4, user: 'Ramesh Kumar', action: 'promoted to Rank #3', score: null, time: '24m ago', initials: 'RK' },
+  { id: 5, user: 'Anita Roy', action: 'completed Pattern Recall', score: 88, time: '41m ago', initials: 'AR' }
 ];
 
 const LiveActivityFeed = () => {
@@ -34,13 +34,12 @@ const LiveActivityFeed = () => {
         action: `completed ${randomGame}`,
         score: randomScore,
         time: 'Just now',
-        type: 'workout',
         initials: randomUser.initials
       };
 
       setActivities((prev) => [newActivity, ...prev.slice(0, 4)]);
       soundFx.playXpGain();
-    }, 15000);
+    }, 18000);
 
     return () => clearInterval(interval);
   }, []);
@@ -53,27 +52,27 @@ const LiveActivityFeed = () => {
           <div style={{
             width: 40,
             height: 40,
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #00F2FE 0%, #00E676 100%)',
+            borderRadius: '10px',
+            backgroundColor: 'rgba(56, 189, 248, 0.15)',
+            border: '1px solid rgba(56, 189, 248, 0.35)',
             display: 'flex',
             alignItems: 'center',
-            justify: 'center',
-            boxShadow: '0 0 15px rgba(0, 242, 254, 0.4)'
+            justify: 'center'
           }}>
-            <Radio size={22} color="#050B14" />
+            <Radio size={22} color="#38BDF8" />
           </div>
           <div>
-            <h4 style={{ fontSize: '1.15rem', color: '#F8FAFC', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
-              LIVE BATTLE TICKER
+            <h4 style={{ fontSize: '1.15rem', color: '#FFFFFF', fontWeight: 800, margin: 0, fontFamily: 'var(--font-heading)' }}>
+              LIVE ACTIVITY STREAM
             </h4>
-            <div style={{ fontSize: '0.78rem', color: '#94A3B8', fontWeight: 700 }}>
-              REAL-TIME GLOBAL PLAYER NETWORK FEED
+            <div style={{ fontSize: '0.78rem', color: '#9198A1', fontWeight: 600 }}>
+              REAL-TIME COMMUNITY EXERCISE FEED
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#00E676', fontWeight: 800, fontFamily: 'var(--font-esports)' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#00E676', boxShadow: '0 0 10px #00E676' }} className="animate-pulse-glow" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#34D399', fontWeight: 800, fontFamily: 'var(--font-esports)' }}>
+          <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#34D399' }} />
           <span>LIVE SYNC</span>
         </div>
       </div>
@@ -88,9 +87,9 @@ const LiveActivityFeed = () => {
               alignItems: 'center',
               justify: 'space-between',
               padding: '0.7rem 1rem',
-              backgroundColor: 'rgba(255, 255, 255, 0.04)',
-              borderRadius: '12px',
-              border: '1px solid rgba(0, 242, 254, 0.15)',
+              backgroundColor: '#0D1117',
+              borderRadius: '10px',
+              border: '1px solid #30363D',
               fontSize: '0.88rem'
             }}
           >
@@ -99,9 +98,9 @@ const LiveActivityFeed = () => {
                 width: 32,
                 height: 32,
                 borderRadius: '8px',
-                background: 'linear-gradient(135deg, #00F2FE 0%, #A855F7 100%)',
-                color: '#050B14',
-                fontWeight: 900,
+                backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                color: '#38BDF8',
+                fontWeight: 800,
                 fontSize: '0.8rem',
                 fontFamily: 'var(--font-esports)',
                 display: 'flex',
@@ -112,17 +111,17 @@ const LiveActivityFeed = () => {
               </div>
 
               <div>
-                <span style={{ fontWeight: 800, color: '#F8FAFC' }}>{act.user}</span>{' '}
-                <span style={{ color: '#94A3B8' }}>{act.action}</span>
+                <span style={{ fontWeight: 800, color: '#FFFFFF' }}>{act.user}</span>{' '}
+                <span style={{ color: '#9198A1' }}>{act.action}</span>
                 {act.score && (
-                  <span style={{ marginLeft: '0.4rem', fontWeight: 900, color: '#FFD700', fontSize: '0.82rem', fontFamily: 'var(--font-esports)' }}>
+                  <span style={{ marginLeft: '0.4rem', fontWeight: 800, color: '#FBBF24', fontSize: '0.82rem', fontFamily: 'var(--font-esports)' }}>
                     (+{act.score} PTS)
                   </span>
                 )}
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#00F2FE', fontSize: '0.75rem', fontWeight: 800, fontFamily: 'var(--font-esports)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#38BDF8', fontSize: '0.75rem', fontWeight: 800, fontFamily: 'var(--font-esports)' }}>
               <Clock size={12} />
               <span>{act.time}</span>
             </div>

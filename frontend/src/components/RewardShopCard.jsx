@@ -70,11 +70,11 @@ const RewardShopCard = () => {
             <ShoppingBag size={24} color="#050B14" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.25rem', color: '#F8FAFC', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
-              ARMORY & BATTLE STORE
+            <h3 style={{ fontSize: '1.25rem', color: '#FFFFFF', fontWeight: 800, margin: 0, fontFamily: 'var(--font-heading)' }}>
+              REWARDS & POWER-UPS
             </h3>
-            <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
-              REDEEM BATTLE GEMS FOR 3D GARDEN ASSETS & POWER-UPS
+            <div style={{ fontSize: '0.8rem', color: '#9198A1', fontWeight: 600 }}>
+              REDEEM POINTS FOR 3D GARDEN PERKS & POWER-UPS
             </div>
           </div>
         </div>

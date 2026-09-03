@@ -119,7 +119,7 @@ const DynamicGreetingHero = () => {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
                 <span className="badge badge-gold">
-                  <Crown size={14} /> HEROIC RANK
+                  <Crown size={14} /> ACTIVE MEMBER
                 </span>
                 <span className="badge badge-cyan">
                   <Sparkles size={14} /> {greetingConfig.badgeText}
@@ -127,34 +127,34 @@ const DynamicGreetingHero = () => {
               </div>
               <h1 style={{
                 fontSize: '2.4rem',
-                color: '#F8FAFC',
+                color: '#FFFFFF',
                 fontWeight: 900,
                 margin: 0,
                 fontFamily: 'var(--font-heading)',
                 letterSpacing: '-0.02em'
               }}>
-                {greetingConfig.title}, <span style={{ color: '#00F2FE' }}>{user?.name || 'Player'}</span>
+                {greetingConfig.title}, <span style={{ color: '#38BDF8' }}>{user?.name || 'Player'}</span>
               </h1>
             </div>
           </div>
 
-          <p style={{ color: '#94A3B8', fontSize: '1.05rem', maxWidth: '640px', lineHeight: 1.5, marginBottom: '1.2rem' }}>
+          <p style={{ color: '#9198A1', fontSize: '1.05rem', maxWidth: '640px', lineHeight: 1.5, marginBottom: '1.2rem' }}>
             {greetingConfig.subtext}
           </p>
 
-          {/* Battle Pass XP Level Progress HUD Bar */}
+          {/* Daily Goal Level Progress Bar */}
           <div style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            backgroundColor: '#21262D',
+            border: '1px solid #30363D',
             borderRadius: '14px',
             padding: '0.85rem 1.2rem',
             maxWidth: '560px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, fontFamily: 'var(--font-esports)', color: '#FFD700', textTransform: 'uppercase' }}>
-                BATTLE PASS TIER {level || 3} PROGRESS
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, fontFamily: 'var(--font-esports)', color: '#FBBF24', textTransform: 'uppercase' }}>
+                DAILY GOAL TIER {level || 1} PROGRESS
               </span>
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, fontFamily: 'var(--font-esports)', color: '#00F2FE' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, fontFamily: 'var(--font-esports)', color: '#38BDF8' }}>
                 {currentXpInLevel} / {nextLevelXp} XP ({progressPercent}%)
               </span>
             </div>
@@ -163,7 +163,7 @@ const DynamicGreetingHero = () => {
             <div style={{
               width: '100%',
               height: '10px',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              backgroundColor: '#0D1117',
               borderRadius: '9999px',
               overflow: 'hidden',
               position: 'relative'
@@ -171,42 +171,40 @@ const DynamicGreetingHero = () => {
               <div style={{
                 width: `${progressPercent}%`,
                 height: '100%',
-                background: 'linear-gradient(90deg, #00F2FE 0%, #FFD700 100%)',
+                background: 'linear-gradient(90deg, #38BDF8 0%, #FBBF24 100%)',
                 borderRadius: '9999px',
-                boxShadow: '0 0 15px rgba(0, 242, 254, 0.8)',
                 transition: 'width 0.8s ease-out'
               }} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.45rem', fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>
-              <span>CURRENT REWARD: 🌸 CYBER SUNFLOWER</span>
-              <span style={{ color: '#FF4E50' }}>NEXT TIER: 👑 HEROIC CRYSTAL (+150 GEMS)</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.45rem', fontSize: '0.8rem', color: '#9198A1', fontWeight: 700 }}>
+              <span>CURRENT REWARD: 3D CYBER SUNFLOWER</span>
+              <span style={{ color: '#FB923C' }}>NEXT TIER: HEROIC CRYSTAL (+150 GEMS)</span>
             </div>
           </div>
         </div>
 
-        {/* Right Section: Season 1 Timer & Battle Counters */}
+        {/* Right Section: Daily Program Timer */}
         <div style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-end',
           gap: '1rem'
         }}>
-          {/* Season Countdown Clock */}
+          {/* Daily Program Clock */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
-            backgroundColor: 'rgba(0, 242, 254, 0.08)',
-            border: '1px solid rgba(0, 242, 254, 0.3)',
+            backgroundColor: 'rgba(56, 189, 248, 0.12)',
+            border: '1px solid rgba(56, 189, 248, 0.35)',
             padding: '0.65rem 1.25rem',
-            borderRadius: '14px',
-            boxShadow: '0 0 20px rgba(0, 242, 254, 0.15)'
+            borderRadius: '14px'
           }}>
-            <Clock size={18} color="#00F2FE" />
+            <Clock size={18} color="#38BDF8" />
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 800, fontFamily: 'var(--font-esports)', letterSpacing: '0.05em' }}>
-                SEASON 1 ARENA
+              <div style={{ fontSize: '0.7rem', color: '#9198A1', fontWeight: 800, fontFamily: 'var(--font-esports)', letterSpacing: '0.05em' }}>
+                DAILY PROGRAM
               </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#F8FAFC', fontFamily: 'var(--font-esports)' }}>
                 {timeFormatted} <span style={{ color: '#00F2FE' }}>•</span> {dateFormatted}
