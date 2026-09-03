@@ -117,10 +117,10 @@ export const sessionAPI = {
       const newProf = { ...currentProfile };
 
       // Update actual metric based on game played
-      if (cat === 'memory') newProf.memoryScore = Math.round(newProf.memoryScore * 0.65 + score * 0.35);
-      if (cat === 'attention') newProf.attentionScore = Math.round(newProf.attentionScore * 0.65 + score * 0.35);
-      if (cat === 'recall') newProf.recallScore = Math.round(newProf.recallScore * 0.65 + score * 0.35);
-      if (cat === 'reaction') newProf.reactionScore = Math.round(newProf.reactionScore * 0.65 + score * 0.35);
+      if (cat === 'memory' || cat === 'pattern' || cat === '3d-memory') newProf.memoryScore = Math.round(newProf.memoryScore * 0.65 + score * 0.35);
+      if (cat === 'attention' || cat === '3d-target' || cat === 'focus') newProf.attentionScore = Math.round(newProf.attentionScore * 0.65 + score * 0.35);
+      if (cat === 'recall' || cat === 'word' || cat === 'number') newProf.recallScore = Math.round(newProf.recallScore * 0.65 + score * 0.35);
+      if (cat === 'reaction' || cat === '3d-reaction') newProf.reactionScore = Math.round(newProf.reactionScore * 0.65 + score * 0.35);
       
       newProf.overallScore = Math.round((newProf.memoryScore + newProf.attentionScore + newProf.recallScore + newProf.reactionScore) / 4);
       localStorage.setItem('memomate_profile', JSON.stringify(newProf));

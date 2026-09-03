@@ -36,15 +36,15 @@ exports.createSession = async (req, res) => {
       });
     }
 
-    // Smooth exponentially weighted score update (0.7 * old + 0.3 * new)
+    // Smooth exponentially weighted score update (0.65 * old + 0.35 * new)
     const newScore = Math.min(100, Math.max(10, Math.round(Number(score))));
-    if (category === 'memory') {
+    if (category === 'memory' || category === 'pattern' || category === '3d-memory') {
       profile.memoryScore = Math.round(profile.memoryScore * 0.65 + newScore * 0.35);
-    } else if (category === 'attention') {
+    } else if (category === 'attention' || category === '3d-target' || category === 'focus') {
       profile.attentionScore = Math.round(profile.attentionScore * 0.65 + newScore * 0.35);
-    } else if (category === 'recall') {
+    } else if (category === 'recall' || category === 'word' || category === 'number') {
       profile.recallScore = Math.round(profile.recallScore * 0.65 + newScore * 0.35);
-    } else if (category === 'reaction') {
+    } else if (category === 'reaction' || category === '3d-reaction') {
       profile.reactionScore = Math.round(profile.reactionScore * 0.65 + newScore * 0.35);
     }
 

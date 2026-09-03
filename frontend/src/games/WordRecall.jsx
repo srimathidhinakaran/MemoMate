@@ -17,7 +17,7 @@ const NER_WORDS = [
 
 const WordRecall = () => {
   const { user, updateStateFromSession, speakText, voiceAssistance } = useAuth();
-  const navigate = useNavigateRouter();
+  const navigate = useNavigate();
 
   const [targetWords, setTargetWords] = useState([]);
   const [options, setOptions] = useState([]);
