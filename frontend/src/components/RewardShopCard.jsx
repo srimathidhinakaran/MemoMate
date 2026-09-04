@@ -73,7 +73,7 @@ const RewardShopCard = () => {
               {t('relicsShop').toUpperCase()}
             </h3>
             <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
-              REDEEM POINTS FOR POWER-UPS & CYBER AVATARS
+              {t('shopSub') || 'REDEEM POINTS FOR POWER-UPS & CYBER AVATARS'}
             </div>
           </div>
         </div>
@@ -161,7 +161,7 @@ const RewardShopCard = () => {
                   justify: 'center',
                   gap: '0.35rem'
                 }}>
-                  <Check size={16} /> UNLOCKED
+                  <Check size={16} /> {t('unlocked') || 'UNLOCKED ✓'}
                 </div>
               ) : (
                 <button
@@ -170,7 +170,7 @@ const RewardShopCard = () => {
                   style={{ width: '100%', padding: '0.5rem', fontSize: '0.8rem' }}
                   disabled={gems < item.cost}
                 >
-                  {gems >= item.cost ? `UNLOCK FOR 💎 ${item.cost}` : 'LOCKED (INSUFFICIENT GEMS)'}
+                  {gems >= item.cost ? `${t('unlockFor') || 'UNLOCK FOR'} 💎 ${item.cost}` : 'LOCKED'}
                 </button>
               )}
             </div>

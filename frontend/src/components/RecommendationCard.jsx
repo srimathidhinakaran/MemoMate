@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
 import { Sparkles, ArrowRight, Zap, Cpu } from 'lucide-react';
 
 const RecommendationCard = ({ recommendation }) => {
+  const { t } = useAuth();
   const rec = recommendation || {
     weakArea: 'attention',
     recommendedActivity: '3D Focus Search 🎯',
@@ -47,17 +49,17 @@ const RecommendationCard = ({ recommendation }) => {
           fontFamily: 'var(--font-esports)'
         }}>
           <Sparkles size={16} />
-          <span>ADAPTIVE AI BATTLE MISSION</span>
+          <span>{t('adaptiveMission')}</span>
         </div>
 
         <span className="badge badge-purple" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
           <Cpu size={14} color="#A855F7" />
-          <span>GROQ LLAMA-3 AI TELEMETRY</span>
+          <span>{t('aiTelemetry')}</span>
         </span>
       </div>
 
       <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#F8FAFC', fontWeight: 900, fontFamily: 'var(--font-heading)' }}>
-        FOCUS MISSION: <span style={{ color: '#00F2FE' }}>{rec.recommendedActivity}</span>
+        {t('focusMissionTitle')} <span style={{ color: '#00F2FE' }}>{rec.recommendedActivity}</span>
       </h3>
 
       <p style={{ color: '#CBD5E1', fontSize: '1.05rem', lineHeight: 1.6, marginBottom: '1.2rem' }}>
@@ -88,11 +90,11 @@ const RecommendationCard = ({ recommendation }) => {
           className="btn-flame" 
           style={{ textDecoration: 'none' }}
         >
-          <span>START BATTLE MISSION</span>
+          <span>{t('startBattleMission')}</span>
           <ArrowRight size={20} />
         </Link>
         <span style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>
-          ⚡ Completing this mission earns +100 XP, unlocks Battle Gems & expands your 3D Garden.
+          {t('missionBonusSub')}
         </span>
       </div>
     </div>

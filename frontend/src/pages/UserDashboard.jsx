@@ -40,7 +40,7 @@ const UserDashboard = () => {
       {/* 4. Current Cognitive Profile Score Cards */}
       <div>
         <h2 style={{ fontSize: '1.35rem', marginBottom: '0.85rem', color: '#F8FAFC', fontWeight: 900, fontFamily: 'var(--font-heading)' }}>
-          Current Cognitive Profile & Metrics
+          {t('cognitiveMetricsHeader')}
         </h2>
         <CognitiveScoreCard
           memory={profile?.memoryScore || 88}

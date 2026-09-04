@@ -17,8 +17,8 @@ const DynamicGreetingHero = () => {
   let greetingConfig = {
     title: t('goodMorning'),
     icon: Sun,
-    badgeText: 'MORNING SESSION ACTIVE',
-    subtext: 'Peak mental acuity window. Execute short-term memory drills and 3D spatial focus exercises.',
+    badgeText: t('morningSessionActive'),
+    subtext: t('morningSessionSub'),
     neonColor: '#38BDF8'
   };
 
@@ -26,24 +26,24 @@ const DynamicGreetingHero = () => {
     greetingConfig = {
       title: t('goodAfternoon'),
       icon: Sun,
-      badgeText: 'PEAK MIND PERFORMANCE',
-      subtext: 'Sustain maximum processing speed with mid-day 3D target search and reaction challenges.',
+      badgeText: t('afternoonSessionActive'),
+      subtext: t('afternoonSessionSub'),
       neonColor: '#FBBF24'
     };
   } else if (hours >= 17 && hours < 22) {
     greetingConfig = {
       title: t('goodEvening'),
       icon: Sunset,
-      badgeText: 'EVENING RECALL SESSION',
-      subtext: 'Unwind with pattern recall, Mind Matrix expansion, and cognitive exercises.',
+      badgeText: t('eveningSessionActive'),
+      subtext: t('eveningSessionSub'),
       neonColor: '#C084FC'
     };
   } else if (hours < 5 || hours >= 22) {
     greetingConfig = {
       title: t('goodNight'),
       icon: Moon,
-      badgeText: 'MEMORY CONSOLIDATION',
-      subtext: 'Rest supports neural synaptic consolidation. Outstanding cognitive progress completed today!',
+      badgeText: t('nightSessionActive'),
+      subtext: t('nightSessionSub'),
       neonColor: '#34D399'
     };
   }
@@ -149,7 +149,7 @@ const DynamicGreetingHero = () => {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
               <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#FBBF24', textTransform: 'uppercase' }}>
-                DAILY GOAL TIER {level || 1} PROGRESS
+                {t('dailyGoalTier')} {level || 1} {t('progress')}
               </span>
               <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#38BDF8' }}>
                 {currentXpInLevel} / {nextLevelXp} XP ({progressPercent}%)
@@ -175,8 +175,8 @@ const DynamicGreetingHero = () => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.45rem', fontSize: '0.78rem', color: '#94A3B8', fontWeight: 700 }}>
-              <span>CURRENT REWARD: 3D QUANTUM CRYSTAL</span>
-              <span style={{ color: '#FB923C' }}>NEXT TIER: HEROIC CREST (+150 PTS)</span>
+              <span>{t('currentReward')}</span>
+              <span style={{ color: '#FB923C' }}>{t('nextTier')}</span>
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@ const DynamicGreetingHero = () => {
             <Clock size={18} color="#38BDF8" />
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: 800, letterSpacing: '0.05em' }}>
-                DAILY PROGRAM
+                {t('dailyProgram')}
               </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#FFFFFF' }}>
                 {timeFormatted} <span style={{ color: '#38BDF8' }}>•</span> {dateFormatted}
@@ -225,8 +225,8 @@ const DynamicGreetingHero = () => {
             }}>
               <Flame size={20} fill="#FB923C" />
               <div>
-                <div style={{ fontSize: '0.65rem', color: '#94A3B8' }}>STREAK</div>
-                <div>{streak ?? 0} DAYS</div>
+                <div style={{ fontSize: '0.65rem', color: '#94A3B8' }}>{t('streak').toUpperCase()}</div>
+                <div>{streak ?? 0} {t('days') || 'DAYS'}</div>
               </div>
             </div>
 
@@ -244,7 +244,7 @@ const DynamicGreetingHero = () => {
             }}>
               <Trophy size={20} color="#FBBF24" />
               <div>
-                <div style={{ fontSize: '0.65rem', color: '#94A3B8' }}>LEAGUE</div>
+                <div style={{ fontSize: '0.65rem', color: '#94A3B8' }}>{t('league')}</div>
                 <div>{league ? league.toUpperCase() : 'EMERALD LEAGUE'}</div>
               </div>
             </div>

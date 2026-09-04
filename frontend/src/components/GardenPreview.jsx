@@ -171,14 +171,14 @@ const GardenPreview = () => {
               {t('navGarden').toUpperCase()}
             </h3>
             <span style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
-              REAL-TIME 3D VISUALIZATION OF NEURAL RELICS
+              {t('gardenSub')}
             </span>
           </div>
         </div>
 
         <span className="badge badge-cyan" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
           <Flame size={16} color="#FB923C" fill="#FB923C" />
-          <span>{garden?.streak ?? 0} DAY STREAK</span>
+          <span>{garden?.streak ?? 0} {t('daysStreak')}</span>
         </span>
       </div>
 
@@ -211,15 +211,15 @@ const GardenPreview = () => {
         fontFamily: 'var(--font-heading)'
       }}>
         <div>
-          <span style={{ color: '#38BDF8', fontSize: '0.75rem', fontWeight: 800 }}>CYBER CRYSTALS</span>
+          <span style={{ color: '#38BDF8', fontSize: '0.75rem', fontWeight: 800 }}>{t('cyberCrystals')}</span>
           <div style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.plants ?? 1}</div>
         </div>
         <div>
-          <span style={{ color: '#C084FC', fontSize: '0.75rem', fontWeight: 800 }}>NEURAL CORES</span>
+          <span style={{ color: '#C084FC', fontSize: '0.75rem', fontWeight: 800 }}>{t('neuralCores')}</span>
           <div style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.flowers ?? 1}</div>
         </div>
         <div>
-          <span style={{ color: '#34D399', fontSize: '0.75rem', fontWeight: 800 }}>QUANTUM RINGS</span>
+          <span style={{ color: '#34D399', fontSize: '0.75rem', fontWeight: 800 }}>{t('quantumRings')}</span>
           <div style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.trees ?? 0}</div>
         </div>
       </div>
@@ -232,7 +232,7 @@ const GardenPreview = () => {
           style={{ padding: '0.65rem 1.2rem', fontSize: '0.85rem' }}
         >
           <Zap size={18} color="#38BDF8" />
-          <span>{charging ? 'CHARGING MATRIX...' : t('water3dGarden')}</span>
+          <span>{charging ? '...' : t('water3dGarden')}</span>
         </button>
 
         <Link 
@@ -240,7 +240,7 @@ const GardenPreview = () => {
           onClick={() => soundFx.playClick()}
           style={{ color: '#38BDF8', fontWeight: 800, fontFamily: 'var(--font-heading)', fontSize: '0.85rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
         >
-          OPEN MIND SANCTUM <ArrowRight size={16} />
+          {t('openMindSanctum')} <ArrowRight size={16} />
         </Link>
       </div>
     </div>

@@ -39,7 +39,7 @@ const Sidebar = () => {
       height: 'fit-content'
     }}>
       <div style={{ padding: '0.4rem 0.85rem', fontSize: '0.75rem', fontWeight: 800, fontFamily: 'var(--font-esports)', color: '#38BDF8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-        NAVIGATION MENU
+        {t('navMenu') || 'NAVIGATION MENU'}
       </div>
 
       {navItems.map((item) => {
@@ -74,10 +74,10 @@ const Sidebar = () => {
       <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#0B0E14', borderRadius: '12px', border: '1px solid #263142' }}>
         <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '0.4rem', fontFamily: 'var(--font-heading)' }}>
           <Brain size={16} color="#38BDF8" />
-          <span>COGNITIVE CARE</span>
+          <span>{t('cognitiveCare') || 'COGNITIVE CARE'}</span>
         </div>
         <div style={{ fontSize: '0.78rem', color: '#94A3B8', marginTop: '0.3rem', lineHeight: 1.4 }}>
-          Complete daily exercises to maintain your streak & unlock Mind Matrix rewards.
+          {t('sidebarTip') || 'Complete daily exercises to maintain your streak & unlock Mind Matrix rewards.'}
         </div>
       </div>
     </aside>
