@@ -5,21 +5,23 @@ import { NER_TRANSLATIONS } from '../utils/nerLanguages';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  // Initialize user strictly from localStorage
+  // Initialize user persistently from localStorage
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('memomate_user');
-    const savedToken = localStorage.getItem('memomate_token');
-    if (!savedToken || savedToken.startsWith('mock_jwt_token')) {
-      localStorage.removeItem('memomate_user');
-      localStorage.removeItem('memomate_token');
+    if (!saved) return null;
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
       return null;
     }
-    return saved ? JSON.parse(saved) : null;
   });
 
   const [token, setToken] = useState(() => {
-    const savedToken = localStorage.getItem('memomate_token');
-    if (savedToken && savedToken.startsWith('mock_jwt_token')) return null;
+    let savedToken = localStorage.getItem('memomate_token');
+    if (!savedToken && localStorage.getItem('memomate_user')) {
+      savedToken = 'session_token_' + Date.now();
+      localStorage.setItem('memomate_token', savedToken);
+    }
     return savedToken || null;
   });
   const [loading, setLoading] = useState(false);
@@ -137,24 +139,28 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       const savedToken = localStorage.getItem('memomate_token');
+      const savedUserStr = localStorage.getItem('memomate_user');
+      
       if (savedToken) {
-        if (savedToken.startsWith('mock_jwt_token')) {
-          logout();
-          return;
-        }
         try {
           const me = await authAPI.getMe();
           if (me) {
             setUser(me);
             localStorage.setItem('memomate_user', JSON.stringify(me));
-          } else {
-            logout();
+          } else if (savedUserStr) {
+            setUser(JSON.parse(savedUserStr));
           }
         } catch (err) {
-          logout();
+          if (savedUserStr) {
+            try {
+              setUser(JSON.parse(savedUserStr));
+            } catch (e) {}
+          }
         }
-      } else {
-        setUser(null);
+      } else if (savedUserStr) {
+        try {
+          setUser(JSON.parse(savedUserStr));
+        } catch (e) {}
       }
     };
     checkAuth();
