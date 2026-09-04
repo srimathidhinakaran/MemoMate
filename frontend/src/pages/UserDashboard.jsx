@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import DynamicGreetingHero from '../components/DynamicGreetingHero';
+import DementiaOrientationCard from '../components/DementiaOrientationCard';
 import LiveActivityFeed from '../components/LiveActivityFeed';
 import StreakTracker from '../components/StreakTracker';
 import DailyQuestsCard from '../components/DailyQuestsCard';
@@ -20,7 +21,10 @@ const UserDashboard = () => {
       {/* 1. Dynamic Time-Aware Hero Greeting */}
       <DynamicGreetingHero />
 
-      {/* 2. Live Cognitive Telemetry Ticker Stream */}
+      {/* 2. Dementia Daily Memory Anchor & Orientation Suite (NER Multi-lingual) */}
+      <DementiaOrientationCard />
+
+      {/* 3. Live Cognitive Telemetry Ticker Stream */}
       <LiveActivityFeed />
 
       {/* 3. Daily Streak Maintenance & Quests */}
@@ -39,7 +43,7 @@ const UserDashboard = () => {
           Current Cognitive Profile & Metrics
         </h2>
         <CognitiveScoreCard
-          memory={profile?.memoryScore || 82}
+          memory={profile?.memoryScore || 88}
           attention={profile?.attentionScore || 64}
           recall={profile?.recallScore || 76}
           reaction={profile?.reactionScore || 71}

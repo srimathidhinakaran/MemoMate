@@ -12,7 +12,11 @@ const NER_WORDS = [
   'Mizo Chilli 🌶️',
   'Kaziranga Fern 🍃',
   'Brahmaputra Lily 🌺',
-  'Nagaland Orchid 🌸'
+  'Nagaland Orchid 🌸',
+  'Majuli Bamboo Craft 🎍',
+  'Loktak Water Lily 🪷',
+  'Shillong Pinecone 🌲',
+  'Bihu Cultural Dhol 🥁'
 ];
 
 const WordRecall = () => {

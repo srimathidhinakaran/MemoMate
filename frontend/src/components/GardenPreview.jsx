@@ -177,7 +177,7 @@ const GardenPreview = () => {
 
         <span className="badge badge-cyan" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
           <Flame size={16} color="#FF4E50" fill="#FF4E50" />
-          <span>{garden?.streak || 4} DAY STREAK</span>
+          <span>{garden?.streak ?? 1} DAY STREAK</span>
         </span>
       </div>
 
@@ -211,15 +211,15 @@ const GardenPreview = () => {
       }}>
         <div>
           <span style={{ color: '#00E676', fontSize: '0.75rem' }}>PLANTS</span>
-          <div style={{ color: '#F8FAFC', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.plants || 3}</div>
+          <div style={{ color: '#F8FAFC', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.plants ?? 1}</div>
         </div>
         <div>
           <span style={{ color: '#A855F7', fontSize: '0.75rem' }}>FLOWERS</span>
-          <div style={{ color: '#F8FAFC', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.flowers || 5}</div>
+          <div style={{ color: '#F8FAFC', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.flowers ?? 0}</div>
         </div>
         <div>
           <span style={{ color: '#00F2FE', fontSize: '0.75rem' }}>TREES</span>
-          <div style={{ color: '#F8FAFC', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.trees || 2}</div>
+          <div style={{ color: '#F8FAFC', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.trees ?? 0}</div>
         </div>
       </div>
 

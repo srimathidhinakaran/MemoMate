@@ -4,7 +4,7 @@ import { soundFx } from '../utils/soundEffects';
 import { Sun, Sunset, Moon, Sparkles, Flame, Gem, Trophy, Clock, Calendar, ShieldCheck, Zap, Crown, Target, ChevronRight } from 'lucide-react';
 
 const DynamicGreetingHero = () => {
-  const { user, streak, gems, xpPoints, level, levelTitle, league } = useAuth();
+  const { user, streak, gems, xpPoints, level, levelTitle, league, t } = useAuth();
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -15,36 +15,36 @@ const DynamicGreetingHero = () => {
   const hours = time.getHours();
 
   let greetingConfig = {
-    title: 'Morning Warfare',
+    title: t('goodMorning'),
     icon: Sun,
-    badgeText: 'MORNING ARENA ACTIVE',
-    subtext: 'Peak mental acuity window. Execute short-term memory drills and 3D spatial focus missions.',
-    neonColor: '#00F2FE'
+    badgeText: 'MORNING SESSION ACTIVE',
+    subtext: 'Peak mental acuity window. Execute short-term memory drills and 3D spatial focus exercises.',
+    neonColor: '#38BDF8'
   };
 
   if (hours >= 12 && hours < 17) {
     greetingConfig = {
-      title: 'Afternoon Ops',
+      title: t('goodAfternoon'),
       icon: Sun,
       badgeText: 'PEAK MIND PERFORMANCE',
       subtext: 'Sustain maximum processing speed with mid-day 3D target search and reaction challenges.',
-      neonColor: '#FFD700'
+      neonColor: '#FBBF24'
     };
   } else if (hours >= 17 && hours < 22) {
     greetingConfig = {
-      title: 'Evening Mission',
+      title: t('goodEvening'),
       icon: Sunset,
       badgeText: 'EVENING RECALL SESSION',
-      subtext: 'Unwind with pattern recall, memory garden expansion, and strategic puzzle battles.',
+      subtext: 'Unwind with pattern recall, memory garden expansion, and cognitive exercises.',
       neonColor: '#A855F7'
     };
   } else if (hours < 5 || hours >= 22) {
     greetingConfig = {
-      title: 'Night Recovery',
+      title: t('goodNight'),
       icon: Moon,
       badgeText: 'MEMORY CONSOLIDATION',
       subtext: 'Rest supports neural synaptic consolidation. Outstanding cognitive progress completed today!',
-      neonColor: '#FF4E50'
+      neonColor: '#34D399'
     };
   }
 
@@ -116,7 +116,7 @@ const DynamicGreetingHero = () => {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
                 <span className="badge badge-gold">
-                  <Crown size={14} /> ACTIVE MEMBER
+                  <Crown size={14} /> {t('activeMember')}
                 </span>
                 <span className="badge badge-cyan">
                   <Sparkles size={14} /> {greetingConfig.badgeText}
@@ -227,7 +227,7 @@ const DynamicGreetingHero = () => {
               <Flame size={20} fill="#FF4E50" />
               <div>
                 <div style={{ fontSize: '0.65rem', color: '#94A3B8' }}>STREAK</div>
-                <div>{streak || 5} DAYS</div>
+                <div>{streak ?? 1} DAYS</div>
               </div>
             </div>
 
@@ -247,7 +247,7 @@ const DynamicGreetingHero = () => {
               <Trophy size={20} color="#FFD700" />
               <div>
                 <div style={{ fontSize: '0.65rem', color: '#94A3B8' }}>LEAGUE</div>
-                <div>EMERALD #3</div>
+                <div>{league ? league.toUpperCase() : 'EMERALD LEAGUE'}</div>
               </div>
             </div>
           </div>

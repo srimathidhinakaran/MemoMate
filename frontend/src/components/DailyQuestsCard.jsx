@@ -26,14 +26,11 @@ const DailyQuestsCard = () => {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{
+          <div className="icon-box" style={{
             width: 44,
             height: 44,
             borderRadius: '12px',
             background: 'linear-gradient(135deg, #A855F7 0%, #00F2FE 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'center',
             boxShadow: '0 0 15px rgba(168, 85, 247, 0.4)'
           }}>
             <Target size={24} color="#050B14" />

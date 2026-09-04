@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://memomate-backend-ju43.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -20,56 +20,33 @@ api.interceptors.request.use((config) => {
 const getStoredProfile = () => {
   const saved = localStorage.getItem('memomate_profile');
   return saved ? JSON.parse(saved) : {
-    memoryScore: 82,
-    attentionScore: 64,
-    recallScore: 76,
-    reactionScore: 71,
-    overallScore: 73
+    memoryScore: 70,
+    attentionScore: 70,
+    recallScore: 70,
+    reactionScore: 70,
+    overallScore: 70
   };
 };
 
 const getStoredGarden = () => {
   const saved = localStorage.getItem('memomate_garden');
   return saved ? JSON.parse(saved) : {
-    plants: 3,
-    flowers: 5,
-    trees: 2,
-    streak: 4,
-    totalActivities: 8
+    plants: 1,
+    flowers: 1,
+    trees: 0,
+    streak: 1,
+    totalActivities: 0
   };
 };
 
 export const authAPI = {
   register: async (userData) => {
-    try {
-      const res = await api.post('/auth/register', userData);
-      return res.data;
-    } catch (err) {
-      const user = {
-        id: 'user_demo_' + Date.now(),
-        name: userData.name || 'Meena',
-        age: userData.age || 68,
-        email: userData.email || 'meena@example.com',
-        role: userData.role || 'elderly'
-      };
-      return { token: 'mock_jwt_token_123', user };
-    }
+    const res = await api.post('/auth/register', userData);
+    return res.data;
   },
   login: async (credentials) => {
-    try {
-      const res = await api.post('/auth/login', credentials);
-      return res.data;
-    } catch (err) {
-      const isCaregiver = credentials.email?.includes('caregiver') || credentials.email?.includes('dr');
-      const user = {
-        id: isCaregiver ? 'caregiver_1' : 'elderly_meena_68',
-        name: isCaregiver ? 'Dr. Sharma' : 'Meena',
-        age: isCaregiver ? 45 : 68,
-        email: credentials.email || 'meena@example.com',
-        role: isCaregiver ? 'caregiver' : 'elderly'
-      };
-      return { token: 'mock_jwt_token_123', user };
-    }
+    const res = await api.post('/auth/login', credentials);
+    return res.data;
   },
   getMe: async () => {
     try {
@@ -77,7 +54,7 @@ export const authAPI = {
       return res.data;
     } catch (err) {
       const stored = localStorage.getItem('memomate_user');
-      return stored ? JSON.parse(stored) : { id: 'elderly_meena_68', name: 'Meena', age: 68, email: 'meena@example.com', role: 'elderly' };
+      return stored ? JSON.parse(stored) : null;
     }
   }
 };
@@ -105,9 +82,19 @@ export const cognitiveAPI = {
 };
 
 export const sessionAPI = {
+  getRecentActivities: async () => {
+    try {
+      const res = await api.get('/sessions/live-activities');
+      return res.data;
+    } catch (err) {
+      const saved = localStorage.getItem('memomate_recent_activities');
+      return saved ? JSON.parse(saved) : [];
+    }
+  },
   createSession: async (sessionData) => {
     try {
       const res = await api.post('/sessions', sessionData);
+      window.dispatchEvent(new Event('memomate_activity_updated'));
       return res.data;
     } catch (err) {
       const score = Number(sessionData.score);
@@ -124,6 +111,36 @@ export const sessionAPI = {
       
       newProf.overallScore = Math.round((newProf.memoryScore + newProf.attentionScore + newProf.recallScore + newProf.reactionScore) / 4);
       localStorage.setItem('memomate_profile', JSON.stringify(newProf));
+
+      // Record real activity entry in local storage for fallback mode
+      const userStr = localStorage.getItem('memomate_user');
+      const currentUser = userStr ? JSON.parse(userStr) : null;
+      if (currentUser) {
+        const parts = (currentUser.name || 'User').split(' ').filter(Boolean);
+        const initials = parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}`.toUpperCase() : (currentUser.name || 'US').slice(0, 2).toUpperCase();
+
+        const newAct = {
+          id: 'act_' + Date.now(),
+          user: currentUser.name || 'Active User',
+          action: `completed ${sessionData.activity || 'Exercise'}`,
+          score: score,
+          completedAt: new Date().toISOString(),
+          initials: initials || 'AU'
+        };
+
+        const storedActs = JSON.parse(localStorage.getItem('memomate_recent_activities') || '[]');
+        const updatedActs = [newAct, ...storedActs].slice(0, 15);
+        localStorage.setItem('memomate_recent_activities', JSON.stringify(updatedActs));
+
+        // Also update local gamification XP
+        const gamStr = localStorage.getItem('memomate_gamification');
+        let gam = gamStr ? JSON.parse(gamStr) : { xpPoints: 100, gems: 20, level: 1, currentStreak: 1 };
+        gam.xpPoints += Math.round(score * 1.5);
+        gam.gems += Math.round(score * 0.2);
+        localStorage.setItem('memomate_gamification', JSON.stringify(gam));
+      }
+
+      window.dispatchEvent(new Event('memomate_activity_updated'));
 
       // Determine new weakest area
       let weakArea = 'attention';
@@ -167,10 +184,7 @@ export const sessionAPI = {
       const res = await api.get(`/sessions/${userId}`);
       return res.data;
     } catch (err) {
-      return [
-        { activity: '3D Memory Match', category: 'memory', score: 85, completedAt: new Date(Date.now() - 3600000) },
-        { activity: '3D Focus Search', category: 'attention', score: 78, completedAt: new Date(Date.now() - 86400000) }
-      ];
+      return [];
     }
   }
 };
@@ -220,19 +234,21 @@ export const caregiverAPI = {
       const res = await api.get('/caregiver/users');
       return res.data;
     } catch (err) {
-      const p = getStoredProfile();
-      return [
-        {
-          id: 'elderly_meena_68',
-          _id: 'elderly_meena_68',
-          name: 'Meena',
-          age: 68,
-          email: 'meena@example.com',
-          profile: p,
-          sessionsCompleted: 8,
-          gardenStreak: 4
-        }
-      ];
+      const storedUserStr = localStorage.getItem('memomate_user');
+      const storedUser = storedUserStr ? JSON.parse(storedUserStr) : null;
+      if (storedUser) {
+        return [{
+          id: storedUser.id,
+          _id: storedUser.id,
+          name: storedUser.name,
+          age: storedUser.age || 68,
+          email: storedUser.email,
+          profile: getStoredProfile(),
+          sessionsCompleted: 1,
+          gardenStreak: 1
+        }];
+      }
+      return [];
     }
   },
   getUserDetails: async (userId) => {
@@ -241,13 +257,14 @@ export const caregiverAPI = {
       return res.data;
     } catch (err) {
       const p = getStoredProfile();
+      const storedUserStr = localStorage.getItem('memomate_user');
+      const storedUser = storedUserStr ? JSON.parse(storedUserStr) : null;
+      const name = storedUser?.name || 'User';
+
       return {
-        user: { id: userId, name: 'Meena', age: 68, email: 'meena@example.com' },
+        user: { id: userId, name: name, age: storedUser?.age || 68, email: storedUser?.email || 'user@example.com' },
         profile: p,
-        sessions: [
-          { activity: '3D Memory Match', category: 'memory', score: p.memoryScore, difficulty: 'Medium', completedAt: new Date() },
-          { activity: '3D Focus Search', category: 'attention', score: p.attentionScore, difficulty: 'Medium', completedAt: new Date(Date.now() - 3600000) }
-        ],
+        sessions: [],
         recommendation: {
           weakArea: 'attention',
           recommendedActivity: '3D Focus Search 🎯',
@@ -269,32 +286,28 @@ export const gamificationAPI = {
     } catch (err) {
       const saved = localStorage.getItem('memomate_gamification');
       return saved ? JSON.parse(saved) : {
-        userId: userId || 'elderly_meena_68',
-        xpPoints: 850,
-        gems: 140,
-        level: 3,
-        currentStreak: 5,
-        highestStreak: 12,
+        userId: userId || 'user_1',
+        xpPoints: 100,
+        gems: 20,
+        level: 1,
+        currentStreak: 1,
+        highestStreak: 1,
         streakFreezeAvailable: true,
         league: 'Emerald League',
-        leagueRank: 3,
-        unlockedBadges: [
-          { id: 'first_win', title: 'First Victory 🏆', desc: 'Completed 1st cognitive game session', icon: '🎯' },
-          { id: 'streak_3', title: 'Streak Pioneer 🔥', desc: 'Maintained 3-day workout streak', icon: '⚡' },
-          { id: '3d_master', title: '3D Spatial Explorer 🎨', desc: 'Played 3D WebGL flower memory', icon: '🌸' }
-        ],
-        unlockedGardenItems: ['golden_sunflower'],
+        leagueRank: 1,
+        unlockedBadges: [],
+        unlockedGardenItems: [],
         dailyQuests: [
-          { id: 'quest_1', title: 'Complete 2 Cognitive Sessions', target: 2, current: 1, rewardXp: 50, rewardGems: 15, completed: false },
-          { id: 'quest_2', title: 'Score over 80 in 3D Focus', target: 1, current: 1, rewardXp: 75, rewardGems: 25, completed: true },
+          { id: 'quest_1', title: 'Complete 2 Cognitive Sessions', target: 2, current: 0, rewardXp: 50, rewardGems: 15, completed: false },
+          { id: 'quest_2', title: 'Score over 80 in 3D Focus', target: 1, current: 0, rewardXp: 75, rewardGems: 25, completed: false },
           { id: 'quest_3', title: 'Maintain your Daily Streak', target: 1, current: 1, rewardXp: 40, rewardGems: 10, completed: true }
         ],
         weeklyHistory: [
           { day: 'Mon', active: true },
-          { day: 'Tue', active: true },
-          { day: 'Wed', active: true },
-          { day: 'Thu', active: true },
-          { day: 'Fri', active: true },
+          { day: 'Tue', active: false },
+          { day: 'Wed', active: false },
+          { day: 'Thu', active: false },
+          { day: 'Fri', active: false },
           { day: 'Sat', active: false },
           { day: 'Sun', active: false }
         ]
@@ -306,15 +319,27 @@ export const gamificationAPI = {
       const res = await api.get('/gamification/leaderboard');
       return res.data;
     } catch (err) {
-      return [
-        { rank: 1, userId: 'user_aarav_99', name: 'Aarav Patel', age: 71, xpPoints: 1420, currentStreak: 14, league: 'Emerald League', avatar: '👴' },
-        { rank: 2, userId: 'user_sunita_45', name: 'Sunita Sharma', age: 65, xpPoints: 1180, currentStreak: 9, league: 'Emerald League', avatar: '👵' },
-        { rank: 3, userId: 'elderly_meena_68', name: 'Meena (You)', age: 68, xpPoints: 850, currentStreak: 5, league: 'Emerald League', avatar: '🌸', isCurrentUser: true },
-        { rank: 4, userId: 'user_ramesh_12', name: 'Ramesh Kumar', age: 74, xpPoints: 720, currentStreak: 4, league: 'Emerald League', avatar: '👴' },
-        { rank: 5, userId: 'user_anita_88', name: 'Anita Roy', age: 69, xpPoints: 650, currentStreak: 3, league: 'Emerald League', avatar: '👵' },
-        { rank: 6, userId: 'user_dev_33', name: 'Devendra Das', age: 72, xpPoints: 590, currentStreak: 2, league: 'Emerald League', avatar: '👨‍🌾' },
-        { rank: 7, userId: 'user_kavita_01', name: 'Kavita Sen', age: 67, xpPoints: 480, currentStreak: 1, league: 'Emerald League', avatar: '👩‍🏫' }
-      ];
+      const storedUserStr = localStorage.getItem('memomate_user');
+      const storedUser = storedUserStr ? JSON.parse(storedUserStr) : null;
+      const storedGam = localStorage.getItem('memomate_gamification');
+      const gamData = storedGam ? JSON.parse(storedGam) : null;
+
+      if (storedUser) {
+        return [
+          {
+            rank: 1,
+            userId: storedUser.id || 'user_1',
+            name: storedUser.name || 'User',
+            age: storedUser.age || 68,
+            xpPoints: gamData?.xpPoints || 100,
+            currentStreak: gamData?.currentStreak || 1,
+            league: 'Emerald League',
+            avatar: '🌸',
+            isCurrentUser: true
+          }
+        ];
+      }
+      return [];
     }
   }
 };

@@ -1,16 +1,28 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI, cognitiveAPI, recommendationAPI, gardenAPI } from '../services/api';
 
+import { NER_TRANSLATIONS } from '../utils/nerLanguages';
+
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  // Initialize user strictly from localStorage (null if not logged in)
+  // Initialize user strictly from localStorage (purge old mock tokens)
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('memomate_user');
+    const savedToken = localStorage.getItem('memomate_token');
+    if (!savedToken || savedToken.startsWith('mock_jwt_token')) {
+      localStorage.removeItem('memomate_user');
+      localStorage.removeItem('memomate_token');
+      return null;
+    }
     return saved ? JSON.parse(saved) : null;
   });
 
-  const [token, setToken] = useState(() => localStorage.getItem('memomate_token') || null);
+  const [token, setToken] = useState(() => {
+    const savedToken = localStorage.getItem('memomate_token');
+    if (savedToken && savedToken.startsWith('mock_jwt_token')) return null;
+    return savedToken || null;
+  });
   const [loading, setLoading] = useState(false);
   
   // Accessibility Font Size state: 'font-normal' | 'font-large' | 'font-xlarge'
@@ -18,6 +30,19 @@ export const AuthProvider = ({ children }) => {
   
   // Audio / Voice Assistance toggle
   const [voiceAssistance, setVoiceAssistance] = useState(false);
+
+  // NER Language state: 'en' | 'as' | 'bn' | 'mni' | 'kha' | 'hi'
+  const [language, setLanguage] = useState(() => localStorage.getItem('memomate_language') || 'en');
+
+  const updateLanguage = (langCode) => {
+    setLanguage(langCode);
+    localStorage.setItem('memomate_language', langCode);
+  };
+
+  const t = (key) => {
+    const dict = NER_TRANSLATIONS[language] || NER_TRANSLATIONS.en;
+    return dict[key] || NER_TRANSLATIONS.en[key] || key;
+  };
 
   // Dynamic Today Streak Engine relative to real-time Date
   const todayStr = new Date().toDateString();
@@ -108,6 +133,32 @@ export const AuthProvider = ({ children }) => {
     document.documentElement.className = fontSize;
     localStorage.setItem('memomate_fontsize', fontSize);
   }, [fontSize]);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const savedToken = localStorage.getItem('memomate_token');
+      if (savedToken) {
+        if (savedToken.startsWith('mock_jwt_token')) {
+          logout();
+          return;
+        }
+        try {
+          const me = await authAPI.getMe();
+          if (me) {
+            setUser(me);
+            localStorage.setItem('memomate_user', JSON.stringify(me));
+          } else {
+            logout();
+          }
+        } catch (err) {
+          logout();
+        }
+      } else {
+        setUser(null);
+      }
+    };
+    checkAuth();
+  }, []);
 
   useEffect(() => {
     if (user && user.role === 'elderly') {
@@ -322,6 +373,9 @@ export const AuthProvider = ({ children }) => {
       voiceAssistance,
       setVoiceAssistance,
       speakText,
+      language,
+      updateLanguage,
+      t,
       profile,
       setProfile,
       recommendation,

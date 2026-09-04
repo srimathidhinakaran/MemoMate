@@ -5,7 +5,7 @@ import { soundFx } from '../utils/soundEffects';
 import { LayoutDashboard, Gamepad2, Trophy, Sparkles, GitCommit, LineChart, Trees, HeartHandshake, Brain } from 'lucide-react';
 
 const Sidebar = () => {
-  const { voiceAssistance, speakText } = useAuth();
+  const { voiceAssistance, speakText, t } = useAuth();
 
   const handleNav = (label) => {
     soundFx.playClick();
@@ -15,14 +15,14 @@ const Sidebar = () => {
   };
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-    { path: '/assessment', label: 'Cognitive Exercises', icon: Gamepad2 },
-    { path: '/analysis', label: 'AI Health Telemetry', icon: Sparkles },
-    { path: '/path', label: 'Cognitive Path', icon: GitCommit },
-    { path: '/progress', label: 'Metrics & Trends', icon: LineChart },
-    { path: '/garden', label: '3D Memory Garden', icon: Trees },
-    { path: '/caregiver', label: 'Caregiver Portal', icon: HeartHandshake }
+    { path: '/dashboard', label: t('navDashboard'), icon: LayoutDashboard },
+    { path: '/leaderboard', label: t('navLeaderboard'), icon: Trophy },
+    { path: '/assessment', label: t('navExercises'), icon: Gamepad2 },
+    { path: '/analysis', label: t('navTelemetry'), icon: Sparkles },
+    { path: '/path', label: t('navPath'), icon: GitCommit },
+    { path: '/progress', label: t('navMetrics'), icon: LineChart },
+    { path: '/garden', label: t('navGarden'), icon: Trees },
+    { path: '/caregiver', label: t('navCaregiver'), icon: HeartHandshake }
   ];
 
   return (

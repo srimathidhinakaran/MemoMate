@@ -82,7 +82,7 @@ const StreakTracker = () => {
         }}>
           {daysOfWeek.map((d, i) => {
             const isToday = d.idx === currentDayIndex;
-            const isCompleted = (isToday && isCheckedInToday) || (!isToday && i < 4);
+            const isCompleted = isToday ? isCheckedInToday : false;
 
             return (
               <div key={i} style={{

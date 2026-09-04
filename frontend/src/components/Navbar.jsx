@@ -5,7 +5,7 @@ import { soundFx } from '../utils/soundEffects';
 import { Brain, UserCheck, LogOut, ShieldCheck, Award, Sparkles, Flame, Gem, Trophy, Volume2, VolumeX } from 'lucide-react';
 
 const Navbar = () => {
-  const { user, logout, speakText, voiceAssistance, xpPoints, level, streak, gems, recentScoreToast } = useAuth();
+  const { user, logout, speakText, voiceAssistance, xpPoints, level, streak, gems, recentScoreToast, t } = useAuth();
   const navigate = useNavigate();
   const [soundEnabled, setSoundEnabled] = useState(soundFx.enabled);
 
@@ -75,7 +75,7 @@ const Navbar = () => {
                 MemoMate
               </div>
               <div style={{ fontSize: '0.75rem', color: '#9198A1', fontWeight: 600 }}>
-                Cognitive Health & Memory Platform
+                {t('dementiaSubtitle')}
               </div>
             </div>
           </Link>
@@ -99,7 +99,7 @@ const Navbar = () => {
                   color: '#FB923C'
                 }}>
                   <Flame size={18} fill="#FB923C" />
-                  <span>{streak || 1} DAYS</span>
+                  <span>{streak || 1} {t('streak').toUpperCase()}</span>
                 </div>
 
                 {/* Gems */}
@@ -135,7 +135,7 @@ const Navbar = () => {
                   color: '#FBBF24'
                 }}>
                   <Award size={18} color="#FBBF24" />
-                  <span>LVL {level} ({xpPoints} XP)</span>
+                  <span>{t('level').toUpperCase()} {level} ({xpPoints} XP)</span>
                 </div>
 
                 {/* Quick Leaderboard Link */}
@@ -158,7 +158,7 @@ const Navbar = () => {
                   }}
                 >
                   <Trophy size={18} />
-                  <span>RANK #3</span>
+                  <span>{t('rank').toUpperCase()} #3</span>
                 </Link>
               </>
             )}
@@ -183,7 +183,7 @@ const Navbar = () => {
               title={soundEnabled ? "Mute Audio SFX" : "Enable Audio SFX"}
             >
               {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-              <span>{soundEnabled ? 'AUDIO ON' : 'AUDIO OFF'}</span>
+              <span>{soundEnabled ? t('audioOn') : t('audioOff')}</span>
             </button>
 
             {user && (
@@ -213,7 +213,7 @@ const Navbar = () => {
               style={{ padding: '0.45rem 0.9rem', fontSize: '0.8rem' }}
             >
               <ShieldCheck size={16} />
-              <span>{user?.role === 'caregiver' ? 'Patient View' : 'Caregiver View'}</span>
+              <span>{user?.role === 'caregiver' ? t('patientView') : t('caregiverView')}</span>
             </button>
 
             {user && (
@@ -238,7 +238,7 @@ const Navbar = () => {
                 title="Log out"
               >
                 <LogOut size={18} />
-                <span>Logout</span>
+                <span>{t('logout')}</span>
               </button>
             )}
           </div>

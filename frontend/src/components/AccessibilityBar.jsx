@@ -1,9 +1,10 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Type, Volume2, VolumeX, Eye } from 'lucide-react';
+import { Type, Volume2, VolumeX, Eye, Globe } from 'lucide-react';
+import { NER_LANGUAGES } from '../utils/nerLanguages';
 
 const AccessibilityBar = () => {
-  const { fontSize, setFontSize, voiceAssistance, setVoiceAssistance, speakText } = useAuth();
+  const { fontSize, setFontSize, voiceAssistance, setVoiceAssistance, speakText, language, updateLanguage } = useAuth();
 
   const handleVoiceToggle = () => {
     const nextState = !voiceAssistance;
@@ -23,16 +24,45 @@ const AccessibilityBar = () => {
       justify: 'space-between',
       fontSize: '0.88rem',
       color: '#FFFFFF',
-      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.4)'
+      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.4)',
+      flexWrap: 'wrap',
+      gap: '0.75rem'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', fontWeight: 700 }}>
         <div className="icon-box" style={{ width: 26, height: 26, borderRadius: '6px', backgroundColor: 'rgba(56, 189, 248, 0.15)' }}>
           <Eye size={16} color="#38BDF8" />
         </div>
-        <span style={{ color: '#FFFFFF', letterSpacing: '0.01em' }}>Elderly Accessibility Mode</span>
+        <span style={{ color: '#FFFFFF', letterSpacing: '0.01em' }}>Elderly Accessibility & Language Bar</span>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+        {/* NER Regional Language Selector */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <Globe size={16} color="#34D399" />
+          <span style={{ fontWeight: 700, color: '#9198A1', fontSize: '0.85rem' }}>NER Language:</span>
+          <select
+            value={language || 'en'}
+            onChange={(e) => updateLanguage(e.target.value)}
+            style={{
+              padding: '0.3rem 0.6rem',
+              borderRadius: '6px',
+              border: '1px solid #34D399',
+              backgroundColor: '#0D1117',
+              color: '#34D399',
+              fontWeight: 700,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+              outline: 'none'
+            }}
+          >
+            {NER_LANGUAGES.map((lang) => (
+              <option key={lang.code} value={lang.code} style={{ backgroundColor: '#161B22', color: '#FFFFFF' }}>
+                {lang.flag} {lang.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Text Size Adjuster */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <Type size={16} color="#38BDF8" style={{ marginRight: '0.1rem' }} />

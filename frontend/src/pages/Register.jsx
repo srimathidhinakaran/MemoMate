@@ -102,7 +102,7 @@ const Register = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Ramesh Kumar"
+              placeholder="Enter your full name"
               required
               style={{
                 width: '100%',

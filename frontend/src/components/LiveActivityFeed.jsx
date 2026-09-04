@@ -1,47 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { soundFx } from '../utils/soundEffects';
-import { Activity, Zap, Flame, Award, Clock, Radio, Sparkles } from 'lucide-react';
+import { sessionAPI } from '../services/api';
+import { Activity, Clock, Radio, Sparkles, AlertCircle } from 'lucide-react';
 
-const INITIAL_ACTIVITIES = [
-  { id: 1, user: 'Aarav Patel', action: 'completed 3D Focus Search', score: 92, time: '2m ago', initials: 'AP' },
-  { id: 2, user: 'Sunita Sharma', action: 'reached a 9-Day Streak', score: null, time: '5m ago', initials: 'SS' },
-  { id: 3, user: 'Patient Member', action: 'completed 3D Memory Match', score: 85, time: '12m ago', initials: 'PM' },
-  { id: 4, user: 'Ramesh Kumar', action: 'promoted to Rank #3', score: null, time: '24m ago', initials: 'RK' },
-  { id: 5, user: 'Anita Roy', action: 'completed Pattern Recall', score: 88, time: '41m ago', initials: 'AR' }
-];
+const getRelativeTime = (timestamp) => {
+  if (!timestamp) return 'Just now';
+  const now = new Date();
+  const past = new Date(timestamp);
+  const diffSec = Math.floor((now - past) / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+
+  if (isNaN(diffSec) || diffSec < 45) return 'Just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffHr < 24) return `${diffHr}h ago`;
+  return `${diffDay}d ago`;
+};
 
 const LiveActivityFeed = () => {
-  const [activities, setActivities] = useState(INITIAL_ACTIVITIES);
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchActivities = async () => {
+    try {
+      const data = await sessionAPI.getRecentActivities();
+      if (Array.isArray(data)) {
+        setActivities(data);
+      }
+    } catch (err) {
+      console.error("Failed to load real live activities:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const users = [
-        { name: 'Aarav Patel', initials: 'AP' },
-        { name: 'Sunita Sharma', initials: 'SS' },
-        { name: 'Ramesh Kumar', initials: 'RK' },
-        { name: 'Anita Roy', initials: 'AR' },
-        { name: 'Kavita Sen', initials: 'KS' }
-      ];
+    fetchActivities();
 
-      const games = ['3D Focus Search', '3D Memory Match', '3D Reaction Orbs', 'Pattern Recall', 'Number Recall'];
-      const randomUser = users[Math.floor(Math.random() * users.length)];
-      const randomGame = games[Math.floor(Math.random() * games.length)];
-      const randomScore = Math.floor(Math.random() * 20) + 80;
+    const handleUpdate = () => {
+      fetchActivities();
+    };
 
-      const newActivity = {
-        id: Date.now(),
-        user: randomUser.name,
-        action: `completed ${randomGame}`,
-        score: randomScore,
-        time: 'Just now',
-        initials: randomUser.initials
-      };
+    window.addEventListener('memomate_activity_updated', handleUpdate);
+    const interval = setInterval(fetchActivities, 12000);
 
-      setActivities((prev) => [newActivity, ...prev.slice(0, 4)]);
-      soundFx.playXpGain();
-    }, 18000);
-
-    return () => clearInterval(interval);
+    return () => {
+      window.removeEventListener('memomate_activity_updated', handleUpdate);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -75,53 +81,79 @@ const LiveActivityFeed = () => {
       </div>
 
       {/* Activity Stream List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-        {activities.map((act) => (
-          <div
-            key={act.id}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justify: 'space-between',
-              padding: '0.7rem 1rem',
-              backgroundColor: '#0D1117',
-              borderRadius: '10px',
-              border: '1px solid #30363D',
-              fontSize: '0.88rem'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div className="icon-box" style={{
-                width: 32,
-                height: 32,
-                borderRadius: '8px',
-                backgroundColor: 'rgba(56, 189, 248, 0.15)',
-                color: '#38BDF8',
-                fontWeight: 800,
-                fontSize: '0.8rem',
-                fontFamily: 'var(--font-esports)'
-              }}>
-                {act.initials}
-              </div>
-
-              <div>
-                <span style={{ fontWeight: 800, color: '#FFFFFF' }}>{act.user}</span>{' '}
-                <span style={{ color: '#9198A1' }}>{act.action}</span>
-                {act.score && (
-                  <span style={{ marginLeft: '0.4rem', fontWeight: 800, color: '#FBBF24', fontSize: '0.82rem', fontFamily: 'var(--font-esports)' }}>
-                    (+{act.score} PTS)
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#38BDF8', fontSize: '0.75rem', fontWeight: 800, fontFamily: 'var(--font-esports)' }}>
-              <Clock size={12} />
-              <span>{act.time}</span>
-            </div>
+      {loading ? (
+        <div style={{ padding: '1.5rem', textAlign: 'center', color: '#9198A1', fontSize: '0.88rem' }}>
+          Syncing activity stream...
+        </div>
+      ) : activities.length === 0 ? (
+        <div style={{
+          textAlign: 'center',
+          padding: '2.2rem 1.5rem',
+          backgroundColor: '#0D1117',
+          borderRadius: '12px',
+          border: '1px solid #30363D',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.75rem'
+        }}>
+          <Radio size={32} color="#9198A1" style={{ opacity: 0.5 }} />
+          <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '1rem', fontFamily: 'var(--font-heading)' }}>
+            No Live Community Activities Yet
           </div>
-        ))}
-      </div>
+          <div style={{ fontSize: '0.82rem', color: '#9198A1', maxWidth: '380px', lineHeight: 1.4 }}>
+            Be the first community member to complete an exercise session to kick off the real-time activity stream!
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+          {activities.map((act) => (
+            <div
+              key={act.id || act._id}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0.7rem 1rem',
+                backgroundColor: '#0D1117',
+                borderRadius: '10px',
+                border: '1px solid #30363D',
+                fontSize: '0.88rem'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div className="icon-box" style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '8px',
+                  backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                  color: '#38BDF8',
+                  fontWeight: 800,
+                  fontSize: '0.8rem',
+                  fontFamily: 'var(--font-esports)'
+                }}>
+                  {act.initials || 'CM'}
+                </div>
+
+                <div>
+                  <span style={{ fontWeight: 800, color: '#FFFFFF' }}>{act.user}</span>{' '}
+                  <span style={{ color: '#9198A1' }}>{act.action}</span>
+                  {act.score && (
+                    <span style={{ marginLeft: '0.4rem', fontWeight: 800, color: '#FBBF24', fontSize: '0.82rem', fontFamily: 'var(--font-esports)' }}>
+                      (+{act.score} PTS)
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#38BDF8', fontSize: '0.75rem', fontWeight: 800, fontFamily: 'var(--font-esports)' }}>
+                <Clock size={12} />
+                <span>{getRelativeTime(act.completedAt)}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

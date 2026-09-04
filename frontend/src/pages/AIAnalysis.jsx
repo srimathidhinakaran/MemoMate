@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Sparkles, Brain, Target, RotateCcw, Zap, ArrowRight, ShieldCheck } from 'lucide-react';
+import CognitiveScoreCard from '../components/CognitiveScoreCard';
+import { Sparkles, ArrowRight, ShieldCheck, Zap, Activity } from 'lucide-react';
 
 const AIAnalysis = () => {
   const { profile, recommendation } = useAuth();
@@ -12,38 +13,46 @@ const AIAnalysis = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnalyzing(false);
-    }, 1200);
+    }, 600);
     return () => clearTimeout(timer);
   }, []);
+
+  const memoryScore = profile?.memoryScore || 88;
+  const attentionScore = profile?.attentionScore || 64;
+  const recallScore = profile?.recallScore || 76;
+  const reactionScore = profile?.reactionScore || 71;
 
   const rec = recommendation || {
     weakArea: 'attention',
     recommendedActivity: 'Attention Challenge',
-    difficulty: 'Medium',
-    reason: 'Your recent attention score (64) is lower compared with your other measured cognitive areas.'
+    difficulty: 'Easy',
+    reason: 'Your recent attention score (64) is lower compared with your other measured cognitive areas. We recommend starting an Attention Challenge.'
   };
+
+  const weakAreaTitle = rec.weakArea ? rec.weakArea.charAt(0).toUpperCase() + rec.weakArea.slice(1) : 'Attention';
 
   if (analyzing) {
     return (
-      <div className="page-view animate-fade-in" style={{ alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-        <div className="garden-card" style={{ textAlign: 'center', padding: '3rem 2rem', maxWidth: 500 }}>
+      <div className="page-view animate-fade-in" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <div className="garden-card" style={{ textAlign: 'center', padding: '3rem 2.5rem', maxWidth: 480, backgroundColor: '#161B22', border: '1px solid #30363D' }}>
           <div className="animate-pulse-gentle" style={{
-            width: 70,
-            height: 70,
-            borderRadius: '50%',
-            backgroundColor: '#FDF3F0',
+            width: 68,
+            height: 68,
+            borderRadius: '18px',
+            backgroundColor: 'rgba(56, 189, 248, 0.15)',
+            border: '1px solid rgba(56, 189, 248, 0.35)',
             display: 'flex',
             alignItems: 'center',
-            justify: 'center',
-            margin: '0 auto 1.5rem'
+            justifyContent: 'center',
+            margin: '0 auto 1.25rem'
           }}>
-            <Sparkles size={38} color="#C87862" />
+            <Sparkles size={32} color="#38BDF8" />
           </div>
-          <h2 style={{ fontSize: '1.8rem', color: '#1C3B2B', marginBottom: '0.5rem' }}>
-            Analysing your performance...
+          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 800, margin: '0 0 0.5rem', fontFamily: 'var(--font-heading)' }}>
+            Analyzing Cognitive Performance...
           </h2>
-          <p style={{ color: '#536B5C', fontSize: '1rem' }}>
-            Evaluating recent session scores across Memory, Attention, Recall, and Reaction.
+          <p style={{ color: '#9198A1', fontSize: '0.92rem', margin: 0, lineHeight: 1.5 }}>
+            Evaluating recent exercise session scores across Memory, Attention, Recall, and Reaction.
           </p>
         </div>
       </div>
@@ -51,132 +60,102 @@ const AIAnalysis = () => {
   }
 
   return (
-    <div className="page-view animate-fade-in">
+    <div className="page-view animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      {/* Hero Header Card */}
       <div className="garden-card" style={{
-        background: 'linear-gradient(135deg, #FFFFFF 0%, #FDF3F0 100%)',
-        border: '1.5px solid #F4C3B2'
+        backgroundColor: '#161B22',
+        border: '1px solid #30363D',
+        padding: '2rem 2.2rem',
+        borderRadius: '16px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-          <span className="badge badge-peach" style={{ fontSize: '0.9rem' }}>
-            <Sparkles size={16} /> Cognitive Performance Analysis
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
+          <span className="badge badge-cyan" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+            <Sparkles size={14} /> Performance Analysis
           </span>
-          <span className="badge badge-sage">Adaptive Recommendation Engine</span>
+          <span className="badge badge-purple" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+            <Zap size={14} /> Adaptive Recommendation Engine
+          </span>
         </div>
 
-        <h1 style={{ fontSize: '2rem', color: '#1C3B2B', marginBottom: '0.5rem' }}>
-          AI Performance Breakdown 🌱
+        <h1 style={{ fontSize: '2.1rem', color: '#FFFFFF', fontWeight: 800, margin: '0 0 0.4rem', fontFamily: 'var(--font-heading)' }}>
+          AI Performance Breakdown 🌿
         </h1>
-        <p style={{ color: '#536B5C', fontSize: '1.05rem' }}>
+        <p style={{ color: '#9198A1', fontSize: '0.96rem', margin: 0, maxWidth: '680px', lineHeight: 1.5 }}>
           Our system continuously observes performance and adapts your daily cognitive path.
         </p>
       </div>
 
-      {/* Cognitive Performance Breakdown Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: '1.25rem'
-      }}>
-        <div className="garden-card" style={{ border: '1px solid #7C9A82' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <Brain size={22} color="#58755E" />
-            <span style={{ fontWeight: 700 }}>Memory</span>
-          </div>
-          <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#58755E' }}>
-            {profile?.memoryScore || 82} <span style={{ fontSize: '1rem', color: '#536B5C' }}>/ 100</span>
-          </div>
-          <span className="badge badge-sage" style={{ marginTop: '0.5rem' }}>Stable & Strong</span>
-        </div>
-
-        <div className="garden-card" style={{ border: '2px solid #C87862', backgroundColor: '#FDF3F0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <Target size={22} color="#C87862" />
-            <span style={{ fontWeight: 700, color: '#C87862' }}>Attention</span>
-          </div>
-          <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#C87862' }}>
-            {profile?.attentionScore || 64} <span style={{ fontSize: '1rem', color: '#C87862' }}>/ 100</span>
-          </div>
-          <span className="badge badge-peach" style={{ marginTop: '0.5rem' }}>Needs More Practice 🎯</span>
-        </div>
-
-        <div className="garden-card" style={{ border: '1px solid #B8A7D9' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <RotateCcw size={22} color="#7A66A3" />
-            <span style={{ fontWeight: 700 }}>Recall</span>
-          </div>
-          <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#7A66A3' }}>
-            {profile?.recallScore || 76} <span style={{ fontSize: '1rem', color: '#536B5C' }}>/ 100</span>
-          </div>
-          <span className="badge badge-lavender" style={{ marginTop: '0.5rem' }}>Improving ↑</span>
-        </div>
-
-        <div className="garden-card" style={{ border: '1px solid #8EC5D2' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <Zap size={22} color="#3B7A8C" />
-            <span style={{ fontWeight: 700 }}>Reaction</span>
-          </div>
-          <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#3B7A8C' }}>
-            {profile?.reactionScore || 71} <span style={{ fontSize: '1rem', color: '#536B5C' }}>/ 100</span>
-          </div>
-          <span className="badge" style={{ backgroundColor: '#EBF6F8', color: '#3B7A8C', marginTop: '0.5rem' }}>Consistent</span>
-        </div>
-      </div>
+      {/* 4 Cognitive Area Score Cards */}
+      <CognitiveScoreCard
+        memory={memoryScore}
+        attention={attentionScore}
+        recall={recallScore}
+        reaction={reactionScore}
+      />
 
       {/* Focus Area Highlight & Next Activity Recommendation */}
-      <div className="garden-card" style={{ backgroundColor: '#FFFFFF', border: '1.5px solid #F4C3B2' }}>
-        <h3 style={{ fontSize: '1.4rem', color: '#C87862', marginBottom: '0.75rem' }}>
-          Weakest Cognitive Area Identified: Attention
-        </h3>
+      <div className="garden-card animate-fade-in" style={{
+        backgroundColor: '#161B22',
+        border: '1px solid rgba(255, 78, 80, 0.4)',
+        borderRadius: '16px',
+        padding: '2rem 2.2rem',
+        boxShadow: '0 0 25px rgba(255, 78, 80, 0.1)'
+      }}>
+        <h2 style={{ fontSize: '1.45rem', color: '#FFFFFF', fontWeight: 800, margin: '0 0 0.75rem', fontFamily: 'var(--font-heading)' }}>
+          Weakest Cognitive Area Identified: <span style={{ color: '#FF4E50' }}>{weakAreaTitle}</span>
+        </h2>
         
-        <p style={{ fontSize: '1.1rem', color: '#1C3B2B', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-          "{rec.reason}"
+        <p style={{ fontSize: '1.05rem', color: '#CBD5E1', lineHeight: 1.6, marginBottom: '1.5rem', fontStyle: 'italic' }}>
+          "{rec.reason || `Your recent ${weakAreaTitle.toLowerCase()} score (${attentionScore}) is lower compared with your other measured cognitive areas. We recommend starting an ${rec.recommendedActivity || 'Attention Challenge'}.`}"
         </p>
 
+        {/* Inner Recommended Activity Box */}
         <div style={{
-          backgroundColor: '#F7F4EE',
-          padding: '1.25rem',
-          borderRadius: '16px',
-          border: '1px solid #E6E0D4',
+          backgroundColor: '#0D1117',
+          padding: '1.4rem 1.6rem',
+          borderRadius: '14px',
+          border: '1px solid #30363D',
           display: 'flex',
           alignItems: 'center',
           justify: 'space-between',
           flexWrap: 'wrap',
-          gap: '1rem',
-          marginBottom: '1.5rem'
+          gap: '1.2rem',
+          marginBottom: '1.25rem'
         }}>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#7E9687', fontWeight: 700, textTransform: 'uppercase' }}>
-              Recommended Next Activity
+            <div style={{ fontSize: '0.78rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)', letterSpacing: '0.05em' }}>
+              RECOMMENDED NEXT ACTIVITY
             </div>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#1C3B2B' }}>
-              {rec.recommendedActivity}
+            <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#FFFFFF', margin: '0.2rem 0', fontFamily: 'var(--font-heading)' }}>
+              {rec.recommendedActivity || 'Attention Challenge'}
             </div>
-            <div style={{ fontSize: '0.9rem', color: '#536B5C' }}>
-              Recommended Difficulty: <strong>{rec.difficulty || 'Medium'}</strong>
+            <div style={{ fontSize: '0.88rem', color: '#9198A1' }}>
+              Recommended Difficulty: <strong style={{ color: '#38BDF8' }}>{rec.difficulty || 'Easy'}</strong>
             </div>
           </div>
 
           <button
-            onClick={() => navigate('/assessment?game=attention')}
-            className="btn-peach"
-            style={{ padding: '0.85rem 1.6rem' }}
+            onClick={() => navigate('/assessment?game=' + (rec.weakArea || 'attention'))}
+            className="btn-primary"
+            style={{ padding: '0.85rem 1.6rem', fontSize: '0.92rem', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            <span>Start {rec.recommendedActivity}</span>
-            <ArrowRight size={20} />
+            <span>Start {rec.recommendedActivity || 'Attention Challenge'}</span>
+            <ArrowRight size={18} />
           </button>
         </div>
 
-        {/* Workflow Diagram */}
+        {/* Workflow Diagram Loop */}
         <div style={{
           padding: '1rem',
-          backgroundColor: '#F9F6F0',
-          borderRadius: '14px',
+          backgroundColor: '#0D1117',
+          borderRadius: '12px',
+          border: '1px solid #30363D',
           textAlign: 'center'
         }}>
-          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#7E9687', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
-            Adaptive Cognitive Path Loop
+          <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#9198A1', marginBottom: '0.4rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)', letterSpacing: '0.08em' }}>
+            ADAPTIVE COGNITIVE PATH LOOP
           </div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#58755E', letterSpacing: '0.1rem' }}>
+          <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#34D399', letterSpacing: '0.14rem', fontFamily: 'var(--font-esports)' }}>
             PLAY → RECORD → ANALYSE → PERSONALIZE → REPEAT
           </div>
         </div>
@@ -184,19 +163,19 @@ const AIAnalysis = () => {
 
       {/* Non-Diagnostic Medical Safety Disclaimer */}
       <div style={{
-        backgroundColor: '#F7F4EE',
-        padding: '1rem 1.25rem',
-        borderRadius: '16px',
-        border: '1px solid #E6E0D4',
+        backgroundColor: '#161B22',
+        padding: '1.1rem 1.5rem',
+        borderRadius: '14px',
+        border: '1px solid #30363D',
         display: 'flex',
         alignItems: 'center',
-        gap: '0.75rem',
+        gap: '0.9rem',
         fontSize: '0.88rem',
-        color: '#536B5C'
+        color: '#9198A1'
       }}>
-        <ShieldCheck size={22} color="#58755E" style={{ flexShrink: 0 }} />
+        <ShieldCheck size={22} color="#34D399" style={{ flexShrink: 0 }} />
         <span>
-          <strong>Medical Safety Notice:</strong> MemoMate provides cognitive exercises and non-clinical trend tracking. It does not diagnose dementia or medical conditions. Consult qualified healthcare professionals for medical advice.
+          <strong style={{ color: '#FFFFFF' }}>Medical Safety Notice:</strong> MemoMate provides cognitive exercises and non-clinical trend tracking. It does not diagnose dementia or medical conditions. Consult qualified healthcare professionals for medical advice.
         </span>
       </div>
     </div>

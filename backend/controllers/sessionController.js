@@ -2,6 +2,8 @@ const CognitiveSession = require('../models/CognitiveSession');
 const CognitiveProfile = require('../models/CognitiveProfile');
 const Recommendation = require('../models/Recommendation');
 const GardenProgress = require('../models/GardenProgress');
+const Gamification = require('../models/Gamification');
+const User = require('../models/User');
 const { generateRecommendation } = require('../utils/recommendationEngine');
 
 exports.createSession = async (req, res) => {
@@ -54,7 +56,20 @@ exports.createSession = async (req, res) => {
     profile.updatedAt = new Date();
     await profile.save();
 
-    // 3. Generate New Adaptive Recommendation
+    // 3. Update Gamification XP & Streak
+    let gamification = await Gamification.findOne({ userId: userId.toString() });
+    if (!gamification) {
+      gamification = await Gamification.create({ userId: userId.toString(), xpPoints: 0, gems: 0, level: 1, currentStreak: 1 });
+    }
+    const gainedXp = Math.round(Number(score) * 1.5);
+    const gainedGems = Math.round(Number(score) * 0.2);
+    gamification.xpPoints += gainedXp;
+    gamification.gems += gainedGems;
+    gamification.level = Math.floor(gamification.xpPoints / 300) + 1;
+    gamification.lastActiveDate = new Date().toISOString().split('T')[0];
+    await gamification.save();
+
+    // 4. Generate New Adaptive Recommendation
     const recData = generateRecommendation(profile);
     const recommendation = await Recommendation.create({
       userId,
@@ -64,7 +79,7 @@ exports.createSession = async (req, res) => {
       reason: recData.reason
     });
 
-    // 4. Update Garden Progress
+    // 5. Update Garden Progress
     let garden = await GardenProgress.findOne({ userId });
     if (!garden) {
       garden = await GardenProgress.create({ userId });
@@ -80,7 +95,8 @@ exports.createSession = async (req, res) => {
       session,
       profile,
       recommendation,
-      garden
+      garden,
+      gamification
     });
   } catch (error) {
     res.status(500).json({ message: 'Error creating cognitive session', error: error.message });
@@ -94,5 +110,40 @@ exports.getSessionsByUser = async (req, res) => {
     res.json(sessions);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching sessions', error: error.message });
+  }
+};
+
+exports.getLiveActivities = async (req, res) => {
+  try {
+    const sessions = await CognitiveSession.find()
+      .sort({ completedAt: -1 })
+      .limit(15);
+
+    const userIds = [...new Set(sessions.map(s => s.userId).filter(Boolean))];
+    const users = await User.find({ _id: { $in: userIds } }).select('name email role');
+    const userMap = {};
+    users.forEach(u => {
+      userMap[u._id.toString()] = u.name;
+    });
+
+    const activities = sessions.map(s => {
+      const uId = s.userId ? s.userId.toString() : '';
+      const userName = userMap[uId] || 'Community Member';
+      const parts = userName.split(' ').filter(Boolean);
+      const initials = parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}`.toUpperCase() : userName.slice(0, 2).toUpperCase();
+
+      return {
+        id: s._id,
+        user: userName,
+        action: `completed ${s.activity}`,
+        score: s.score,
+        completedAt: s.completedAt,
+        initials: initials || 'CM'
+      };
+    });
+
+    res.json(activities);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching live activities', error: error.message });
   }
 };

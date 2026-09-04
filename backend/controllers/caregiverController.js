@@ -34,8 +34,8 @@ exports.getElderlyUsers = async (req, res) => {
           email: u.email,
           createdAt: u.createdAt,
           profile,
-          sessionsCompleted: sessionsCount || 8,
-          gardenStreak: garden?.streak || 4
+          sessionsCompleted: sessionsCount || 0,
+          gardenStreak: garden?.streak || 1
         };
       })
     );

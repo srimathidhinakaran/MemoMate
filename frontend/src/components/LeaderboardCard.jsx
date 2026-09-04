@@ -82,104 +82,118 @@ const LeaderboardCard = () => {
       </div>
 
       {/* Leaderboard Entries */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        {leaderboard.map((item) => {
-          const isUser = item.isCurrentUser || (user && item.userId === user.id);
-          const displayName = isUser ? (user?.name || item.name) : item.name;
-          const initials = getCleanInitials(displayName);
+      {leaderboard.length === 0 ? (
+        <div style={{
+          padding: '1.8rem 1rem',
+          textAlign: 'center',
+          backgroundColor: '#0D1117',
+          borderRadius: '12px',
+          border: '1px solid #30363D',
+          color: '#9198A1',
+          fontSize: '0.88rem'
+        }}>
+          No leaderboard rankings yet. Complete exercises to earn XP and top the board!
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {leaderboard.map((item) => {
+            const isUser = item.isCurrentUser || (user && item.userId === user.id);
+            const displayName = isUser ? (user?.name || item.name) : item.name;
+            const initials = getCleanInitials(displayName);
 
-          const isGold = item.rank === 1;
-          const isSilver = item.rank === 2;
-          const isBronze = item.rank === 3;
+            const isGold = item.rank === 1;
+            const isSilver = item.rank === 2;
+            const isBronze = item.rank === 3;
 
-          let rankGlow = '#0D1117';
-          let borderColor = '#30363D';
-          let rankColor = '#9198A1';
+            let rankGlow = '#0D1117';
+            let borderColor = '#30363D';
+            let rankColor = '#9198A1';
 
-          if (isGold) {
-            rankGlow = 'rgba(251, 191, 36, 0.1)';
-            borderColor = 'rgba(251, 191, 36, 0.4)';
-            rankColor = '#FBBF24';
-          } else if (isSilver) {
-            rankGlow = 'rgba(226, 232, 240, 0.08)';
-            borderColor = 'rgba(226, 232, 240, 0.3)';
-            rankColor = '#E2E8F0';
-          } else if (isBronze) {
-            rankGlow = 'rgba(251, 146, 60, 0.08)';
-            borderColor = 'rgba(251, 146, 60, 0.3)';
-            rankColor = '#FB923C';
-          } else if (isUser) {
-            rankGlow = 'rgba(56, 189, 248, 0.1)';
-            borderColor = '#38BDF8';
-            rankColor = '#38BDF8';
-          }
+            if (isGold) {
+              rankGlow = 'rgba(251, 191, 36, 0.1)';
+              borderColor = 'rgba(251, 191, 36, 0.4)';
+              rankColor = '#FBBF24';
+            } else if (isSilver) {
+              rankGlow = 'rgba(226, 232, 240, 0.08)';
+              borderColor = 'rgba(226, 232, 240, 0.3)';
+              rankColor = '#E2E8F0';
+            } else if (isBronze) {
+              rankGlow = 'rgba(251, 146, 60, 0.08)';
+              borderColor = 'rgba(251, 146, 60, 0.3)';
+              rankColor = '#FB923C';
+            } else if (isUser) {
+              rankGlow = 'rgba(56, 189, 248, 0.1)';
+              borderColor = '#38BDF8';
+              rankColor = '#38BDF8';
+            }
 
-          return (
-            <div
-              key={item.userId || item.rank}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justify: 'space-between',
-                padding: '0.85rem 1.2rem',
-                borderRadius: '12px',
-                backgroundColor: rankGlow,
-                border: `1px solid ${borderColor}`,
-                transition: 'all 0.25s ease'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
-                <div className="icon-box" style={{
-                  fontSize: '0.95rem',
-                  fontWeight: 800,
-                  fontFamily: 'var(--font-heading)',
-                  color: rankColor,
-                  width: '28px'
-                }}>
-                  {isGold ? <Crown size={22} color="#FBBF24" fill="#FBBF24" /> : `#${item.rank}`}
-                </div>
-
-                {/* Dead-Centered Player Badge */}
-                <div className="icon-box" style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: '10px',
-                  backgroundColor: isGold ? '#FBBF24' : (isUser ? '#38BDF8' : '#21262D'),
-                  color: (isGold || isUser) ? '#0D1117' : '#FFFFFF',
-                  fontWeight: 800,
-                  fontSize: '0.85rem',
-                  fontFamily: 'var(--font-heading)',
-                  border: '1px solid #30363D'
-                }}>
-                  {initials}
-                </div>
-
-                <div>
-                  <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.95rem' }}>
-                    {displayName} {isUser && <span style={{ color: '#38BDF8', fontWeight: 800, marginLeft: '0.3rem' }}>(You)</span>}
+            return (
+              <div
+                key={item.userId || item.rank}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justify: 'space-between',
+                  padding: '0.85rem 1.2rem',
+                  borderRadius: '12px',
+                  backgroundColor: rankGlow,
+                  border: `1px solid ${borderColor}`,
+                  transition: 'all 0.25s ease'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
+                  <div className="icon-box" style={{
+                    fontSize: '0.95rem',
+                    fontWeight: 800,
+                    fontFamily: 'var(--font-heading)',
+                    color: rankColor,
+                    width: '28px'
+                  }}>
+                    {isGold ? <Crown size={22} color="#FBBF24" fill="#FBBF24" /> : `#${item.rank}`}
                   </div>
-                  <div style={{ fontSize: '0.78rem', color: '#9198A1', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span>Age {item.age || 68}</span>
-                    <span>•</span>
-                    <span style={{ color: '#FB923C', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-                      <Flame size={12} fill="#FB923C" /> {item.currentStreak || streak || 1}d streak
-                    </span>
+
+                  {/* Dead-Centered Player Badge */}
+                  <div className="icon-box" style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: '10px',
+                    backgroundColor: isGold ? '#FBBF24' : (isUser ? '#38BDF8' : '#21262D'),
+                    color: (isGold || isUser) ? '#0D1117' : '#FFFFFF',
+                    fontWeight: 800,
+                    fontSize: '0.85rem',
+                    fontFamily: 'var(--font-heading)',
+                    border: '1px solid #30363D'
+                  }}>
+                    {initials}
+                  </div>
+
+                  <div>
+                    <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.95rem' }}>
+                      {displayName} {isUser && <span style={{ color: '#38BDF8', fontWeight: 800, marginLeft: '0.3rem' }}>(You)</span>}
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#9198A1', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span>Age {item.age || 68}</span>
+                      <span>•</span>
+                      <span style={{ color: '#FB923C', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                        <Flame size={12} fill="#FB923C" /> {item.currentStreak || streak || 1}d streak
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontWeight: 800, fontFamily: 'var(--font-heading)', color: '#FBBF24', fontSize: '1.05rem' }}>
+                    {item.xpPoints} <span style={{ fontSize: '0.75rem', color: '#38BDF8' }}>XP</span>
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#34D399', fontWeight: 700 }}>
+                    TOP DIVISION
                   </div>
                 </div>
               </div>
-
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontWeight: 800, fontFamily: 'var(--font-heading)', color: '#FBBF24', fontSize: '1.05rem' }}>
-                  {item.xpPoints} <span style={{ fontSize: '0.75rem', color: '#38BDF8' }}>XP</span>
-                </div>
-                <div style={{ fontSize: '0.72rem', color: '#34D399', fontWeight: 700 }}>
-                  TOP DIVISION
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

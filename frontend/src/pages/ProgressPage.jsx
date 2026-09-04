@@ -7,16 +7,29 @@ import { TrendingUp, ArrowUpRight, Minus } from 'lucide-react';
 const ProgressPage = () => {
   const { profile } = useAuth();
 
+  const memoryScore = profile?.memoryScore || 88;
+  const attentionScore = profile?.attentionScore || 64;
+  const recallScore = profile?.recallScore || 76;
+  const reactionScore = profile?.reactionScore || 71;
+
   return (
     <div className="page-view animate-fade-in">
-      <div className="garden-card">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
-          <TrendingUp size={26} color="#58755E" />
-          <h1 style={{ fontSize: '1.8rem', color: '#1C3B2B' }}>
+      <div className="garden-card" style={{ backgroundColor: '#161B22', border: '1px solid #30363D' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
+          <div className="icon-box" style={{
+            width: 42,
+            height: 42,
+            borderRadius: '12px',
+            backgroundColor: 'rgba(56, 189, 248, 0.15)',
+            border: '1px solid rgba(56, 189, 248, 0.35)'
+          }}>
+            <TrendingUp size={24} color="#38BDF8" />
+          </div>
+          <h1 style={{ fontSize: '1.8rem', color: '#FFFFFF', fontWeight: 800, fontFamily: 'var(--font-heading)', margin: 0 }}>
             Cognitive Progress & Weekly Trends 📊
           </h1>
         </div>
-        <p style={{ color: '#536B5C', fontSize: '1.05rem' }}>
+        <p style={{ color: '#9198A1', fontSize: '0.96rem', margin: 0, lineHeight: 1.5 }}>
           Simple visual tracking of your weekly performance across all 4 cognitive categories.
         </p>
       </div>
@@ -27,42 +40,42 @@ const ProgressPage = () => {
         gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
         gap: '1.25rem'
       }}>
-        <div className="garden-card" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.85rem', color: '#7E9687', fontWeight: 700 }}>Memory Trend</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.4rem' }}>
-            <span style={{ fontSize: '1.6rem', fontWeight: 800, color: '#58755E' }}>Memory</span>
-            <span className="badge badge-sage" style={{ display: 'inline-flex', alignItems: 'center' }}>
-              <ArrowUpRight size={16} /> Improving
+        <div className="garden-card" style={{ padding: '1.25rem', backgroundColor: '#161B22', border: '1px solid #30363D' }}>
+          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Memory Trend</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.6rem' }}>
+            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#38BDF8', fontFamily: 'var(--font-heading)' }}>Memory</span>
+            <span className="badge badge-cyan" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+              <ArrowUpRight size={15} /> Improving
             </span>
           </div>
         </div>
 
-        <div className="garden-card" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.85rem', color: '#7E9687', fontWeight: 700 }}>Attention Trend</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.4rem' }}>
-            <span style={{ fontSize: '1.6rem', fontWeight: 800, color: '#C87862' }}>Attention</span>
-            <span className="badge badge-peach" style={{ display: 'inline-flex', alignItems: 'center' }}>
-              <Minus size={16} /> Stable Focus
+        <div className="garden-card" style={{ padding: '1.25rem', backgroundColor: '#161B22', border: '1px solid #30363D' }}>
+          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Attention Trend</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.6rem' }}>
+            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#FF4E50', fontFamily: 'var(--font-heading)' }}>Attention</span>
+            <span className="badge badge-flame" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+              <Minus size={15} /> Focus Needed
             </span>
           </div>
         </div>
 
-        <div className="garden-card" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.85rem', color: '#7E9687', fontWeight: 700 }}>Recall Trend</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.4rem' }}>
-            <span style={{ fontSize: '1.6rem', fontWeight: 800, color: '#7A66A3' }}>Recall</span>
-            <span className="badge badge-lavender" style={{ display: 'inline-flex', alignItems: 'center' }}>
-              <ArrowUpRight size={16} /> Improving
+        <div className="garden-card" style={{ padding: '1.25rem', backgroundColor: '#161B22', border: '1px solid #30363D' }}>
+          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Recall Trend</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.6rem' }}>
+            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#A855F7', fontFamily: 'var(--font-heading)' }}>Recall</span>
+            <span className="badge badge-purple" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+              <ArrowUpRight size={15} /> Improving
             </span>
           </div>
         </div>
 
-        <div className="garden-card" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.85rem', color: '#7E9687', fontWeight: 700 }}>Reaction Trend</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.4rem' }}>
-            <span style={{ fontSize: '1.6rem', fontWeight: 800, color: '#3B7A8C' }}>Reaction</span>
-            <span className="badge" style={{ backgroundColor: '#EBF6F8', color: '#3B7A8C', display: 'inline-flex', alignItems: 'center' }}>
-              <Minus size={16} /> Consistent
+        <div className="garden-card" style={{ padding: '1.25rem', backgroundColor: '#161B22', border: '1px solid #30363D' }}>
+          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Reaction Trend</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.6rem' }}>
+            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#34D399', fontFamily: 'var(--font-heading)' }}>Reaction</span>
+            <span className="badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+              <Minus size={15} /> Consistent
             </span>
           </div>
         </div>
@@ -71,10 +84,10 @@ const ProgressPage = () => {
       <ProgressChart profile={profile} />
 
       <CognitiveScoreCard
-        memory={profile?.memoryScore || 82}
-        attention={profile?.attentionScore || 64}
-        recall={profile?.recallScore || 76}
-        reaction={profile?.reactionScore || 71}
+        memory={memoryScore}
+        attention={attentionScore}
+        recall={recallScore}
+        reaction={reactionScore}
       />
     </div>
   );

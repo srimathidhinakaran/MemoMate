@@ -115,12 +115,17 @@ h1, h2, h3, h4, h5, h6 {
   box-sizing: border-box !important;
   flex-shrink: 0 !important;
   line-height: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
 }
 
-.icon-box svg {
-  display: block !important;
+.icon-box svg, .badge svg, button svg {
+  display: inline-block !important;
+  vertical-align: middle !important;
   margin: auto !important;
   flex-shrink: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
 }
 
 /* Container Cards */
@@ -291,6 +296,30 @@ select option {
   background: rgba(251, 191, 36, 0.15);
   color: #FBBF24;
   border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.badge-green {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34D399;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+.badge-sage {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34D399;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+.badge-peach {
+  background: rgba(251, 146, 60, 0.15);
+  color: #FB923C;
+  border: 1px solid rgba(251, 146, 60, 0.35);
+}
+
+.badge-lavender {
+  background: rgba(192, 132, 252, 0.15);
+  color: #C084FC;
+  border: 1px solid rgba(192, 132, 252, 0.35);
 }
 
 /* Animations */

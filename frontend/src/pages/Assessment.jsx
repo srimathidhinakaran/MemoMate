@@ -76,7 +76,22 @@ const Assessment = () => {
     setSearchParams({ game: gameId });
   };
 
-  if (currentGame) {
+  const gameAliasMap = {
+    'attention': '3d-target',
+    '3d-target': '3d-target',
+    'memory': '3d-memory',
+    '3d-memory': '3d-memory',
+    'recall': 'number',
+    'number': 'number',
+    'reaction': '3d-reaction',
+    '3d-reaction': '3d-reaction',
+    'pattern': 'pattern',
+    'word': 'word'
+  };
+
+  const activeGameKey = currentGame ? (gameAliasMap[currentGame] || currentGame) : null;
+
+  if (activeGameKey) {
     return (
       <div className="page-view animate-fade-in" style={{ gap: '1.2rem' }}>
         <button
@@ -91,12 +106,12 @@ const Assessment = () => {
           <span>BACK TO EXERCISE HUB</span>
         </button>
 
-        {currentGame === '3d-memory' && <ThreeDFlowerMatch />}
-        {currentGame === '3d-target' && <ThreeDTargetSearch />}
-        {currentGame === '3d-reaction' && <ThreeDReactionOrbs />}
-        {currentGame === 'number' && <NumberRecall />}
-        {currentGame === 'pattern' && <PatternRecall />}
-        {currentGame === 'word' && <WordRecall />}
+        {activeGameKey === '3d-memory' && <ThreeDFlowerMatch />}
+        {activeGameKey === '3d-target' && <ThreeDTargetSearch />}
+        {activeGameKey === '3d-reaction' && <ThreeDReactionOrbs />}
+        {activeGameKey === 'number' && <NumberRecall />}
+        {activeGameKey === 'pattern' && <PatternRecall />}
+        {activeGameKey === 'word' && <WordRecall />}
       </div>
     );
   }
