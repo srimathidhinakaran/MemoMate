@@ -92,25 +92,26 @@ const AttentionChallenge = () => {
     setReactionTimes(prev => [...prev, elapsed]);
 
     const isCorrect = selected === currentProblem.correct;
+    let points = 0;
     if (isCorrect) {
       soundFx.playSuccess();
-      const points = Math.max(10, Math.round(15 - elapsed / 250));
-      const newScore = score + points;
-      setScore(newScore);
+      points = Math.max(10, Math.round(15 - elapsed / 250));
+      setScore(prev => prev + points);
       setFeedback({ correct: true, text: `Correct! +${points} pts (${elapsed}ms)` });
     } else {
       soundFx.playCardMismatch();
       setFeedback({ correct: false, text: `Wrong! Correct answer: ${currentProblem.correct}` });
     }
 
-    // Zero artificial delay - 300ms fast transition
+    // Zero artificial delay - 350ms fast transition
     setTimeout(() => {
       setFeedback(null);
+      const nextScore = isCorrect ? score + points : score;
       if (round + 1 > totalRounds) {
-        finishGame(isCorrect ? score + 10 : score);
+        finishGame(nextScore);
       } else {
         setRound(r => r + 1);
-        startNextRound(isCorrect ? score + 10 : score);
+        startNextRound(nextScore);
       }
     }, 350);
   };

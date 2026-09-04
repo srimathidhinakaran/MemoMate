@@ -138,7 +138,7 @@ const Assessment = () => {
           style={{ width: 'fit-content', padding: '0.6rem 1.25rem', fontSize: '0.85rem' }}
         >
           <ArrowLeft size={18} />
-          <span>BACK TO EXERCISE HUB</span>
+          <span>{t('backToExercises') || 'BACK TO EXERCISE HUB'}</span>
         </button>
 
         {activeGameKey === '3d-memory' && <ThreeDFlowerMatch />}
@@ -166,7 +166,7 @@ const Assessment = () => {
           </h1>
         </div>
         <p style={{ color: '#94A3B8', fontSize: '0.95rem', lineHeight: 1.5 }}>
-          Select a dynamic, non-repetitive cognitive exercise below. All games feature procedural generation and zero delay execution.
+          {t('exercisesSub') || 'Select a dynamic, non-repetitive cognitive exercise below. All games feature procedural generation and zero delay execution.'}
         </p>
       </div>
 
@@ -229,7 +229,7 @@ const Assessment = () => {
                 style={{ width: '100%', padding: '0.85rem' }}
               >
                 <Gamepad2 size={18} />
-                <span>START GAME</span>
+                <span>{t('startGame') || 'START GAME'}</span>
               </button>
             </div>
           );
