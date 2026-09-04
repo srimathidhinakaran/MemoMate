@@ -8,14 +8,16 @@ const StreakTracker = () => {
   const isCheckedInToday = lastCheckin === todayStr && streak > 0;
 
   const currentDayIndex = new Date().getDay(); // 0 = Sun, 1 = Mon, ...
+  const todayIsoDay = currentDayIndex === 0 ? 7 : currentDayIndex; // Mon=1 ... Sun=7
+
   const daysOfWeek = [
-    { day: 'M', full: 'MON', idx: 1 },
-    { day: 'T', full: 'TUE', idx: 2 },
-    { day: 'W', full: 'WED', idx: 3 },
-    { day: 'T', full: 'THU', idx: 4 },
-    { day: 'F', full: 'FRI', idx: 5 },
-    { day: 'S', full: 'SAT', idx: 6 },
-    { day: 'S', full: 'SUN', idx: 0 }
+    { day: 'M', full: 'MON', isoDay: 1 },
+    { day: 'T', full: 'TUE', isoDay: 2 },
+    { day: 'W', full: 'WED', isoDay: 3 },
+    { day: 'T', full: 'THU', isoDay: 4 },
+    { day: 'F', full: 'FRI', isoDay: 5 },
+    { day: 'S', full: 'SAT', isoDay: 6 },
+    { day: 'S', full: 'SUN', isoDay: 7 }
   ];
 
   const handleCheckin = () => {
@@ -86,8 +88,21 @@ const StreakTracker = () => {
           textAlign: 'center'
         }}>
           {daysOfWeek.map((d, i) => {
-            const isToday = d.idx === currentDayIndex;
-            const isCompleted = isToday ? isCheckedInToday : (streak > 0 && d.idx < currentDayIndex);
+            const isToday = d.isoDay === todayIsoDay;
+            let isCompleted = false;
+
+            if (isToday) {
+              isCompleted = isCheckedInToday;
+            } else if (d.isoDay < todayIsoDay) {
+              const daysAgo = todayIsoDay - d.isoDay;
+              if (isCheckedInToday) {
+                isCompleted = streak > daysAgo;
+              } else {
+                isCompleted = streak >= daysAgo;
+              }
+            } else {
+              isCompleted = false;
+            }
 
             return (
               <div key={i} style={{

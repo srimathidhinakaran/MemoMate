@@ -133,11 +133,26 @@ export const sessionAPI = {
         localStorage.setItem('memomate_recent_activities', JSON.stringify(updatedActs));
 
         // Also update local gamification XP
-        const gamStr = localStorage.getItem('memomate_gamification');
-        let gam = gamStr ? JSON.parse(gamStr) : { xpPoints: 100, gems: 20, level: 1, currentStreak: 1 };
-        gam.xpPoints += Math.round(score * 1.5);
-        gam.gems += Math.round(score * 0.2);
-        localStorage.setItem('memomate_gamification', JSON.stringify(gam));
+        const savedXp = localStorage.getItem('memomate_xp');
+        const savedGems = localStorage.getItem('memomate_gems');
+        const savedStreak = localStorage.getItem('memomate_streak');
+        const currentXp = savedXp !== null ? Number(savedXp) : 0;
+        const currentGems = savedGems !== null ? Number(savedGems) : 10;
+        const currentStreak = savedStreak !== null ? Number(savedStreak) : 0;
+
+        const newXp = currentXp + Math.round(score * 1.5);
+        const newGems = currentGems + Math.round(score * 0.25);
+
+        localStorage.setItem('memomate_xp', newXp);
+        localStorage.setItem('memomate_gems', newGems);
+
+        const gamObj = {
+          xpPoints: newXp,
+          gems: newGems,
+          level: Math.floor(newXp / 300) + 1,
+          currentStreak: currentStreak
+        };
+        localStorage.setItem('memomate_gamification', JSON.stringify(gamObj));
       }
 
       window.dispatchEvent(new Event('memomate_activity_updated'));
@@ -285,32 +300,34 @@ export const gamificationAPI = {
       return res.data;
     } catch (err) {
       const saved = localStorage.getItem('memomate_gamification');
-      return saved ? JSON.parse(saved) : {
+      const savedXp = localStorage.getItem('memomate_xp');
+      const savedGems = localStorage.getItem('memomate_gems');
+      const savedStreak = localStorage.getItem('memomate_streak');
+
+      const xp = savedXp !== null ? Number(savedXp) : 0;
+      const gems = savedGems !== null ? Number(savedGems) : 10;
+      const streak = savedStreak !== null ? Number(savedStreak) : 0;
+
+      let baseObj = saved ? JSON.parse(saved) : {};
+      return {
+        ...baseObj,
         userId: userId || 'user_1',
-        xpPoints: 100,
-        gems: 20,
-        level: 1,
-        currentStreak: 1,
-        highestStreak: 1,
+        xpPoints: Math.max(xp, baseObj.xpPoints || 0),
+        gems: Math.max(gems, baseObj.gems || 10),
+        level: Math.floor(Math.max(xp, baseObj.xpPoints || 0) / 300) + 1,
+        currentStreak: Math.max(streak, baseObj.currentStreak || 0),
+        highestStreak: Math.max(streak, baseObj.highestStreak || 0),
         streakFreezeAvailable: true,
         league: 'Emerald League',
         leagueRank: 1,
         unlockedBadges: [],
-        unlockedGardenItems: [],
-        dailyQuests: [
+        unlockedGardenItems: ['cyber_crystal'],
+        dailyQuests: baseObj.dailyQuests || [
           { id: 'quest_1', title: 'Complete 2 Cognitive Sessions', target: 2, current: 0, rewardXp: 50, rewardGems: 15, completed: false },
           { id: 'quest_2', title: 'Score over 80 in 3D Focus', target: 1, current: 0, rewardXp: 75, rewardGems: 25, completed: false },
-          { id: 'quest_3', title: 'Maintain your Daily Streak', target: 1, current: 1, rewardXp: 40, rewardGems: 10, completed: true }
+          { id: 'quest_3', title: 'Maintain your Daily Streak', target: 1, current: streak > 0 ? 1 : 0, rewardXp: 40, rewardGems: 10, completed: streak > 0 }
         ],
-        weeklyHistory: [
-          { day: 'Mon', active: true },
-          { day: 'Tue', active: false },
-          { day: 'Wed', active: false },
-          { day: 'Thu', active: false },
-          { day: 'Fri', active: false },
-          { day: 'Sat', active: false },
-          { day: 'Sun', active: false }
-        ]
+        weeklyHistory: []
       };
     }
   },

@@ -184,16 +184,25 @@ export const AuthProvider = ({ children }) => {
       gamificationAPI.getGamification(userId).then((res) => {
         if (res) {
           if (res.currentStreak !== undefined) {
-            setStreak(res.currentStreak);
-            localStorage.setItem('memomate_streak', res.currentStreak);
+            setStreak((prev) => {
+              const maxS = Math.max(prev, res.currentStreak);
+              localStorage.setItem('memomate_streak', maxS);
+              return maxS;
+            });
           }
           if (res.xpPoints !== undefined) {
-            setXpPoints(res.xpPoints);
-            localStorage.setItem('memomate_xp', res.xpPoints);
+            setXpPoints((prev) => {
+              const maxXp = Math.max(prev, res.xpPoints);
+              localStorage.setItem('memomate_xp', maxXp);
+              return maxXp;
+            });
           }
           if (res.gems !== undefined) {
-            setGems(res.gems);
-            localStorage.setItem('memomate_gems', res.gems);
+            setGems((prev) => {
+              const maxGems = Math.max(prev, res.gems);
+              localStorage.setItem('memomate_gems', maxGems);
+              return maxGems;
+            });
           }
         }
       });
@@ -231,6 +240,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('memomate_gems', '10');
       localStorage.setItem('memomate_streak', '0');
       localStorage.setItem('memomate_highest_streak', '0');
+      localStorage.setItem('memomate_gamification', JSON.stringify({ xpPoints: 0, gems: 10, currentStreak: 0 }));
       return data;
     } finally {
       setLoading(false);
@@ -245,6 +255,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('memomate_profile');
     localStorage.removeItem('memomate_recommendation');
     localStorage.removeItem('memomate_garden');
+    localStorage.removeItem('memomate_xp');
+    localStorage.removeItem('memomate_gems');
+    localStorage.removeItem('memomate_streak');
+    localStorage.removeItem('memomate_gamification');
   };
 
   const updateStateFromSession = (sessionResult) => {
@@ -263,7 +277,9 @@ export const AuthProvider = ({ children }) => {
 
     // Dynamic Duolingo Streak Logic
     let newStreak = streak;
-    if (lastCheckin !== todayStr) {
+    if (sessionResult.gamification?.currentStreak !== undefined) {
+      newStreak = sessionResult.gamification.currentStreak;
+    } else if (lastCheckin !== todayStr) {
       if (streak === 0) {
         newStreak = 1;
       } else {
@@ -276,23 +292,32 @@ export const AuthProvider = ({ children }) => {
           newStreak = 1;
         }
       }
-      setStreak(newStreak);
-      const h = Math.max(newStreak, highestStreak);
-      setHighestStreak(h);
-      localStorage.setItem('memomate_streak', newStreak);
-      localStorage.setItem('memomate_last_checkin_date', todayStr);
-      localStorage.setItem('memomate_highest_streak', h);
     }
+    setStreak(newStreak);
+    const h = Math.max(newStreak, highestStreak);
+    setHighestStreak(h);
+    localStorage.setItem('memomate_streak', newStreak);
+    localStorage.setItem('memomate_last_checkin_date', todayStr);
+    localStorage.setItem('memomate_highest_streak', h);
 
     // Dynamic XP & Gems Calculation
     const earnedScore = sessionResult.session?.score || 85;
     const streakBonusMultiplier = newStreak >= 3 ? 1.25 : 1.0;
     const gainedXp = Math.round(earnedScore * 1.5 * streakBonusMultiplier);
     const gainedGems = Math.round(earnedScore * 0.25);
-    
-    const newXp = xpPoints + gainedXp;
-    const newGems = gems + gainedGems;
-    
+
+    let newXp = xpPoints + gainedXp;
+    let newGems = gems + gainedGems;
+
+    if (sessionResult.gamification) {
+      if (sessionResult.gamification.xpPoints !== undefined) {
+        newXp = Math.max(newXp, sessionResult.gamification.xpPoints);
+      }
+      if (sessionResult.gamification.gems !== undefined) {
+        newGems = Math.max(newGems, sessionResult.gamification.gems);
+      }
+    }
+
     const oldLevel = Math.floor(xpPoints / 300) + 1;
     const newLevel = Math.floor(newXp / 300) + 1;
 
@@ -300,6 +325,16 @@ export const AuthProvider = ({ children }) => {
     setGems(newGems);
     localStorage.setItem('memomate_xp', newXp);
     localStorage.setItem('memomate_gems', newGems);
+
+    // Persist full gamification object to local storage
+    const gamObj = {
+      xpPoints: newXp,
+      gems: newGems,
+      level: newLevel,
+      currentStreak: newStreak,
+      highestStreak: h
+    };
+    localStorage.setItem('memomate_gamification', JSON.stringify(gamObj));
 
     // Update quests
     setDailyQuests((prev) =>
