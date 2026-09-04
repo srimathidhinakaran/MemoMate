@@ -6,7 +6,7 @@ import { gamificationAPI } from '../services/api';
 import { Trophy, Flame, Crown, ChevronRight } from 'lucide-react';
 
 const getCleanInitials = (name) => {
-  if (!name) return 'AM';
+  if (!name) return 'CM';
   const clean = name.replace(/\(.*?\)/g, '').trim();
   const parts = clean.split(' ').filter(Boolean);
   if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
@@ -14,14 +14,13 @@ const getCleanInitials = (name) => {
 };
 
 const LeaderboardCard = () => {
-  const { user, xpPoints, streak } = useAuth();
+  const { user, xpPoints, streak, t } = useAuth();
   const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     gamificationAPI.getLeaderboard().then((res) => {
       if (res && Array.isArray(res)) {
         let updated = res.map((item) => {
-          // Remove fake name checks; match logged in user strictly
           if (item.isCurrentUser || (user && item.userId === user.id)) {
             return {
               ...item,
@@ -43,21 +42,24 @@ const LeaderboardCard = () => {
   return (
     <div className="garden-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div className="icon-box" style={{
             width: 44,
             height: 44,
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #FBBF24 0%, #EA580C 100%)'
+            background: 'linear-gradient(135deg, #FBBF24 0%, #EA580C 100%)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justify: 'center'
           }}>
-            <Trophy size={24} color="#0D1117" />
+            <Trophy size={24} color="#0B0E14" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.25rem', color: '#FFFFFF', fontWeight: 800, margin: 0, fontFamily: 'var(--font-heading)' }}>
-              COMMUNITY LEADERBOARD
+            <h3 style={{ fontSize: '1.2rem', color: '#FFFFFF', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
+              {t('leaderboardTitle').toUpperCase()}
             </h3>
-            <div style={{ fontSize: '0.8rem', color: '#9198A1', fontWeight: 600 }}>
+            <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
               TOP ACTIVE MEMBERS • REAL-TIME STANDINGS
             </div>
           </div>
@@ -72,7 +74,7 @@ const LeaderboardCard = () => {
             fontFamily: 'var(--font-heading)',
             color: '#38BDF8',
             textDecoration: 'none',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
             gap: '0.3rem'
           }}
@@ -86,10 +88,10 @@ const LeaderboardCard = () => {
         <div style={{
           padding: '1.8rem 1rem',
           textAlign: 'center',
-          backgroundColor: '#0D1117',
+          backgroundColor: '#0B0E14',
           borderRadius: '12px',
-          border: '1px solid #30363D',
-          color: '#9198A1',
+          border: '1px solid #263142',
+          color: '#94A3B8',
           fontSize: '0.88rem'
         }}>
           No leaderboard rankings yet. Complete exercises to earn XP and top the board!
@@ -105,9 +107,9 @@ const LeaderboardCard = () => {
             const isSilver = item.rank === 2;
             const isBronze = item.rank === 3;
 
-            let rankGlow = '#0D1117';
-            let borderColor = '#30363D';
-            let rankColor = '#9198A1';
+            let rankGlow = '#0B0E14';
+            let borderColor = '#263142';
+            let rankColor = '#94A3B8';
 
             if (isGold) {
               rankGlow = 'rgba(251, 191, 36, 0.1)';
@@ -138,7 +140,8 @@ const LeaderboardCard = () => {
                   borderRadius: '12px',
                   backgroundColor: rankGlow,
                   border: `1px solid ${borderColor}`,
-                  transition: 'all 0.25s ease'
+                  flexWrap: 'wrap',
+                  gap: '0.5rem'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
@@ -152,17 +155,16 @@ const LeaderboardCard = () => {
                     {isGold ? <Crown size={22} color="#FBBF24" fill="#FBBF24" /> : `#${item.rank}`}
                   </div>
 
-                  {/* Dead-Centered Player Badge */}
                   <div className="icon-box" style={{
                     width: 38,
                     height: 38,
                     borderRadius: '10px',
-                    backgroundColor: isGold ? '#FBBF24' : (isUser ? '#38BDF8' : '#21262D'),
-                    color: (isGold || isUser) ? '#0D1117' : '#FFFFFF',
+                    backgroundColor: isGold ? '#FBBF24' : (isUser ? '#38BDF8' : '#222B3B'),
+                    color: (isGold || isUser) ? '#0B0E14' : '#FFFFFF',
                     fontWeight: 800,
                     fontSize: '0.85rem',
                     fontFamily: 'var(--font-heading)',
-                    border: '1px solid #30363D'
+                    border: '1px solid #263142'
                   }}>
                     {initials}
                   </div>
@@ -171,11 +173,11 @@ const LeaderboardCard = () => {
                     <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.95rem' }}>
                       {displayName} {isUser && <span style={{ color: '#38BDF8', fontWeight: 800, marginLeft: '0.3rem' }}>(You)</span>}
                     </div>
-                    <div style={{ fontSize: '0.78rem', color: '#9198A1', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ fontSize: '0.78rem', color: '#94A3B8', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <span>Age {item.age || 68}</span>
                       <span>•</span>
                       <span style={{ color: '#FB923C', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-                        <Flame size={12} fill="#FB923C" /> {item.currentStreak || streak || 1}d streak
+                        <Flame size={12} fill="#FB923C" /> {(item.currentStreak !== undefined ? item.currentStreak : streak) || 0}d streak
                       </span>
                     </div>
                   </div>

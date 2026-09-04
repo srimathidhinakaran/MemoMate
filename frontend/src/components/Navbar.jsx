@@ -34,53 +34,59 @@ const Navbar = () => {
   return (
     <>
       <nav style={{
-        backgroundColor: '#161B22',
-        borderBottom: '1px solid #30363D',
-        padding: '0.8rem 2rem',
+        backgroundColor: '#121721',
+        borderBottom: '1px solid #263142',
+        padding: '0.75rem 2rem',
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)'
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
       }}>
         <div style={{
           maxWidth: 1440,
           margin: '0 auto',
           display: 'flex',
           alignItems: 'center',
-          justify: 'space-between'
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '1rem'
         }}>
-          {/* Professional Brand Logo & Tagline */}
+          {/* Brand Logo Container Fitted Perfectly */}
           <Link 
             to={user?.role === 'caregiver' ? '/caregiver' : '/dashboard'} 
             onClick={() => handleNavClick('Home')}
-            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem' }}
+            style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.8rem' }}
           >
             <div className="icon-box" style={{
-              width: 44,
-              height: 44,
+              width: 42,
+              height: 42,
               borderRadius: '12px',
               backgroundColor: 'rgba(56, 189, 248, 0.15)',
-              border: '1px solid rgba(56, 189, 248, 0.35)'
+              border: '1px solid rgba(56, 189, 248, 0.35)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}>
-              <Brain size={26} color="#38BDF8" />
+              <Brain size={24} color="#38BDF8" />
             </div>
-            <div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ 
-                fontSize: '1.4rem', 
+                fontSize: '1.35rem', 
                 fontWeight: 900, 
                 fontFamily: 'var(--font-heading)', 
                 color: '#FFFFFF', 
-                letterSpacing: '-0.01em'
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1
               }}>
                 MemoMate
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#9198A1', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 600 }}>
                 {t('dementiaSubtitle')}
               </div>
             </div>
           </Link>
 
-          {/* User Info & Currency Status */}
+          {/* User Info & Dynamic Currency Status */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             {user && user.role === 'elderly' && (
               <>
@@ -95,11 +101,11 @@ const Navbar = () => {
                   border: '1px solid rgba(251, 146, 60, 0.35)',
                   fontSize: '0.85rem',
                   fontWeight: 800,
-                  fontFamily: 'var(--font-esports)',
+                  fontFamily: 'var(--font-heading)',
                   color: '#FB923C'
                 }}>
                   <Flame size={18} fill="#FB923C" />
-                  <span>{streak || 1} {t('streak').toUpperCase()}</span>
+                  <span>{streak || 0} {t('streak').toUpperCase()}</span>
                 </div>
 
                 {/* Gems */}
@@ -113,11 +119,11 @@ const Navbar = () => {
                   border: '1px solid rgba(56, 189, 248, 0.35)',
                   fontSize: '0.85rem',
                   fontWeight: 800,
-                  fontFamily: 'var(--font-esports)',
+                  fontFamily: 'var(--font-heading)',
                   color: '#38BDF8'
                 }}>
                   <Gem size={18} fill="#38BDF8" />
-                  <span>{gems || 100} PTS</span>
+                  <span>{gems || 10} PTS</span>
                 </div>
 
                 {/* Level & XP */}
@@ -131,7 +137,7 @@ const Navbar = () => {
                   border: '1px solid rgba(251, 191, 36, 0.35)',
                   fontSize: '0.85rem',
                   fontWeight: 800,
-                  fontFamily: 'var(--font-esports)',
+                  fontFamily: 'var(--font-heading)',
                   color: '#FBBF24'
                 }}>
                   <Award size={18} color="#FBBF24" />
@@ -152,13 +158,13 @@ const Navbar = () => {
                     border: '1px solid rgba(52, 211, 153, 0.35)',
                     fontSize: '0.85rem',
                     fontWeight: 800,
-                    fontFamily: 'var(--font-esports)',
+                    fontFamily: 'var(--font-heading)',
                     color: '#34D399',
                     textDecoration: 'none'
                   }}
                 >
                   <Trophy size={18} />
-                  <span>{t('rank').toUpperCase()} #3</span>
+                  <span>{t('rank').toUpperCase()} #1</span>
                 </Link>
               </>
             )}
@@ -167,18 +173,16 @@ const Navbar = () => {
             <button
               onClick={toggleSound}
               style={{
-                background: soundEnabled ? 'rgba(56, 189, 248, 0.15)' : '#21262D',
-                border: soundEnabled ? '1px solid #38BDF8' : '1px solid #30363D',
-                color: soundEnabled ? '#38BDF8' : '#9198A1',
+                background: soundEnabled ? 'rgba(56, 189, 248, 0.15)' : '#161C26',
+                border: soundEnabled ? '1px solid #38BDF8' : '1px solid #263142',
+                color: soundEnabled ? '#38BDF8' : '#94A3B8',
                 borderRadius: '8px',
                 padding: '0.45rem 0.75rem',
-                cursor: 'pointer',
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.4rem',
                 fontSize: '0.8rem',
-                fontWeight: 700,
-                transition: 'all 0.2s ease'
+                fontWeight: 700
               }}
               title={soundEnabled ? "Mute Audio SFX" : "Enable Audio SFX"}
             >
@@ -191,10 +195,10 @@ const Navbar = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.6rem',
-                backgroundColor: '#21262D',
+                backgroundColor: '#161C26',
                 padding: '0.45rem 0.9rem',
                 borderRadius: '8px',
-                border: '1px solid #30363D'
+                border: '1px solid #263142'
               }}>
                 <UserCheck size={18} color="#38BDF8" />
                 <span style={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.9rem' }}>
@@ -228,7 +232,7 @@ const Navbar = () => {
                   border: 'none',
                   cursor: 'pointer',
                   color: '#FB923C',
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.4rem',
                   fontWeight: 700,
@@ -251,33 +255,33 @@ const Navbar = () => {
           position: 'fixed',
           bottom: 24,
           right: 24,
-          backgroundColor: '#161B22',
+          backgroundColor: '#161C26',
           border: '1px solid #38BDF8',
           borderRadius: '14px',
           padding: '1.1rem 1.5rem',
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6)',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7)',
           zIndex: 100,
           display: 'flex',
           alignItems: 'center',
           gap: '1rem',
-          animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+          animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards'
         }}>
-          <div style={{
-            width: 44,
-            height: 44,
+          <div className="icon-box" style={{
+            width: 42,
+            height: 42,
             borderRadius: '10px',
             backgroundColor: 'rgba(56, 189, 248, 0.15)',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
             justify: 'center'
           }}>
             <Sparkles size={24} color="#38BDF8" />
           </div>
           <div>
-            <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '1rem' }}>
+            <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.95rem' }}>
               EXERCISE COMPLETED!
             </div>
-            <div style={{ fontSize: '0.88rem', color: '#9198A1', fontWeight: 600 }}>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 600 }}>
               {recentScoreToast.activity}: <strong style={{ color: '#38BDF8' }}>+{recentScoreToast.score} PTS</strong> | <strong style={{ color: '#FBBF24' }}>+{recentScoreToast.xp} XP</strong>
             </div>
           </div>

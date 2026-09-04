@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
 import { sessionAPI } from '../services/api';
-import { RotateCcw, CheckCircle2, ArrowRight, Award, Zap } from 'lucide-react';
+import { RotateCcw, CheckCircle2, ArrowRight } from 'lucide-react';
 
 const NumberRecall = () => {
-  const { user, updateStateFromSession, speakText, voiceAssistance } = useAuth();
+  const { user, updateStateFromSession, speakText, voiceAssistance, level, t } = useAuth();
   const navigate = useNavigate();
   const mountRef = useRef(null);
 
@@ -17,20 +17,25 @@ const NumberRecall = () => {
   const [countdown, setCountdown] = useState(4);
   const [scoreResult, setScoreResult] = useState(null);
 
+  const digitLength = Math.min(10, Math.max(3, 3 + Math.floor((level || 1) / 2)));
+
   useEffect(() => {
     startNewGame();
   }, []);
 
   const startNewGame = () => {
     soundFx.playClick();
-    const randomNum = Math.floor(1000 + Math.random() * 9000).toString();
-    setTargetNumber(randomNum);
+    let numStr = '';
+    for (let i = 0; i < digitLength; i++) {
+      numStr += Math.floor(Math.random() * 10).toString();
+    }
+    setTargetNumber(numStr);
     setUserInput('');
     setStage('memorize');
     setCountdown(4);
 
     if (voiceAssistance) {
-      speakText(`Remember this 3D number crystal sequence: ${randomNum}`);
+      speakText(`Remember this number sequence: ${numStr}`);
     }
   };
 
@@ -40,7 +45,7 @@ const NumberRecall = () => {
     if (!currentMount) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x090C15);
+    scene.background = new THREE.Color(0x0B0E14);
 
     const camera = new THREE.PerspectiveCamera(45, currentMount.clientWidth / currentMount.clientHeight, 0.1, 100);
     camera.position.set(0, 0, 8);
@@ -52,25 +57,26 @@ const NumberRecall = () => {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0x00F2FE, 2, 20);
+    const pointLight = new THREE.PointLight(0x38BDF8, 2, 20);
     pointLight.position.set(3, 4, 5);
     scene.add(pointLight);
 
-    // 4 Floating 3D Crystal Nodes representing 4 digits
+    // Floating 3D Crystal Nodes representing digits
     const crystalsGroup = new THREE.Group();
-    const nodeColors = [0x00F2FE, 0xFFD700, 0xA855F7, 0x00E676];
+    const nodeColors = [0x38BDF8, 0xFBBF24, 0xC084FC, 0x34D399, 0xFB923C];
 
-    for (let i = 0; i < 4; i++) {
-      const geo = new THREE.DodecahedronGeometry(0.7, 1);
+    const displayCount = Math.min(6, digitLength);
+    for (let i = 0; i < displayCount; i++) {
+      const geo = new THREE.DodecahedronGeometry(0.6, 1);
       const mat = new THREE.MeshStandardMaterial({
-        color: nodeColors[i],
+        color: nodeColors[i % nodeColors.length],
         roughness: 0.2,
         metalness: 0.8,
-        emissive: nodeColors[i],
+        emissive: nodeColors[i % nodeColors.length],
         emissiveIntensity: 0.3
       });
       const mesh = new THREE.Mesh(geo, mat);
-      mesh.position.set(-3 + i * 2, 0, 0);
+      mesh.position.set(-3.5 + i * 1.4, 0, 0);
       crystalsGroup.add(mesh);
     }
     scene.add(crystalsGroup);
@@ -108,7 +114,7 @@ const NumberRecall = () => {
         currentMount.removeChild(renderer.domElement);
       }
     };
-  }, [stage]);
+  }, [stage, digitLength]);
 
   useEffect(() => {
     let timer;
@@ -124,13 +130,13 @@ const NumberRecall = () => {
     e.preventDefault();
     soundFx.playClick();
     const isCorrect = userInput.trim() === targetNumber;
-    const calculatedScore = isCorrect ? 95 : 60;
+    const calculatedScore = isCorrect ? 95 : 50;
 
     const sessionPayload = {
       userId: user?.id || user?._id,
-      activity: 'Number Recall',
+      activity: 'Dual-N-Back & Number Recall',
       category: 'recall',
-      difficulty: 'Medium',
+      difficulty: digitLength > 5 ? 'Hard' : 'Medium',
       score: calculatedScore,
       accuracy: isCorrect ? 100 : 0
     };
@@ -155,32 +161,32 @@ const NumberRecall = () => {
           width: 70,
           height: 70,
           borderRadius: '50%',
-          backgroundColor: 'rgba(0, 242, 254, 0.15)',
+          backgroundColor: 'rgba(56, 189, 248, 0.15)',
           display: 'flex',
           alignItems: 'center',
           justify: 'center',
           margin: '0 auto 1.25rem',
-          border: '1px solid #00F2FE'
+          border: '1px solid #38BDF8'
         }}>
-          <CheckCircle2 size={44} color="#00F2FE" />
+          <CheckCircle2 size={44} color="#38BDF8" />
         </div>
 
-        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#F8FAFC', fontWeight: 900 }}>
+        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#FFFFFF', fontWeight: 900 }}>
           3D NUMBER RECALL COMPLETE! 🔢
         </h2>
         <p style={{ color: '#94A3B8', fontSize: '1.1rem', marginBottom: '1.5rem' }}>
-          Target sequence was: <strong style={{ color: '#00F2FE' }}>{scoreResult.targetNumber}</strong> (Your answer: {scoreResult.userInput})
+          Target sequence was: <strong style={{ color: '#38BDF8' }}>{scoreResult.targetNumber}</strong> (Your answer: {scoreResult.userInput})
         </p>
 
         <div style={{
-          backgroundColor: 'rgba(0, 0, 0, 0.4)',
+          backgroundColor: '#0B0E14',
           padding: '1.25rem',
           borderRadius: '16px',
-          border: '1px solid rgba(0, 242, 254, 0.3)',
+          border: '1px solid #263142',
           marginBottom: '1.75rem'
         }}>
-          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 800, fontFamily: 'var(--font-esports)' }}>RECALL SCORE</div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFD700', fontFamily: 'var(--font-esports)' }}>{scoreResult.score} / 100 PTS</div>
+          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 800 }}>RECALL SCORE</div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100 PTS</div>
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
@@ -188,8 +194,8 @@ const NumberRecall = () => {
             <RotateCcw size={18} />
             <span>PLAY AGAIN</span>
           </button>
-          <button onClick={() => navigate('/analysis')} className="btn-flame">
-            <span>ANALYZE TELEMETRY</span>
+          <button onClick={() => navigate('/dashboard')} className="btn-flame">
+            <span>DASHBOARD</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -201,9 +207,9 @@ const NumberRecall = () => {
     <div className="garden-card animate-fade-in" style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
       <div className="garden-card-header">
         <div>
-          <h2 style={{ fontSize: '1.6rem', color: '#F8FAFC', fontWeight: 900 }}>3D NUMBER RECALL CRYSTALS 🔢</h2>
+          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>3D DUAL-N-BACK & NUMBER RECALL 🔢</h2>
           <p style={{ fontSize: '0.95rem', color: '#94A3B8' }}>
-            {stage === 'memorize' ? 'MEMORIZE THE 3D NUMBER CRYSTAL SEQUENCE BELOW!' : 'ENTER THE 4-DIGIT SEQUENCE YOU RECALLED.'}
+            {stage === 'memorize' ? `MEMORIZE THE ${digitLength}-DIGIT SEQUENCE BELOW!` : `ENTER THE ${digitLength}-DIGIT SEQUENCE YOU RECALLED.`}
           </p>
         </div>
         <span className="badge badge-cyan">{stage === 'memorize' ? `HIDING IN ${countdown}s` : 'ENTER DIGITS'}</span>
@@ -214,10 +220,10 @@ const NumberRecall = () => {
         ref={mountRef}
         style={{
           width: '100%',
-          height: '240px',
+          height: '220px',
           borderRadius: '16px',
-          backgroundColor: '#090C15',
-          border: '1px solid rgba(0, 242, 254, 0.3)',
+          backgroundColor: '#0B0E14',
+          border: '1px solid rgba(56, 189, 248, 0.3)',
           margin: '1rem 0',
           position: 'relative'
         }}
@@ -225,13 +231,13 @@ const NumberRecall = () => {
 
       {stage === 'memorize' ? (
         <div style={{
-          backgroundColor: 'rgba(0, 242, 254, 0.1)',
-          border: '1px solid rgba(0, 242, 254, 0.4)',
+          backgroundColor: 'rgba(56, 189, 248, 0.1)',
+          border: '1px solid rgba(56, 189, 248, 0.4)',
           borderRadius: '16px',
           padding: '1.5rem',
           margin: '1rem 0'
         }}>
-          <div style={{ fontSize: '3.2rem', fontWeight: 900, letterSpacing: '0.6rem', color: '#00F2FE', fontFamily: 'var(--font-esports)' }}>
+          <div style={{ fontSize: '3rem', fontWeight: 900, letterSpacing: '0.5rem', color: '#38BDF8', fontFamily: 'var(--font-heading)' }}>
             {targetNumber}
           </div>
         </div>
@@ -241,17 +247,17 @@ const NumberRecall = () => {
             type="number"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Enter digits..."
+            placeholder={`Enter ${digitLength} digits...`}
             autoFocus
             style={{
               width: '100%',
               fontSize: '2rem',
               padding: '0.85rem',
               borderRadius: '14px',
-              border: '2px solid #00F2FE',
-              backgroundColor: '#090C15',
-              color: '#F8FAFC',
-              fontFamily: 'var(--font-esports)',
+              border: '2px solid #38BDF8',
+              backgroundColor: '#0B0E14',
+              color: '#FFFFFF',
+              fontFamily: 'var(--font-heading)',
               textAlign: 'center',
               outline: 'none',
               marginBottom: '1.25rem'

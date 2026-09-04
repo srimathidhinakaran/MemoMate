@@ -3,10 +3,11 @@ import * as THREE from 'three';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { sessionAPI } from '../services/api';
-import { Target, CheckCircle2, RotateCcw, ArrowRight, Award } from 'lucide-react';
+import { soundFx } from '../utils/soundEffects';
+import { Target, CheckCircle2, RotateCcw, ArrowRight } from 'lucide-react';
 
 const ThreeDTargetSearch = () => {
-  const { user, updateStateFromSession, speakText, voiceAssistance } = useAuth();
+  const { user, updateStateFromSession, speakText, voiceAssistance, t } = useAuth();
   const navigate = useNavigate();
   const mountRef = useRef(null);
 
@@ -15,7 +16,6 @@ const ThreeDTargetSearch = () => {
   const [isCompleted, setIsCompleted] = useState(false);
 
   const targetMeshRef = useRef(null);
-  const sceneRef = useRef(null);
   const roundRef = useRef(1);
   const startTimeRef = useRef(Date.now());
 
@@ -24,8 +24,7 @@ const ThreeDTargetSearch = () => {
     if (!currentMount) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xFDFBF7);
-    sceneRef.current = scene;
+    scene.background = new THREE.Color(0x0B0E14);
 
     const camera = new THREE.PerspectiveCamera(45, currentMount.clientWidth / currentMount.clientHeight, 0.1, 100);
     camera.position.set(0, 4, 9);
@@ -38,17 +37,14 @@ const ThreeDTargetSearch = () => {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xfff5e6, 1.2);
+    const dirLight = new THREE.DirectionalLight(0x38BDF8, 1.2);
     dirLight.position.set(5, 10, 5);
     scene.add(dirLight);
 
-    // Ground Plane
-    const groundGeo = new THREE.PlaneGeometry(12, 10);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0x58755E });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.position.y = -1;
-    scene.add(ground);
+    // Ground Grid Base
+    const gridHelper = new THREE.GridHelper(12, 10, 0x38BDF8, 0x1E2634);
+    gridHelper.position.y = -1;
+    scene.add(gridHelper);
 
     // Spawn 3D Distractor Objects & 1 Target Object
     const objectsGroup = new THREE.Group();
@@ -59,25 +55,27 @@ const ThreeDTargetSearch = () => {
         objectsGroup.remove(objectsGroup.children[0]);
       }
 
-      const targetIdx = Math.floor(Math.random() * 8);
+      const totalItems = 9;
+      const targetIdx = Math.floor(Math.random() * totalItems);
 
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < totalItems; i++) {
         const isTarget = i === targetIdx;
         const geo = isTarget
-          ? new THREE.DodecahedronGeometry(0.7)
-          : (i % 2 === 0 ? new THREE.BoxGeometry(0.9, 0.9, 0.9) : new THREE.CylinderGeometry(0.4, 0.4, 1.2, 16));
+          ? new THREE.IcosahedronGeometry(0.75, 1)
+          : (i % 2 === 0 ? new THREE.BoxGeometry(0.85, 0.85, 0.85) : new THREE.CylinderGeometry(0.4, 0.4, 1.2, 16));
 
         const mat = new THREE.MeshStandardMaterial({
-          color: isTarget ? 0xFFB74D : (i % 2 === 0 ? 0x7A66A3 : 0x80CBC4),
+          color: isTarget ? 0xFBBF24 : (i % 2 === 0 ? 0xC084FC : 0x34D399),
           roughness: isTarget ? 0.2 : 0.6,
-          emissive: isTarget ? 0xFF6F00 : 0x000000,
-          emissiveIntensity: isTarget ? 0.5 : 0
+          metalness: isTarget ? 0.8 : 0.2,
+          emissive: isTarget ? 0xFBBF24 : 0x000000,
+          emissiveIntensity: isTarget ? 0.6 : 0
         });
 
         const mesh = new THREE.Mesh(geo, mat);
-        const col = i % 4;
-        const row = Math.floor(i / 4);
-        mesh.position.set(-3.5 + col * 2.3, 0, -1.5 + row * 2.5);
+        const col = i % 3;
+        const row = Math.floor(i / 3);
+        mesh.position.set(-3 + col * 3, 0, -2 + row * 2.5);
         mesh.userData = { isTarget };
 
         if (isTarget) targetMeshRef.current = mesh;
@@ -103,19 +101,19 @@ const ThreeDTargetSearch = () => {
       if (intersects.length > 0) {
         const hit = intersects[0].object;
         if (hit.userData && hit.userData.isTarget) {
-          // Found Target!
+          soundFx.playSuccess();
           if (roundRef.current < 5) {
             roundRef.current += 1;
             setRound(roundRef.current);
             spawn3DObjects();
           } else {
-            // Complete Game
-            const timeSpent = Math.max(4, Math.round((Date.now() - startTimeRef.current) / 1000));
-            const score = Math.min(100, Math.max(50, 100 - (timeSpent - 8) * 3));
+            soundFx.playLevelUp();
+            const timeSpent = Math.max(3, Math.round((Date.now() - startTimeRef.current) / 1000));
+            const score = Math.min(100, Math.max(50, 100 - (timeSpent - 5) * 3));
 
             const sessionPayload = {
               userId: user?.id || user?._id,
-              activity: 'Attention Challenge',
+              activity: 'Target Precision Velocity',
               category: 'attention',
               difficulty: 'Medium',
               score,
@@ -130,9 +128,11 @@ const ThreeDTargetSearch = () => {
             setIsCompleted(true);
 
             if (voiceAssistance) {
-              speakText(`3D Attention Challenge complete! Score ${score}.`);
+              speakText(`Target Search complete! Score ${score}.`);
             }
           }
+        } else {
+          soundFx.playCardMismatch();
         }
       }
     };
@@ -181,36 +181,38 @@ const ThreeDTargetSearch = () => {
           width: 70,
           height: 70,
           borderRadius: '50%',
-          backgroundColor: '#FDF3F0',
+          backgroundColor: 'rgba(56, 189, 248, 0.15)',
           display: 'flex',
           alignItems: 'center',
           justify: 'center',
-          margin: '0 auto 1.25rem'
+          margin: '0 auto 1.25rem',
+          border: '1px solid #38BDF8'
         }}>
-          <CheckCircle2 size={44} color="#C87862" />
+          <CheckCircle2 size={44} color="#38BDF8" />
         </div>
 
-        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#1C3B2B' }}>
-          3D Attention Challenge Complete! 🎯
+        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#FFFFFF', fontWeight: 900 }}>
+          3D TARGET SEARCH COMPLETE! 🎯
         </h2>
 
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '1rem',
-          backgroundColor: '#F7F4EE',
+          backgroundColor: '#0B0E14',
           padding: '1.25rem',
-          borderRadius: '18px',
+          borderRadius: '16px',
+          border: '1px solid #263142',
           marginBottom: '1.75rem',
           textAlign: 'left'
         }}>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#7E9687', fontWeight: 600 }}>Attention Score</div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#C87862' }}>{scoreResult.score} / 100</div>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>Attention Score</div>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100</div>
           </div>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#7E9687', fontWeight: 600 }}>3D Search Time</div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#1C3B2B' }}>{scoreResult.timeSpent} sec</div>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>Search Time</div>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#38BDF8' }}>{scoreResult.timeSpent} sec</div>
           </div>
         </div>
 
@@ -219,9 +221,8 @@ const ThreeDTargetSearch = () => {
             <RotateCcw size={18} />
             <span>Play Again</span>
           </button>
-          <button onClick={() => navigate('/analysis')} className="btn-peach">
-            <Award size={18} />
-            <span>Analyse Performance</span>
+          <button onClick={() => navigate('/dashboard')} className="btn-flame">
+            <span>Dashboard</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -233,13 +234,13 @@ const ThreeDTargetSearch = () => {
     <div className="garden-card animate-fade-in" style={{ maxWidth: 750, margin: '0 auto', textAlign: 'center' }}>
       <div className="garden-card-header">
         <div>
-          <h2 style={{ fontSize: '1.6rem', color: '#1C3B2B' }}>3D Target Focus Search 🎯</h2>
-          <p style={{ fontSize: '0.95rem', color: '#536B5C' }}>
-            Find and click the glowing golden 3D Gem floating in the 3D Meadow!
+          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>3D Target Focus Search 🎯</h2>
+          <p style={{ fontSize: '0.95rem', color: '#94A3B8' }}>
+            Tap the glowing golden 3D Quantum Crystal in the matrix grid!
           </p>
         </div>
 
-        <span className="badge badge-peach">Round {round} / 5</span>
+        <span className="badge badge-cyan">Round {round} / 5</span>
       </div>
 
       {/* 3D WebGL Canvas Container */}
@@ -249,8 +250,8 @@ const ThreeDTargetSearch = () => {
           width: '100%',
           height: 380,
           borderRadius: '24px',
-          backgroundColor: '#F7F4EE',
-          border: '1.5px solid #E6E0D4',
+          backgroundColor: '#0B0E14',
+          border: '1px solid #263142',
           cursor: 'pointer',
           margin: '1rem 0',
           position: 'relative'

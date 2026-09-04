@@ -1,24 +1,24 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
-import { Gem, Sparkles, ShoppingBag, Check, ShieldCheck, Trees, Sprout, Cpu, Crown, Lock } from 'lucide-react';
+import { Gem, ShoppingBag, Check, ShieldCheck, Cpu, Crown, Zap } from 'lucide-react';
 
 const RewardShopCard = () => {
-  const { gems, unlockedItems, buyShopItem } = useAuth();
+  const { gems, unlockedItems, buyShopItem, t } = useAuth();
 
   const shopItems = [
     {
-      id: 'golden_sunflower',
-      title: 'Cyber Golden Sunflower',
-      desc: 'Unlocks dynamic glowing 3D golden sunflowers in your interactive Memory Garden.',
+      id: 'cyber_crystal',
+      title: 'Quantum Crystal Relic',
+      desc: 'Unlocks dynamic glowing 3D quantum crystals in your interactive Mind Matrix Sanctum.',
       cost: 50,
-      icon: Sprout,
-      category: '3D Garden Asset'
+      icon: Zap,
+      category: '3D Cyber Relic'
     },
     {
       id: 'ai_llama_booster',
-      title: 'Groq Llama-3 AI Crystal',
-      desc: 'Boosts cognitive analysis precision with instant Groq neural telemetry.',
+      title: 'Neural Core Booster',
+      desc: 'Boosts cognitive analysis precision with instant AI neural telemetry.',
       cost: 80,
       icon: Cpu,
       category: 'AI Telemetry Power-Up'
@@ -34,10 +34,10 @@ const RewardShopCard = () => {
     {
       id: 'heroic_crest',
       title: 'Heroic Memory Crest',
-      desc: 'Displays legendary Heroic golden rank aura on profile & global leaderboard.',
+      desc: 'Displays legendary Heroic rank aura on profile & global leaderboard.',
       cost: 120,
       icon: Crown,
-      category: 'Profile Cosmetic'
+      category: 'Profile Avatar'
     }
   ];
 
@@ -55,26 +55,25 @@ const RewardShopCard = () => {
   return (
     <div className="garden-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{
+          <div className="icon-box" style={{
             width: 44,
             height: 44,
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #00F2FE 0%, #FFD700 100%)',
-            display: 'flex',
+            background: 'linear-gradient(135deg, #38BDF8 0%, #FBBF24 100%)',
+            display: 'inline-flex',
             alignItems: 'center',
-            justify: 'center',
-            boxShadow: '0 0 15px rgba(0, 242, 254, 0.4)'
+            justify: 'center'
           }}>
-            <ShoppingBag size={24} color="#050B14" />
+            <ShoppingBag size={24} color="#0B0E14" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.25rem', color: '#FFFFFF', fontWeight: 800, margin: 0, fontFamily: 'var(--font-heading)' }}>
-              REWARDS & POWER-UPS
+            <h3 style={{ fontSize: '1.2rem', color: '#FFFFFF', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
+              {t('relicsShop').toUpperCase()}
             </h3>
-            <div style={{ fontSize: '0.8rem', color: '#9198A1', fontWeight: 600 }}>
-              REDEEM POINTS FOR 3D GARDEN PERKS & POWER-UPS
+            <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
+              REDEEM POINTS FOR POWER-UPS & CYBER AVATARS
             </div>
           </div>
         </div>
@@ -83,18 +82,17 @@ const RewardShopCard = () => {
           display: 'flex',
           alignItems: 'center',
           gap: '0.4rem',
-          backgroundColor: 'rgba(0, 242, 254, 0.12)',
+          backgroundColor: 'rgba(56, 189, 248, 0.12)',
           padding: '0.45rem 0.95rem',
           borderRadius: '10px',
-          border: '1px solid rgba(0, 242, 254, 0.4)',
+          border: '1px solid rgba(56, 189, 248, 0.4)',
           fontWeight: 800,
-          fontFamily: 'var(--font-esports)',
-          color: '#00F2FE',
-          fontSize: '0.9rem',
-          boxShadow: '0 0 12px rgba(0, 242, 254, 0.2)'
+          fontFamily: 'var(--font-heading)',
+          color: '#38BDF8',
+          fontSize: '0.9rem'
         }}>
-          <Gem size={16} fill="#00F2FE" />
-          <span>{gems || 140} GEMS</span>
+          <Gem size={16} fill="#38BDF8" />
+          <span>{gems || 10} PTS</span>
         </div>
       </div>
 
@@ -108,15 +106,14 @@ const RewardShopCard = () => {
             <div
               key={item.id}
               style={{
-                backgroundColor: isUnlocked ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.05)',
-                border: isUnlocked ? '1px solid rgba(0, 230, 118, 0.3)' : '1px solid rgba(0, 242, 254, 0.2)',
+                backgroundColor: isUnlocked ? 'rgba(52, 211, 153, 0.05)' : '#0B0E14',
+                border: isUnlocked ? '1px solid rgba(52, 211, 153, 0.3)' : '1px solid #263142',
                 borderRadius: '16px',
                 padding: '1.1rem',
                 display: 'flex',
                 flexDirection: 'column',
                 justify: 'space-between',
-                gap: '0.85rem',
-                transition: 'all 0.25s ease'
+                gap: '0.85rem'
               }}
             >
               <div>
@@ -129,18 +126,17 @@ const RewardShopCard = () => {
                     alignItems: 'center',
                     gap: '0.3rem',
                     fontWeight: 800,
-                    fontFamily: 'var(--font-esports)',
-                    color: '#00F2FE',
-                    fontSize: '0.9rem'
+                    color: '#38BDF8',
+                    fontSize: '0.88rem'
                   }}>
-                    <Gem size={14} fill="#00F2FE" />
+                    <Gem size={14} fill="#38BDF8" />
                     <span>{item.cost}</span>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.3rem 0' }}>
-                  <Icon size={20} color="#FFD700" />
-                  <h4 style={{ fontSize: '1.05rem', color: '#F8FAFC', fontWeight: 800, margin: 0 }}>
+                  <Icon size={20} color="#FBBF24" />
+                  <h4 style={{ fontSize: '1rem', color: '#FFFFFF', fontWeight: 800, margin: 0 }}>
                     {item.title}
                   </h4>
                 </div>
@@ -152,13 +148,12 @@ const RewardShopCard = () => {
 
               {isUnlocked ? (
                 <div style={{
-                  backgroundColor: 'rgba(0, 230, 118, 0.15)',
-                  color: '#00E676',
-                  border: '1px solid rgba(0, 230, 118, 0.4)',
+                  backgroundColor: 'rgba(52, 211, 153, 0.15)',
+                  color: '#34D399',
+                  border: '1px solid rgba(52, 211, 153, 0.4)',
                   padding: '0.5rem',
                   borderRadius: '10px',
                   fontWeight: 800,
-                  fontFamily: 'var(--font-esports)',
                   fontSize: '0.8rem',
                   textAlign: 'center',
                   display: 'flex',

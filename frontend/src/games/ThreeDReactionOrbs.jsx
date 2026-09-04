@@ -3,18 +3,16 @@ import * as THREE from 'three';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { sessionAPI } from '../services/api';
-import { Zap, CheckCircle2, RotateCcw, ArrowRight, Award } from 'lucide-react';
+import { soundFx } from '../utils/soundEffects';
+import { Zap, CheckCircle2, RotateCcw, ArrowRight } from 'lucide-react';
 
 const ThreeDReactionOrbs = () => {
-  const { user, updateStateFromSession, speakText, voiceAssistance } = useAuth();
+  const { user, updateStateFromSession, speakText, voiceAssistance, t } = useAuth();
   const navigate = useNavigate();
   const mountRef = useRef(null);
 
-  const [score, setScore] = useState(0);
-  const [reactionMs, setReactionMs] = useState(null);
-  const [gameState, setGameState] = useState('idle'); // 'idle' | 'waiting' | 'glow' | 'done'
-  const [submitting, setSubmitting] = useState(false);
   const [scoreResult, setScoreResult] = useState(null);
+  const [gameState, setGameState] = useState('idle'); // 'idle' | 'waiting' | 'glow' | 'done'
 
   const targetMeshRef = useRef(null);
   const glowTimeRef = useRef(null);
@@ -25,7 +23,7 @@ const ThreeDReactionOrbs = () => {
     if (!currentMount) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xFDFBF7);
+    scene.background = new THREE.Color(0x0B0E14);
 
     const camera = new THREE.PerspectiveCamera(50, currentMount.clientWidth / currentMount.clientHeight, 0.1, 100);
     camera.position.set(0, 0, 7);
@@ -37,17 +35,17 @@ const ThreeDReactionOrbs = () => {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0xffb74d, 1.5, 20);
+    const pointLight = new THREE.PointLight(0x38BDF8, 2, 20);
     pointLight.position.set(2, 3, 4);
     scene.add(pointLight);
 
     // 3D Target Orb Sphere
     const orbGeo = new THREE.SphereGeometry(1.4, 32, 32);
     const orbMat = new THREE.MeshStandardMaterial({
-      color: 0x7C9A82,
+      color: 0x222B3B,
       roughness: 0.2,
-      metalness: 0.3,
-      emissive: 0x1C3B2B,
+      metalness: 0.8,
+      emissive: 0x38BDF8,
       emissiveIntensity: 0.2
     });
     const orb = new THREE.Mesh(orbGeo, orbMat);
@@ -58,7 +56,7 @@ const ThreeDReactionOrbs = () => {
     const decGroup = new THREE.Group();
     for (let i = 0; i < 6; i++) {
       const smallGeo = new THREE.SphereGeometry(0.3, 16, 16);
-      const smallMat = new THREE.MeshStandardMaterial({ color: 0xB8A7D9 });
+      const smallMat = new THREE.MeshStandardMaterial({ color: 0xC084FC });
       const smallMesh = new THREE.Mesh(smallGeo, smallMat);
       const angle = (i / 6) * Math.PI * 2;
       smallMesh.position.set(Math.cos(angle) * 3, Math.sin(angle) * 3, 0);
@@ -100,25 +98,27 @@ const ThreeDReactionOrbs = () => {
   }, []);
 
   const start3DTest = () => {
+    soundFx.playClick();
     setGameState('waiting');
-    setReactionMs(null);
 
     if (targetMeshRef.current) {
-      targetMeshRef.current.material.color.setHex(0x7C9A82);
-      targetMeshRef.current.material.emissive.setHex(0x1C3B2B);
+      targetMeshRef.current.material.color.setHex(0x222B3B);
+      targetMeshRef.current.material.emissive.setHex(0x38BDF8);
+      targetMeshRef.current.material.emissiveIntensity = 0.2;
     }
 
-    const delay = 1800 + Math.random() * 2500;
+    const delay = 1200 + Math.random() * 2000;
     timerRef.current = setTimeout(() => {
       setGameState('glow');
       glowTimeRef.current = Date.now();
 
       if (targetMeshRef.current) {
-        targetMeshRef.current.material.color.setHex(0xFFB74D); // Golden Glow
-        targetMeshRef.current.material.emissive.setHex(0xFF6F00);
-        targetMeshRef.current.material.emissiveIntensity = 0.8;
+        targetMeshRef.current.material.color.setHex(0xFBBF24);
+        targetMeshRef.current.material.emissive.setHex(0xFBBF24);
+        targetMeshRef.current.material.emissiveIntensity = 0.9;
       }
 
+      soundFx.playSuccess();
       if (voiceAssistance) speakText("TAP THE 3D ORB NOW!");
     }, delay);
   };
@@ -126,18 +126,18 @@ const ThreeDReactionOrbs = () => {
   const handleOrbClick = async () => {
     if (gameState === 'waiting') {
       clearTimeout(timerRef.current);
+      soundFx.playCardMismatch();
       alert("Wait for the 3D Orb to glow golden before tapping!");
       setGameState('idle');
     } else if (gameState === 'glow') {
       const ms = Date.now() - glowTimeRef.current;
-      setReactionMs(ms);
+      soundFx.playLevelUp();
 
-      const calculatedScore = Math.max(50, Math.min(100, Math.round(100 - (ms - 240) * 0.1)));
+      const calculatedScore = Math.max(50, Math.min(100, Math.round(100 - (ms - 220) * 0.1)));
 
-      setSubmitting(true);
       const sessionPayload = {
         userId: user?.id || user?._id,
-        activity: '3D Reaction Orbs',
+        activity: 'Quantum Reflex Orbs',
         category: 'reaction',
         difficulty: 'Medium',
         score: calculatedScore,
@@ -146,17 +146,12 @@ const ThreeDReactionOrbs = () => {
 
       const result = await sessionAPI.createSession(sessionPayload);
       updateStateFromSession(result);
-      setSubmitting(false);
 
       setScoreResult({ score: calculatedScore, ms });
       setGameState('done');
 
       if (targetMeshRef.current) {
-        targetMeshRef.current.material.color.setHex(0x58755E);
-      }
-
-      if (voiceAssistance) {
-        speakText(`3D Reaction complete! Speed ${ms} milliseconds.`);
+        targetMeshRef.current.material.color.setHex(0x34D399);
       }
     }
   };
@@ -168,36 +163,38 @@ const ThreeDReactionOrbs = () => {
           width: 70,
           height: 70,
           borderRadius: '50%',
-          backgroundColor: '#EBF6F8',
+          backgroundColor: 'rgba(56, 189, 248, 0.15)',
           display: 'flex',
           alignItems: 'center',
           justify: 'center',
-          margin: '0 auto 1.25rem'
+          margin: '0 auto 1.25rem',
+          border: '1px solid #38BDF8'
         }}>
-          <CheckCircle2 size={44} color="#3B7A8C" />
+          <CheckCircle2 size={44} color="#38BDF8" />
         </div>
 
-        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#1C3B2B' }}>
-          3D Reaction Test Complete! ⚡
+        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#FFFFFF', fontWeight: 900 }}>
+          3D REACTION TEST COMPLETE! ⚡
         </h2>
 
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '1rem',
-          backgroundColor: '#F7F4EE',
+          backgroundColor: '#0B0E14',
           padding: '1.25rem',
-          borderRadius: '18px',
+          borderRadius: '16px',
+          border: '1px solid #263142',
           marginBottom: '1.75rem',
           textAlign: 'left'
         }}>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#7E9687', fontWeight: 600 }}>Reaction Score</div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#3B7A8C' }}>{scoreResult.score} / 100</div>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>Reaction Score</div>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100</div>
           </div>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#7E9687', fontWeight: 600 }}>3D Spatial Speed</div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#1C3B2B' }}>{scoreResult.ms} ms</div>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>Spatial Speed</div>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#38BDF8' }}>{scoreResult.ms} ms</div>
           </div>
         </div>
 
@@ -206,9 +203,8 @@ const ThreeDReactionOrbs = () => {
             <RotateCcw size={18} />
             <span>Play Again</span>
           </button>
-          <button onClick={() => navigate('/analysis')} className="btn-peach">
-            <Award size={18} />
-            <span>Analyse Performance</span>
+          <button onClick={() => navigate('/dashboard')} className="btn-flame">
+            <span>Dashboard</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -218,8 +214,8 @@ const ThreeDReactionOrbs = () => {
 
   return (
     <div className="garden-card animate-fade-in" style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
-      <h2 style={{ fontSize: '1.6rem', color: '#1C3B2B', marginBottom: '0.4rem' }}>3D Reaction Orbs ⚡</h2>
-      <p style={{ color: '#536B5C', marginBottom: '1.25rem' }}>
+      <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.4rem' }}>Quantum Speed Reflex Orbs ⚡</h2>
+      <p style={{ color: '#94A3B8', marginBottom: '1.25rem' }}>
         Press START, then tap the center 3D sphere as soon as it glows golden!
       </p>
 
@@ -231,8 +227,8 @@ const ThreeDReactionOrbs = () => {
           width: '100%',
           height: 320,
           borderRadius: '24px',
-          backgroundColor: gameState === 'glow' ? '#FDF3F0' : '#F7F4EE',
-          border: gameState === 'glow' ? '3px solid #C87862' : '1.5px solid #E6E0D4',
+          backgroundColor: '#0B0E14',
+          border: gameState === 'glow' ? '3px solid #FBBF24' : '1px solid #263142',
           cursor: gameState === 'glow' || gameState === 'waiting' ? 'pointer' : 'default',
           margin: '1rem 0',
           position: 'relative',
@@ -249,13 +245,13 @@ const ThreeDReactionOrbs = () => {
         )}
 
         {gameState === 'waiting' && (
-          <div style={{ position: 'absolute', bottom: 20, fontWeight: 700, color: '#536B5C', zIndex: 10 }}>
+          <div style={{ position: 'absolute', bottom: 20, fontWeight: 700, color: '#94A3B8', zIndex: 10 }}>
             Wait for 3D Orb to glow golden...
           </div>
         )}
 
         {gameState === 'glow' && (
-          <div style={{ position: 'absolute', bottom: 20, fontWeight: 800, color: '#C87862', fontSize: '1.2rem', zIndex: 10 }}>
+          <div style={{ position: 'absolute', bottom: 20, fontWeight: 800, color: '#FBBF24', fontSize: '1.2rem', zIndex: 10 }}>
             TAP THE GOLDEN 3D ORB NOW! ⚡
           </div>
         )}

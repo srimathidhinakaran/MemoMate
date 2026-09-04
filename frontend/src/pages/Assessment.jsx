@@ -6,50 +6,82 @@ import ThreeDReactionOrbs from '../games/ThreeDReactionOrbs';
 import NumberRecall from '../games/NumberRecall';
 import PatternRecall from '../games/PatternRecall';
 import WordRecall from '../games/WordRecall';
+import AttentionChallenge from '../games/AttentionChallenge';
+import MemoryMatch from '../games/MemoryMatch';
+import ReactionTest from '../games/ReactionTest';
 import ThreeMemoryGardenCanvas from '../components/ThreeMemoryGardenCanvas';
 import { soundFx } from '../utils/soundEffects';
-import { Brain, Target, RotateCcw, Zap, BookOpen, Layers, ArrowLeft, Box, Sparkles, Gamepad2 } from 'lucide-react';
+import { Brain, Target, RotateCcw, Zap, BookOpen, Layers, ArrowLeft, Box, Gamepad2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Assessment = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentGame = searchParams.get('game');
+  const { t } = useAuth();
 
   const games = [
     {
       id: '3d-memory',
-      title: '3D Memory Match',
-      category: '3D Spatial Memory',
+      title: 'Spatial Node Matrix',
+      category: '3D Memory Matrix',
       icon: Box,
       color: '#38BDF8',
-      desc: 'Interactive 3D Three.js WebGL Wooden Block Flip game with 3D color matching.',
-      badge: '3D WEBGL'
+      desc: 'Interactive 3D Three.js WebGL Quantum Node flip game with procedural color pairs.',
+      badge: 'DYNAMIC 3D'
     },
     {
       id: '3d-target',
-      title: '3D Focus Search',
-      category: '3D Visual Focus',
+      title: '3D Target Focus Search',
+      category: 'Target Precision',
       icon: Target,
       color: '#FB923C',
-      desc: 'Interactive 3D Meadow Target Search using Three.js raycasting to find target gems.',
-      badge: '3D WEBGL'
+      desc: 'Interactive 3D Target Search using Three.js raycasting to find target quantum crystals.',
+      badge: 'DYNAMIC 3D'
     },
     {
       id: '3d-reaction',
-      title: '3D Reaction Orbs',
-      category: '3D Spatial Speed',
+      title: 'Quantum Speed Reflex',
+      category: 'Reaction Speed',
       icon: Zap,
       color: '#FBBF24',
-      desc: 'Orbiting WebGL 3D Target Orbs measuring real-time 3D spatial reaction speed in milliseconds.',
-      badge: '3D WEBGL'
+      desc: 'Orbiting WebGL 3D Target Orbs measuring real-time spatial reaction speed in milliseconds.',
+      badge: 'DYNAMIC 3D'
+    },
+    {
+      id: 'focus-reflex',
+      title: 'Focus Reflex & Math Matrix',
+      category: 'Executive Focus',
+      icon: Zap,
+      color: '#34D399',
+      desc: 'Procedural focus and mental calculation challenges scaling dynamically with your level.',
+      badge: 'PROCEDURAL'
+    },
+    {
+      id: 'card-match',
+      title: 'Card Memory Matrix',
+      category: 'Visual Memory',
+      icon: Brain,
+      color: '#C084FC',
+      desc: 'Procedurally generated card matching game to train visual recall and concentration.',
+      badge: 'PROCEDURAL'
+    },
+    {
+      id: 'speed-reaction',
+      title: 'Speed Reflex Reaction Test',
+      category: 'Motor Speed',
+      icon: Zap,
+      color: '#FB923C',
+      desc: 'Motor reaction speed test measuring response velocity in milliseconds.',
+      badge: 'PROCEDURAL'
     },
     {
       id: 'number',
-      title: '3D Number Crystals',
+      title: '3D Dual-N-Back & Number Recall',
       category: 'Sequence Recall',
       icon: RotateCcw,
       color: '#C084FC',
-      desc: 'Floating 3D Three.js WebGL numbered crystal dodecahedrons for sequence memorization.',
-      badge: '3D WEBGL'
+      desc: 'Procedural digit sequence memorization scaling from 3 to 10 digits based on progress.',
+      badge: 'DYNAMIC 3D'
     },
     {
       id: 'pattern',
@@ -58,16 +90,16 @@ const Assessment = () => {
       icon: Layers,
       color: '#34D399',
       desc: '3D grid matrix of illuminated WebGL cubes to reinforce spatial pattern recognition.',
-      badge: '3D WEBGL'
+      badge: 'DYNAMIC 3D'
     },
     {
       id: 'word',
-      title: '3D Cyber Word Spheres',
-      category: 'Regional Memory',
+      title: '3D Categorical Word Recall',
+      category: 'Categorical Recall',
       icon: BookOpen,
       color: '#38BDF8',
-      desc: 'Revolving 3D Three.js WebGL word spheres for regional garden item recall.',
-      badge: '3D WEBGL'
+      desc: 'Revolving 3D Three.js WebGL word spheres for multi-category item recall.',
+      badge: 'DYNAMIC 3D'
     }
   ];
 
@@ -86,7 +118,10 @@ const Assessment = () => {
     'reaction': '3d-reaction',
     '3d-reaction': '3d-reaction',
     'pattern': 'pattern',
-    'word': 'word'
+    'word': 'word',
+    'focus-reflex': 'focus-reflex',
+    'card-match': 'card-match',
+    'speed-reaction': 'speed-reaction'
   };
 
   const activeGameKey = currentGame ? (gameAliasMap[currentGame] || currentGame) : null;
@@ -112,6 +147,9 @@ const Assessment = () => {
         {activeGameKey === 'number' && <NumberRecall />}
         {activeGameKey === 'pattern' && <PatternRecall />}
         {activeGameKey === 'word' && <WordRecall />}
+        {activeGameKey === 'focus-reflex' && <AttentionChallenge />}
+        {activeGameKey === 'card-match' && <MemoryMatch />}
+        {activeGameKey === 'speed-reaction' && <ReactionTest />}
       </div>
     );
   }
@@ -120,24 +158,24 @@ const Assessment = () => {
     <div className="page-view animate-fade-in" style={{ gap: '1.5rem' }}>
       <div className="garden-card">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
-          <div className="icon-box" style={{ width: 44, height: 44, borderRadius: '12px', backgroundColor: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.35)' }}>
+          <div className="icon-box" style={{ width: 44, height: 44, borderRadius: '12px', backgroundColor: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.35)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
             <Brain size={26} color="#38BDF8" />
           </div>
-          <h1 style={{ fontSize: '1.9rem', color: '#FFFFFF', fontWeight: 800, fontFamily: 'var(--font-heading)', margin: 0 }}>
-            3D COGNITIVE EXERCISE HUB
+          <h1 style={{ fontSize: '1.9rem', color: '#FFFFFF', fontWeight: 900, fontFamily: 'var(--font-heading)', margin: 0 }}>
+            {t('navExercises').toUpperCase()}
           </h1>
         </div>
-        <p style={{ color: '#9198A1', fontSize: '0.95rem', lineHeight: 1.5 }}>
-          Select a 100% 3D Three.js WebGL interactive exercise below. Real-time performance metrics automatically update your AI analysis & MongoDB database.
+        <p style={{ color: '#94A3B8', fontSize: '0.95rem', lineHeight: 1.5 }}>
+          Select a dynamic, non-repetitive cognitive exercise below. All games feature procedural generation and zero delay execution.
         </p>
       </div>
 
-      {/* Interactive 3D Memory Garden Canvas */}
+      {/* Interactive 3D Mind Matrix Canvas */}
       <ThreeMemoryGardenCanvas />
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
         gap: '1.4rem'
       }}>
         {games.map((g) => {
@@ -158,14 +196,16 @@ const Assessment = () => {
               </span>
 
               <div>
-                {/* 100% Dead-Centered Icon Box */}
                 <div className="icon-box" style={{
                   width: 48,
                   height: 48,
                   borderRadius: '14px',
                   backgroundColor: 'rgba(56, 189, 248, 0.15)',
                   border: `1px solid ${g.color}`,
-                  marginBottom: '1rem'
+                  marginBottom: '1rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justify: 'center'
                 }}>
                   <Icon size={24} color={g.color} />
                 </div>
@@ -174,11 +214,11 @@ const Assessment = () => {
                   {g.category}
                 </div>
 
-                <h3 style={{ fontSize: '1.3rem', color: '#FFFFFF', fontWeight: 800, marginBottom: '0.4rem', fontFamily: 'var(--font-heading)' }}>
+                <h3 style={{ fontSize: '1.3rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.4rem', fontFamily: 'var(--font-heading)' }}>
                   {g.title}
                 </h3>
 
-                <p style={{ color: '#9198A1', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '1.4rem' }}>
+                <p style={{ color: '#94A3B8', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '1.4rem' }}>
                   {g.desc}
                 </p>
               </div>
@@ -189,7 +229,7 @@ const Assessment = () => {
                 style={{ width: '100%', padding: '0.85rem' }}
               >
                 <Gamepad2 size={18} />
-                <span>START 3D GAME</span>
+                <span>START GAME</span>
               </button>
             </div>
           );

@@ -3,7 +3,7 @@ const router = express.Router();
 const Gamification = require('../models/Gamification');
 const User = require('../models/User');
 
-// GET /api/gamification/leaderboard
+// GET /api/gamification/leaderboard - Real MongoDB dynamic leaderboard
 router.get('/leaderboard', async (req, res) => {
   try {
     const list = await Gamification.find().sort({ xpPoints: -1 }).limit(10);
@@ -20,12 +20,12 @@ router.get('/leaderboard', async (req, res) => {
         return {
           rank: idx + 1,
           userId: item.userId,
-          name: u ? u.name : 'Community Member',
+          name: u ? u.name : 'Cognitive Member',
           age: u ? u.age : 68,
           xpPoints: item.xpPoints,
           currentStreak: item.currentStreak,
           league: item.league || 'Emerald League',
-          avatar: u?.role === 'caregiver' ? '👨‍⚕️' : '🌸'
+          avatar: u?.role === 'caregiver' ? '👨‍⚕️' : '⚡'
         };
       });
 
@@ -43,22 +43,22 @@ router.get('/:userId', async (req, res) => {
   try {
     let doc = await Gamification.findOne({ userId: req.params.userId });
     if (!doc) {
-      doc = {
+      doc = await Gamification.create({
         userId: req.params.userId,
         xpPoints: 0,
-        gems: 0,
+        gems: 10,
         level: 1,
-        currentStreak: 1,
-        highestStreak: 1,
+        currentStreak: 0,
+        highestStreak: 0,
         streakFreezeAvailable: true,
         league: 'Emerald League',
         leagueRank: 1,
         unlockedBadges: [],
-        unlockedGardenItems: [],
+        unlockedGardenItems: ['cyber_crystal'],
         dailyQuests: [
-          { id: 'quest_1', title: 'Complete 2 Cognitive Sessions', target: 2, current: 0, rewardXp: 50, rewardGems: 15, completed: false },
-          { id: 'quest_2', title: 'Score over 80 in 3D Focus', target: 1, current: 0, rewardXp: 75, rewardGems: 25, completed: false },
-          { id: 'quest_3', title: 'Maintain your Daily Streak', target: 1, current: 0, rewardXp: 40, rewardGems: 10, completed: false }
+          { id: 'quest_1', title: 'Complete 2 Cognitive Missions', target: 2, current: 0, rewardXp: 50, rewardGems: 15, completed: false },
+          { id: 'quest_2', title: 'Score over 80 in Focus Reflex', target: 1, current: 0, rewardXp: 75, rewardGems: 25, completed: false },
+          { id: 'quest_3', title: 'Maintain your Daily Workout Streak', target: 1, current: 0, rewardXp: 40, rewardGems: 10, completed: false }
         ],
         weeklyHistory: [
           { day: 'Mon', active: false },
@@ -69,7 +69,7 @@ router.get('/:userId', async (req, res) => {
           { day: 'Sat', active: false },
           { day: 'Sun', active: false }
         ]
-      };
+      });
     }
     res.json(doc);
   } catch (err) {
@@ -83,11 +83,11 @@ router.post('/record-session', async (req, res) => {
     const { userId, score } = req.body;
     let doc = await Gamification.findOne({ userId });
     if (!doc) {
-      doc = new Gamification({ userId });
+      doc = new Gamification({ userId, currentStreak: 0 });
     }
     
     const gainedXp = Math.round((score || 80) * 1.5);
-    const gainedGems = Math.round((score || 80) * 0.2);
+    const gainedGems = Math.round((score || 80) * 0.25);
     
     doc.xpPoints += gainedXp;
     doc.gems += gainedGems;

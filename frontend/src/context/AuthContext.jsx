@@ -1,12 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI, cognitiveAPI, recommendationAPI, gardenAPI } from '../services/api';
-
+import { authAPI, cognitiveAPI, recommendationAPI, gardenAPI, gamificationAPI } from '../services/api';
 import { NER_TRANSLATIONS } from '../utils/nerLanguages';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  // Initialize user strictly from localStorage (purge old mock tokens)
+  // Initialize user strictly from localStorage
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('memomate_user');
     const savedToken = localStorage.getItem('memomate_token');
@@ -31,7 +30,7 @@ export const AuthProvider = ({ children }) => {
   // Audio / Voice Assistance toggle
   const [voiceAssistance, setVoiceAssistance] = useState(false);
 
-  // NER Language state: 'en' | 'as' | 'bn' | 'mni' | 'kha' | 'hi'
+  // Language state: defaults to 'en'
   const [language, setLanguage] = useState(() => localStorage.getItem('memomate_language') || 'en');
 
   const updateLanguage = (langCode) => {
@@ -44,24 +43,25 @@ export const AuthProvider = ({ children }) => {
     return dict[key] || NER_TRANSLATIONS.en[key] || key;
   };
 
-  // Dynamic Today Streak Engine relative to real-time Date
-  const todayStr = new Date().toDateString();
+  // Duolingo-Style Dynamic Streak Engine (Initial Streak = 0)
+  const todayStr = new Date().toISOString().split('T')[0];
   const lastCheckin = localStorage.getItem('memomate_last_checkin_date');
 
   const [streak, setStreak] = useState(() => {
-    const savedStreak = Number(localStorage.getItem('memomate_streak'));
-    if (!savedStreak) return 1;
+    const savedStreak = localStorage.getItem('memomate_streak');
+    if (savedStreak === null) return 0; // Default to 0 initially
+    const val = Number(savedStreak);
     
     if (lastCheckin) {
       const lastDate = new Date(lastCheckin);
-      const todayDate = new Date();
-      const diffTime = Math.abs(todayDate - lastDate);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const todayDate = new Date(todayStr);
+      const diffTime = todayDate - lastDate;
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
       
-      // If missed more than 1 day, reset streak to 1
-      if (diffDays > 2) return 1;
+      // If missed more than 1 day, reset streak to 0
+      if (diffDays > 1) return 0;
     }
-    return savedStreak;
+    return val;
   });
 
   const [highestStreak, setHighestStreak] = useState(() => Number(localStorage.getItem('memomate_highest_streak')) || streak);
@@ -81,27 +81,27 @@ export const AuthProvider = ({ children }) => {
   const [league, setLeague] = useState('Emerald League');
   const [unlockedItems, setUnlockedItems] = useState(() => {
     const saved = localStorage.getItem('memomate_unlocked_items');
-    return saved ? JSON.parse(saved) : ['golden_sunflower'];
+    return saved ? JSON.parse(saved) : ['cyber_crystal'];
   });
 
   const [dailyQuests, setDailyQuests] = useState([
     { id: 'quest_1', title: 'Complete 2 Cognitive Missions', target: 2, current: 0, rewardXp: 50, rewardGems: 15, completed: false },
-    { id: 'quest_2', title: 'Score over 80 in 3D Focus', target: 1, current: 0, rewardXp: 75, rewardGems: 25, completed: false },
-    { id: 'quest_3', title: 'Maintain your Daily Workout Streak', target: 1, current: 1, rewardXp: 40, rewardGems: 10, completed: true }
+    { id: 'quest_2', title: 'Score over 80 in Focus Reflex', target: 1, current: 0, rewardXp: 75, rewardGems: 25, completed: false },
+    { id: 'quest_3', title: 'Maintain your Daily Workout Streak', target: 1, current: streak > 0 ? 1 : 0, rewardXp: 40, rewardGems: 10, completed: streak > 0 }
   ]);
   
   const [recentScoreToast, setRecentScoreToast] = useState(null);
   const [activeRewardModal, setActiveRewardModal] = useState(null);
 
-  // Global Cognitive State
+  // Global Cognitive Performance State
   const [profile, setProfile] = useState(() => {
     const savedProf = localStorage.getItem('memomate_profile');
     return savedProf ? JSON.parse(savedProf) : {
-      memoryScore: 78,
-      attentionScore: 68,
-      recallScore: 74,
-      reactionScore: 71,
-      overallScore: 73
+      memoryScore: 70,
+      attentionScore: 70,
+      recallScore: 70,
+      reactionScore: 70,
+      overallScore: 70
     };
   });
 
@@ -111,7 +111,7 @@ export const AuthProvider = ({ children }) => {
       weakArea: 'attention',
       recommendedActivity: '3D Focus Search 🎯',
       difficulty: 'Medium',
-      reason: 'Your recent attention score is lower compared with your other measured cognitive areas. We recommend starting a 3D Focus Search.'
+      reason: 'Complete focus training to evaluate your attention performance metrics.'
     };
   });
 
@@ -119,15 +119,15 @@ export const AuthProvider = ({ children }) => {
     const savedGdn = localStorage.getItem('memomate_garden');
     return savedGdn ? JSON.parse(savedGdn) : {
       plants: 1,
-      flowers: 2,
-      trees: 1,
+      flowers: 1,
+      trees: 0,
       streak: streak,
-      totalActivities: 1
+      totalActivities: 0
     };
   });
 
   const level = Math.floor(xpPoints / 300) + 1;
-  const levelTitle = level === 1 ? 'Cognitive Novice 🌱' : (level === 2 ? 'Memory Explorer 🌸' : (level === 3 ? 'Focus Master 🌳' : (level === 4 ? 'Mind Master ⚡' : 'Cognitive Legend 👑')));
+  const levelTitle = level === 1 ? 'Cognitive Initiate ⚡' : (level === 2 ? 'Focus Explorer 🛡️' : (level === 3 ? 'Memory Master 🧠' : (level === 4 ? 'Mind Legend 👑' : 'Grandmaster Supreme 🌌')));
 
   useEffect(() => {
     document.documentElement.className = fontSize;
@@ -181,6 +181,22 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem('memomate_garden', JSON.stringify(res));
         }
       });
+      gamificationAPI.getGamification(userId).then((res) => {
+        if (res) {
+          if (res.currentStreak !== undefined) {
+            setStreak(res.currentStreak);
+            localStorage.setItem('memomate_streak', res.currentStreak);
+          }
+          if (res.xpPoints !== undefined) {
+            setXpPoints(res.xpPoints);
+            localStorage.setItem('memomate_xp', res.xpPoints);
+          }
+          if (res.gems !== undefined) {
+            setGems(res.gems);
+            localStorage.setItem('memomate_gems', res.gems);
+          }
+        }
+      });
     }
   }, [user]);
 
@@ -206,11 +222,15 @@ export const AuthProvider = ({ children }) => {
       setToken(data.token);
       localStorage.setItem('memomate_token', data.token);
       localStorage.setItem('memomate_user', JSON.stringify(data.user));
-      // Reset XP to 0 for fresh account
+      // Reset XP to 0 & streak to 0 for brand new account
       setXpPoints(0);
       setGems(10);
+      setStreak(0);
+      setHighestStreak(0);
       localStorage.setItem('memomate_xp', '0');
       localStorage.setItem('memomate_gems', '10');
+      localStorage.setItem('memomate_streak', '0');
+      localStorage.setItem('memomate_highest_streak', '0');
       return data;
     } finally {
       setLoading(false);
@@ -241,9 +261,32 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('memomate_garden', JSON.stringify(sessionResult.garden));
     }
 
+    // Dynamic Duolingo Streak Logic
+    let newStreak = streak;
+    if (lastCheckin !== todayStr) {
+      if (streak === 0) {
+        newStreak = 1;
+      } else {
+        const lastDate = new Date(lastCheckin);
+        const todayDate = new Date(todayStr);
+        const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+        if (diffDays === 1) {
+          newStreak = streak + 1;
+        } else {
+          newStreak = 1;
+        }
+      }
+      setStreak(newStreak);
+      const h = Math.max(newStreak, highestStreak);
+      setHighestStreak(h);
+      localStorage.setItem('memomate_streak', newStreak);
+      localStorage.setItem('memomate_last_checkin_date', todayStr);
+      localStorage.setItem('memomate_highest_streak', h);
+    }
+
     // Dynamic XP & Gems Calculation
     const earnedScore = sessionResult.session?.score || 85;
-    const streakBonusMultiplier = streak >= 5 ? 1.25 : 1.0;
+    const streakBonusMultiplier = newStreak >= 3 ? 1.25 : 1.0;
     const gainedXp = Math.round(earnedScore * 1.5 * streakBonusMultiplier);
     const gainedGems = Math.round(earnedScore * 0.25);
     
@@ -258,43 +301,50 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('memomate_xp', newXp);
     localStorage.setItem('memomate_gems', newGems);
 
-    // Update streak for today
-    if (lastCheckin !== todayStr) {
-      const newStreak = streak + 1;
-      setStreak(newStreak);
-      if (newStreak > highestStreak) setHighestStreak(newStreak);
-      localStorage.setItem('memomate_streak', newStreak);
-      localStorage.setItem('memomate_last_checkin_date', todayStr);
-      localStorage.setItem('memomate_highest_streak', Math.max(newStreak, highestStreak));
-    }
+    // Update quests
+    setDailyQuests((prev) =>
+      prev.map((q) => {
+        if (q.id === 'quest_1') {
+          const c = Math.min(q.target, q.current + 1);
+          return { ...q, current: c, completed: c >= q.target };
+        }
+        if (q.id === 'quest_2' && earnedScore >= 80) {
+          return { ...q, current: 1, completed: true };
+        }
+        if (q.id === 'quest_3' && newStreak > 0) {
+          return { ...q, current: 1, completed: true };
+        }
+        return q;
+      })
+    );
 
     // Level-up celebratory trigger
     if (newLevel > oldLevel) {
       setActiveRewardModal({
         title: `Level Up! Level ${newLevel}`,
-        desc: `Congratulations! You reached Level ${newLevel} (${levelTitle}). You unlocked new Memory Garden shop perks!`,
-        icon: '👑',
+        desc: `Congratulations! You reached Level ${newLevel} (${levelTitle}). You unlocked new Mind Matrix relics!`,
+        icon: '⚡',
         xp: gainedXp,
         gems: 50
       });
     }
 
     setRecentScoreToast({
-      activity: sessionResult.session?.activity || 'Cognitive Game',
+      activity: sessionResult.session?.activity || 'Cognitive Mission',
       score: earnedScore,
       xp: gainedXp
     });
 
-    setTimeout(() => setRecentScoreToast(null), 5000);
+    setTimeout(() => setRecentScoreToast(null), 4000);
   };
 
   const completeDailyStreakCheckin = () => {
-    if (lastCheckin === todayStr) {
-      alert("You have already checked in for today! 🔥 Keep playing exercises to earn XP.");
+    if (lastCheckin === todayStr && streak > 0) {
+      alert("You have already completed your exercise for today! 🔥 Keep playing to earn XP.");
       return;
     }
 
-    const newStreak = streak + 1;
+    const newStreak = streak === 0 ? 1 : streak + 1;
     const newGems = gems + 25;
     setStreak(newStreak);
     setGems(newGems);
@@ -306,8 +356,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('memomate_highest_streak', Math.max(newStreak, highestStreak));
 
     setActiveRewardModal({
-      title: 'Daily Streak Checked In! 🔥',
-      desc: `You maintained a ${newStreak}-day workout streak for today! Your 1.25x XP multiplier is active.`,
+      title: 'Daily Streak Active! 🔥',
+      desc: `You maintained a ${newStreak}-day workout streak for today!`,
       icon: '🔥',
       xp: 50,
       gems: 25
@@ -324,8 +374,8 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('memomate_unlocked_items', JSON.stringify(updatedItems));
 
       setActiveRewardModal({
-        title: 'Item Unlocked! 🛡️',
-        desc: `You unlocked ${itemId.replace('_', ' ')} in your account!`,
+        title: 'Cognitive Relic Unlocked! 🛡️',
+        desc: `You unlocked ${itemId.replace('_', ' ').toUpperCase()} in your profile!`,
         icon: '🎁',
         xp: 30,
         gems: 0
@@ -354,7 +404,7 @@ export const AuthProvider = ({ children }) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
+      utterance.rate = 0.95;
       utterance.pitch = 1.0;
       window.speechSynthesis.speak(utterance);
     }

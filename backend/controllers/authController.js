@@ -2,6 +2,7 @@ const User = require('../models/User');
 const CognitiveProfile = require('../models/CognitiveProfile');
 const GardenProgress = require('../models/GardenProgress');
 const Recommendation = require('../models/Recommendation');
+const Gamification = require('../models/Gamification');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -29,7 +30,7 @@ const initializeUserData = async (user) => {
         plants: 1,
         flowers: 1,
         trees: 0,
-        streak: 1,
+        streak: 0,
         totalActivities: 0
       });
     }
@@ -42,6 +43,29 @@ const initializeUserData = async (user) => {
         recommendedActivity: '3D Focus Search 🎯',
         difficulty: 'Easy',
         reason: 'Welcome to MemoMate! Complete a 3D Focus Search session to evaluate your initial attention metrics.'
+      });
+    }
+
+    let gamification = await Gamification.findOne({ userId: user._id.toString() });
+    if (!gamification) {
+      await Gamification.create({
+        userId: user._id.toString(),
+        xpPoints: 0,
+        gems: 10,
+        level: 1,
+        currentStreak: 0,
+        highestStreak: 0,
+        lastActiveDate: null,
+        streakFreezeAvailable: true,
+        league: 'Emerald League',
+        leagueRank: 1,
+        unlockedBadges: [],
+        unlockedGardenItems: ['cyber_crystal'],
+        dailyQuests: [
+          { id: 'quest_1', title: 'Complete 2 Cognitive Sessions', target: 2, current: 0, rewardXp: 50, rewardGems: 15, completed: false },
+          { id: 'quest_2', title: 'Score over 80 in Focus Reflex', target: 1, current: 0, rewardXp: 75, rewardGems: 25, completed: false },
+          { id: 'quest_3', title: 'Maintain your Daily Streak', target: 1, current: 0, rewardXp: 40, rewardGems: 10, completed: false }
+        ]
       });
     }
   }

@@ -31,14 +31,14 @@ exports.createSession = async (req, res) => {
     if (!profile) {
       profile = await CognitiveProfile.create({
         userId,
-        memoryScore: 82,
-        attentionScore: 64,
-        recallScore: 76,
-        reactionScore: 71
+        memoryScore: 70,
+        attentionScore: 70,
+        recallScore: 70,
+        reactionScore: 70
       });
     }
 
-    // Smooth exponentially weighted score update (0.65 * old + 0.35 * new)
+    // Smooth exponentially weighted score update
     const newScore = Math.min(100, Math.max(10, Math.round(Number(score))));
     if (category === 'memory' || category === 'pattern' || category === '3d-memory') {
       profile.memoryScore = Math.round(profile.memoryScore * 0.65 + newScore * 0.35);
@@ -56,17 +56,49 @@ exports.createSession = async (req, res) => {
     profile.updatedAt = new Date();
     await profile.save();
 
-    // 3. Update Gamification XP & Streak
+    // 3. Update Gamification XP & Duolingo Streak Logic
     let gamification = await Gamification.findOne({ userId: userId.toString() });
     if (!gamification) {
-      gamification = await Gamification.create({ userId: userId.toString(), xpPoints: 0, gems: 0, level: 1, currentStreak: 1 });
+      gamification = await Gamification.create({
+        userId: userId.toString(),
+        xpPoints: 0,
+        gems: 10,
+        level: 1,
+        currentStreak: 0,
+        highestStreak: 0
+      });
     }
-    const gainedXp = Math.round(Number(score) * 1.5);
-    const gainedGems = Math.round(Number(score) * 0.2);
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (gamification.lastActiveDate !== todayStr) {
+      if (gamification.currentStreak === 0) {
+        gamification.currentStreak = 1;
+      } else {
+        const lastDate = gamification.lastActiveDate ? new Date(gamification.lastActiveDate) : null;
+        const todayDate = new Date(todayStr);
+        if (lastDate) {
+          const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+          if (diffDays === 1) {
+            gamification.currentStreak += 1;
+          } else if (diffDays > 1) {
+            gamification.currentStreak = 1;
+          }
+        } else {
+          gamification.currentStreak = 1;
+        }
+      }
+      gamification.lastActiveDate = todayStr;
+      if (gamification.currentStreak > gamification.highestStreak) {
+        gamification.highestStreak = gamification.currentStreak;
+      }
+    }
+
+    const streakMultiplier = gamification.currentStreak >= 3 ? 1.25 : 1.0;
+    const gainedXp = Math.round(Number(score) * 1.5 * streakMultiplier);
+    const gainedGems = Math.round(Number(score) * 0.25);
     gamification.xpPoints += gainedXp;
     gamification.gems += gainedGems;
     gamification.level = Math.floor(gamification.xpPoints / 300) + 1;
-    gamification.lastActiveDate = new Date().toISOString().split('T')[0];
     await gamification.save();
 
     // 4. Generate New Adaptive Recommendation
@@ -82,9 +114,10 @@ exports.createSession = async (req, res) => {
     // 5. Update Garden Progress
     let garden = await GardenProgress.findOne({ userId });
     if (!garden) {
-      garden = await GardenProgress.create({ userId });
+      garden = await GardenProgress.create({ userId, streak: gamification.currentStreak });
     }
     garden.totalActivities += 1;
+    garden.streak = gamification.currentStreak;
     if (garden.totalActivities % 2 === 0) garden.plants += 1;
     if (garden.totalActivities % 3 === 0) garden.flowers += 1;
     if (garden.totalActivities % 5 === 0) garden.trees += 1;
@@ -128,7 +161,7 @@ exports.getLiveActivities = async (req, res) => {
 
     const activities = sessions.map(s => {
       const uId = s.userId ? s.userId.toString() : '';
-      const userName = userMap[uId] || 'Community Member';
+      const userName = userMap[uId] || 'Cognitive Member';
       const parts = userName.split(' ').filter(Boolean);
       const initials = parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}`.toUpperCase() : userName.slice(0, 2).toUpperCase();
 

@@ -4,7 +4,7 @@ import { MapPin, Calendar, Sun, CheckCircle2, AlertCircle, Volume2, HeartHandsha
 import { soundFx } from '../utils/soundEffects';
 
 const DementiaOrientationCard = () => {
-  const { t, speakText, user } = useAuth();
+  const { t, speakText } = useAuth();
   const [medTaken, setMedTaken] = useState(true);
 
   const now = new Date();
@@ -30,7 +30,7 @@ const DementiaOrientationCard = () => {
 
   return (
     <div style={{
-      backgroundColor: '#161B22',
+      backgroundColor: '#161C26',
       border: '1px solid #34D399',
       borderRadius: '20px',
       padding: '1.5rem 1.8rem',
@@ -41,7 +41,16 @@ const DementiaOrientationCard = () => {
       {/* Top Banner Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-          <div className="icon-box" style={{ width: 42, height: 42, borderRadius: '12px', backgroundColor: 'rgba(52, 211, 153, 0.15)', border: '1px solid rgba(52, 211, 153, 0.3)' }}>
+          <div className="icon-box" style={{
+            width: 42,
+            height: 42,
+            borderRadius: '12px',
+            backgroundColor: 'rgba(52, 211, 153, 0.15)',
+            border: '1px solid rgba(52, 211, 153, 0.3)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justify: 'center'
+          }}>
             <MapPin size={24} color="#34D399" />
           </div>
           <div>
@@ -65,14 +74,13 @@ const DementiaOrientationCard = () => {
             fontWeight: 800,
             fontSize: '0.82rem',
             cursor: 'pointer',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.45rem',
-            transition: 'all 0.2s ease'
+            gap: '0.45rem'
           }}
         >
           <Volume2 size={16} />
-          <span>READ ANCHOR ALOUD</span>
+          <span>{t('readAnchorAloud')}</span>
         </button>
       </div>
 
@@ -85,16 +93,16 @@ const DementiaOrientationCard = () => {
       }}>
         {/* 1. Date & Time Orientation */}
         <div style={{
-          backgroundColor: '#0D1117',
-          border: '1px solid #30363D',
+          backgroundColor: '#0B0E14',
+          border: '1px solid #263142',
           borderRadius: '14px',
           padding: '1rem 1.2rem'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', color: '#9198A1', fontSize: '0.8rem', fontWeight: 700 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', color: '#94A3B8', fontSize: '0.8rem', fontWeight: 700 }}>
             <Calendar size={16} color="#38BDF8" />
             <span>{t('todaysDate')}</span>
           </div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFFFFF' }}>
+          <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF' }}>
             {dateStr}
           </div>
           <div style={{ fontSize: '0.9rem', color: '#38BDF8', fontWeight: 700, marginTop: '0.2rem' }}>
@@ -102,39 +110,39 @@ const DementiaOrientationCard = () => {
           </div>
         </div>
 
-        {/* 2. NER Regional Season */}
+        {/* 2. Regional Season */}
         <div style={{
-          backgroundColor: '#0D1117',
-          border: '1px solid #30363D',
+          backgroundColor: '#0B0E14',
+          border: '1px solid #263142',
           borderRadius: '14px',
           padding: '1rem 1.2rem'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', color: '#9198A1', fontSize: '0.8rem', fontWeight: 700 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', color: '#94A3B8', fontSize: '0.8rem', fontWeight: 700 }}>
             <Sun size={16} color="#FBBF24" />
             <span>{t('currentSeason')}</span>
           </div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFFFFF' }}>
+          <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF' }}>
             Autumn / Post-Monsoon 🌿
           </div>
-          <div style={{ fontSize: '0.85rem', color: '#9198A1', fontWeight: 600, marginTop: '0.2rem' }}>
-            Pleasant climate across NER hill towns & valleys
+          <div style={{ fontSize: '0.82rem', color: '#94A3B8', fontWeight: 600, marginTop: '0.2rem' }}>
+            Pleasant climate for cognitive wellness
           </div>
         </div>
 
         {/* 3. Medication Tracker */}
         <div style={{
-          backgroundColor: '#0D1117',
+          backgroundColor: '#0B0E14',
           border: medTaken ? '1px solid rgba(52, 211, 153, 0.4)' : '1px solid rgba(251, 146, 60, 0.4)',
           borderRadius: '14px',
           padding: '1rem 1.2rem',
           cursor: 'pointer'
         }} onClick={toggleMedication}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#9198A1', fontSize: '0.8rem', fontWeight: 700 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94A3B8', fontSize: '0.8rem', fontWeight: 700 }}>
               <HeartHandshake size={16} color={medTaken ? '#34D399' : '#FB923C'} />
               <span>{t('medicationCheck')}</span>
             </div>
-            <span style={{ fontSize: '0.75rem', color: '#9198A1' }}>Tap to toggle</span>
+            <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Tap to toggle</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {medTaken ? (
@@ -162,7 +170,7 @@ const DementiaOrientationCard = () => {
         <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#34D399', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.3rem' }}>
           📍 {t('memoryAnchorPrompt')}
         </div>
-        <p style={{ margin: 0, fontSize: '1.02rem', fontWeight: 700, color: '#F8FAFC', lineHeight: 1.5 }}>
+        <p style={{ margin: 0, fontSize: '1.02rem', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.5 }}>
           "{t('memoryAnchorText')}"
         </p>
       </div>

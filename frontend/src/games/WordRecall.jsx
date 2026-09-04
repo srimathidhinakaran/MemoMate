@@ -6,21 +6,14 @@ import { soundFx } from '../utils/soundEffects';
 import { sessionAPI } from '../services/api';
 import { BookOpen, CheckCircle2, RotateCcw, ArrowRight } from 'lucide-react';
 
-const NER_WORDS = [
-  'Assam Tea Leaf 🌱',
-  'Lakadong Turmeric 🌿',
-  'Mizo Chilli 🌶️',
-  'Kaziranga Fern 🍃',
-  'Brahmaputra Lily 🌺',
-  'Nagaland Orchid 🌸',
-  'Majuli Bamboo Craft 🎍',
-  'Loktak Water Lily 🪷',
-  'Shillong Pinecone 🌲',
-  'Bihu Cultural Dhol 🥁'
+const CATEGORY_WORD_BANKS = [
+  ['Quantum Core ⚡', 'Neural Node 🧠', 'Cyber Crystal 💎', 'Shield Barrier 🛡️', 'Solar Array ☀️', 'Starlight Prism ✨'],
+  ['Memory Matrix 🧩', 'Focus Beacon 🎯', 'Velocity Vector 🚀', 'Atomic Orbit ⚛️', 'Laser Optics 💡', 'Gravity Field 🪐'],
+  ['Purity Stream 🌊', 'Mountain Crest ⛰️', 'Emerald Leaf 🍃', 'Golden Aura 🌟', 'Diamond Shield 💎', 'Cosmic Nebula 🌌']
 ];
 
 const WordRecall = () => {
-  const { user, updateStateFromSession, speakText, voiceAssistance } = useAuth();
+  const { user, updateStateFromSession, speakText, voiceAssistance, t } = useAuth();
   const navigate = useNavigate();
   const mountRef = useRef(null);
 
@@ -39,7 +32,8 @@ const WordRecall = () => {
 
   const startNewGame = () => {
     soundFx.playClick();
-    const shuffled = [...NER_WORDS].sort(() => Math.random() - 0.5);
+    const bank = CATEGORY_WORD_BANKS[Math.floor(Math.random() * CATEGORY_WORD_BANKS.length)];
+    const shuffled = [...bank].sort(() => Math.random() - 0.5);
     const targets = shuffled.slice(0, 3);
     const opts = shuffled.slice(0, 6).sort(() => Math.random() - 0.5);
 
@@ -50,7 +44,7 @@ const WordRecall = () => {
     setCountdown(5);
 
     if (voiceAssistance) {
-      speakText(`Remember these 3 garden words: ${targets.join(', ')}`);
+      speakText(`Remember these 3 items: ${targets.join(', ')}`);
     }
   };
 
@@ -60,7 +54,7 @@ const WordRecall = () => {
     if (!currentMount) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x090C15);
+    scene.background = new THREE.Color(0x0B0E14);
 
     const camera = new THREE.PerspectiveCamera(45, currentMount.clientWidth / currentMount.clientHeight, 0.1, 100);
     camera.position.set(0, 0, 8);
@@ -72,15 +66,14 @@ const WordRecall = () => {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0x00F2FE, 2, 20);
+    const pointLight = new THREE.PointLight(0x38BDF8, 2, 20);
     pointLight.position.set(3, 4, 5);
     scene.add(pointLight);
 
-    // 3D Rotating Word Nodes Group
     const nodesGroup = new THREE.Group();
     nodesGroupRef.current = nodesGroup;
 
-    const colors = [0x00F2FE, 0xFFD700, 0xA855F7, 0x00E676, 0xFF4E50, 0x3182CE];
+    const colors = [0x38BDF8, 0xFBBF24, 0xC084FC, 0x34D399, 0xFB923C, 0x3182CE];
 
     for (let i = 0; i < 6; i++) {
       const angle = (i / 6) * Math.PI * 2;
@@ -99,7 +92,6 @@ const WordRecall = () => {
 
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(x, y, 0);
-      mesh.userData = { index: i };
       nodesGroup.add(mesh);
     }
     scene.add(nodesGroup);
@@ -113,7 +105,7 @@ const WordRecall = () => {
 
       if (nodesGroupRef.current) {
         nodesGroupRef.current.rotation.z = elapsedTime * 0.3;
-        nodesGroupRef.current.children.forEach((child, idx) => {
+        nodesGroupRef.current.children.forEach((child) => {
           child.rotation.y = elapsedTime * 1.2;
           child.rotation.x = elapsedTime * 0.8;
         });
@@ -169,7 +161,7 @@ const WordRecall = () => {
 
       const sessionPayload = {
         userId: user?.id || user?._id,
-        activity: 'Word Recall',
+        activity: 'Categorical Word Recall',
         category: 'recall',
         difficulty: 'Medium',
         score,
@@ -192,29 +184,29 @@ const WordRecall = () => {
           width: 70,
           height: 70,
           borderRadius: '50%',
-          backgroundColor: 'rgba(0, 242, 254, 0.15)',
+          backgroundColor: 'rgba(56, 189, 248, 0.15)',
           display: 'flex',
           alignItems: 'center',
           justify: 'center',
           margin: '0 auto 1.25rem',
-          border: '1px solid #00F2FE'
+          border: '1px solid #38BDF8'
         }}>
-          <CheckCircle2 size={44} color="#00F2FE" />
+          <CheckCircle2 size={44} color="#38BDF8" />
         </div>
 
-        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#F8FAFC', fontWeight: 900 }}>
-          3D WORD RECALL COMPLETE! 📖
+        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#FFFFFF', fontWeight: 900 }}>
+          CATEGORICAL RECALL COMPLETE! 📖
         </h2>
 
         <div style={{
-          backgroundColor: 'rgba(0, 0, 0, 0.4)',
+          backgroundColor: '#0B0E14',
           padding: '1.25rem',
           borderRadius: '16px',
-          border: '1px solid rgba(0, 242, 254, 0.3)',
+          border: '1px solid #263142',
           marginBottom: '1.75rem'
         }}>
-          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 800, fontFamily: 'var(--font-esports)' }}>RECALL SCORE</div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFD700', fontFamily: 'var(--font-esports)' }}>{scoreResult.score} / 100 PTS</div>
+          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 800 }}>RECALL SCORE</div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100 PTS</div>
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
@@ -222,8 +214,8 @@ const WordRecall = () => {
             <RotateCcw size={18} />
             <span>PLAY AGAIN</span>
           </button>
-          <button onClick={() => navigate('/analysis')} className="btn-flame">
-            <span>ANALYZE TELEMETRY</span>
+          <button onClick={() => navigate('/dashboard')} className="btn-flame">
+            <span>DASHBOARD</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -235,9 +227,9 @@ const WordRecall = () => {
     <div className="garden-card animate-fade-in" style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
       <div className="garden-card-header">
         <div>
-          <h2 style={{ fontSize: '1.6rem', color: '#F8FAFC', fontWeight: 900 }}>3D CYBER WORD CRYSTALS 🌿</h2>
+          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>3D CATEGORICAL WORD RECALL 📖</h2>
           <p style={{ fontSize: '0.95rem', color: '#94A3B8' }}>
-            {phase === 'memorize' ? 'MEMORIZE THE 3 CYBER GARDEN ITEMS BELOW!' : 'SELECT THE 3 GARDEN ITEMS YOU SAW.'}
+            {phase === 'memorize' ? 'MEMORIZE THE 3 CATEGORICAL ITEMS BELOW!' : 'SELECT THE 3 ITEMS YOU SAW.'}
           </p>
         </div>
         <span className="badge badge-cyan">{phase === 'memorize' ? `HIDING IN ${countdown}s` : 'SELECT 3 ITEMS'}</span>
@@ -248,10 +240,10 @@ const WordRecall = () => {
         ref={mountRef}
         style={{
           width: '100%',
-          height: '240px',
+          height: '220px',
           borderRadius: '16px',
-          backgroundColor: '#090C15',
-          border: '1px solid rgba(0, 242, 254, 0.3)',
+          backgroundColor: '#0B0E14',
+          border: '1px solid rgba(56, 189, 248, 0.3)',
           margin: '1rem 0',
           position: 'relative'
         }}
@@ -259,8 +251,8 @@ const WordRecall = () => {
 
       {phase === 'memorize' ? (
         <div style={{
-          backgroundColor: 'rgba(0, 242, 254, 0.1)',
-          border: '1px solid rgba(0, 242, 254, 0.4)',
+          backgroundColor: 'rgba(56, 189, 248, 0.1)',
+          border: '1px solid rgba(56, 189, 248, 0.4)',
           borderRadius: '16px',
           padding: '1.5rem',
           margin: '1rem 0',
@@ -269,7 +261,7 @@ const WordRecall = () => {
           gap: '0.8rem'
         }}>
           {targetWords.map((w, idx) => (
-            <span key={idx} style={{ fontSize: '1.4rem', fontWeight: 900, color: '#00F2FE', fontFamily: 'var(--font-heading)' }}>
+            <span key={idx} style={{ fontSize: '1.4rem', fontWeight: 900, color: '#38BDF8', fontFamily: 'var(--font-heading)' }}>
               {w}
             </span>
           ))}
@@ -285,14 +277,13 @@ const WordRecall = () => {
                 style={{
                   padding: '1.1rem 1rem',
                   borderRadius: '14px',
-                  border: isSel ? '2px solid #00F2FE' : '1px solid rgba(255, 255, 255, 0.1)',
-                  backgroundColor: isSel ? 'rgba(0, 242, 254, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                  border: isSel ? '2px solid #38BDF8' : '1px solid #263142',
+                  backgroundColor: isSel ? 'rgba(56, 189, 248, 0.15)' : '#0B0E14',
                   fontSize: '1rem',
                   fontWeight: 800,
-                  color: isSel ? '#00F2FE' : '#F8FAFC',
-                  fontFamily: 'var(--font-heading)',
+                  color: isSel ? '#38BDF8' : '#FFFFFF',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.15s ease'
                 }}
               >
                 {word}

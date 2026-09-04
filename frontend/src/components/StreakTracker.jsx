@@ -1,11 +1,11 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
-import { Flame, ShieldCheck, Zap, CheckCircle2, Award } from 'lucide-react';
+import { Flame, ShieldCheck, Zap } from 'lucide-react';
 
 const StreakTracker = () => {
-  const { streak, highestStreak, todayStr, lastCheckin, completeDailyStreakCheckin } = useAuth();
-  const isCheckedInToday = lastCheckin === todayStr;
+  const { streak, highestStreak, todayStr, lastCheckin, completeDailyStreakCheckin, t } = useAuth();
+  const isCheckedInToday = lastCheckin === todayStr && streak > 0;
 
   const currentDayIndex = new Date().getDay(); // 0 = Sun, 1 = Mon, ...
   const daysOfWeek = [
@@ -34,16 +34,19 @@ const StreakTracker = () => {
             width: 44,
             height: 44,
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #FB923C 0%, #FBBF24 100%)'
+            background: 'linear-gradient(135deg, #FB923C 0%, #FBBF24 100%)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justify: 'center'
           }}>
-            <Flame size={26} fill="#050B14" color="#050B14" />
+            <Flame size={26} fill="#0B0E14" color="#0B0E14" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.25rem', color: '#F8FAFC', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
+            <h3 style={{ fontSize: '1.2rem', color: '#FFFFFF', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
               DAILY STREAK ARENA
             </h3>
             <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
-              ACTIVE STREAK: <strong style={{ color: '#FF4E50', fontFamily: 'var(--font-esports)' }}>{streak || 1} DAYS</strong> | BEST: <strong style={{ color: '#FFD700', fontFamily: 'var(--font-esports)' }}>{highestStreak || streak} DAYS</strong>
+              {t('streakCount').toUpperCase()}: <strong style={{ color: '#FB923C' }}>{streak || 0} DAYS</strong> | BEST: <strong style={{ color: '#FBBF24' }}>{highestStreak || 0} DAYS</strong>
             </div>
           </div>
         </div>
@@ -53,25 +56,27 @@ const StreakTracker = () => {
           display: 'flex',
           alignItems: 'center',
           gap: '0.4rem',
-          backgroundColor: 'rgba(0, 242, 254, 0.12)',
-          border: '1px solid rgba(0, 242, 254, 0.3)',
+          backgroundColor: 'rgba(56, 189, 248, 0.12)',
+          border: '1px solid rgba(56, 189, 248, 0.35)',
           padding: '0.45rem 0.85rem',
           borderRadius: '10px',
           fontSize: '0.8rem',
           fontWeight: 800,
-          fontFamily: 'var(--font-esports)',
-          color: '#00F2FE'
+          fontFamily: 'var(--font-heading)',
+          color: '#38BDF8'
         }}>
-          <ShieldCheck size={16} color="#00F2FE" />
-          <span>SHIELD ACTIVE</span>
+          <ShieldCheck size={16} color="#38BDF8" />
+          <span>STREAK SHIELD ACTIVE</span>
         </div>
       </div>
 
       {/* 7-Day Mon-Sun Dynamic Check-in Calendar */}
       <div>
-        <div style={{ fontSize: '0.85rem', fontWeight: 800, fontFamily: 'var(--font-esports)', color: '#F8FAFC', marginBottom: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
-          <span>WEEKLY BATTLE CALENDAR</span>
-          <span style={{ color: '#00E676' }}>{isCheckedInToday ? 'TODAY COMPLETED ✓' : 'CHECK-IN REQUIRED TODAY'}</span>
+        <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
+          <span>WEEKLY CHECKIN CALENDAR</span>
+          <span style={{ color: isCheckedInToday ? '#34D399' : '#FB923C' }}>
+            {isCheckedInToday ? t('alreadyChecked') : t('checkinToday')}
+          </span>
         </div>
 
         <div style={{
@@ -82,7 +87,7 @@ const StreakTracker = () => {
         }}>
           {daysOfWeek.map((d, i) => {
             const isToday = d.idx === currentDayIndex;
-            const isCompleted = isToday ? isCheckedInToday : false;
+            const isCompleted = isToday ? isCheckedInToday : (streak > 0 && d.idx < currentDayIndex);
 
             return (
               <div key={i} style={{
@@ -91,7 +96,7 @@ const StreakTracker = () => {
                 alignItems: 'center',
                 gap: '0.4rem'
               }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 800, fontFamily: 'var(--font-esports)', color: isToday ? '#FF4E50' : '#94A3B8' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: isToday ? '#FB923C' : '#94A3B8' }}>
                   {d.full}
                 </span>
                 <div style={{
@@ -99,18 +104,16 @@ const StreakTracker = () => {
                   aspectRatio: '1',
                   maxHeight: '48px',
                   borderRadius: '12px',
-                  backgroundColor: isCompleted ? 'rgba(255, 78, 80, 0.15)' : (isToday ? 'rgba(0, 242, 254, 0.1)' : 'rgba(255, 255, 255, 0.04)'),
-                  border: isCompleted ? '1px solid #FF4E50' : (isToday ? '1px dashed #00F2FE' : '1px solid rgba(255, 255, 255, 0.1)'),
+                  backgroundColor: isCompleted ? 'rgba(251, 146, 60, 0.15)' : (isToday ? 'rgba(56, 189, 248, 0.1)' : '#0B0E14'),
+                  border: isCompleted ? '1px solid #FB923C' : (isToday ? '1px dashed #38BDF8' : '1px solid #263142'),
                   display: 'flex',
                   alignItems: 'center',
-                  justify: 'center',
-                  boxShadow: isCompleted ? '0 0 12px rgba(255, 78, 80, 0.3)' : 'none',
-                  transition: 'all 0.2s ease'
+                  justify: 'center'
                 }}>
                   {isCompleted ? (
-                    <Flame size={20} fill="#FF4E50" color="#FF4E50" />
+                    <Flame size={20} fill="#FB923C" color="#FB923C" />
                   ) : (
-                    <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#64748B', fontFamily: 'var(--font-esports)' }}>{d.day}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#64748B' }}>{d.day}</span>
                   )}
                 </div>
               </div>
@@ -121,29 +124,30 @@ const StreakTracker = () => {
 
       {/* XP Boost Banner */}
       <div style={{
-        backgroundColor: 'rgba(0, 230, 118, 0.1)',
-        border: '1px solid rgba(0, 230, 118, 0.3)',
+        backgroundColor: 'rgba(52, 211, 153, 0.1)',
+        border: '1px solid rgba(52, 211, 153, 0.3)',
         borderRadius: '14px',
         padding: '0.85rem 1.1rem',
         display: 'flex',
         alignItems: 'center',
         justify: 'space-between',
-        gap: '0.75rem'
+        gap: '0.75rem',
+        flexWrap: 'wrap'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Zap size={20} color="#00E676" fill="#00E676" />
-          <div style={{ fontSize: '0.88rem', color: '#F8FAFC', fontWeight: 700 }}>
-            <strong style={{ color: '#00E676', fontFamily: 'var(--font-esports)' }}>1.25x XP MULTIPLIER ACTIVE!</strong> Play daily to keep your streak.
+          <Zap size={20} color="#34D399" fill="#34D399" />
+          <div style={{ fontSize: '0.85rem', color: '#FFFFFF', fontWeight: 700 }}>
+            <strong style={{ color: '#34D399' }}>1.25x XP MULTIPLIER ACTIVE!</strong> Play daily exercises to maintain your streak.
           </div>
         </div>
 
         <button
           onClick={handleCheckin}
           disabled={isCheckedInToday}
-          className={isCheckedInToday ? "btn-secondary" : "btn-primary"}
+          className={isCheckedInToday ? "btn-secondary" : "btn-flame"}
           style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
         >
-          {isCheckedInToday ? 'CHECKED IN TODAY ✓' : 'CHECK IN TODAY'}
+          {isCheckedInToday ? 'CHECKED IN TODAY ✓' : 'RECORD DAILY CHECKIN'}
         </button>
       </div>
     </div>

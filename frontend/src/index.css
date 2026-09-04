@@ -1,14 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* High-Contrast User-Friendly Slate Dark Theme */
-  --bg-obsidian: #0D1117;
-  --bg-dark-surface: #161B22;
-  --bg-card: #161B22;
-  --bg-card-hover: #1F242D;
-  --bg-card-subtle: #21262D;
+  /* High-Contrast Modern Gamification Theme */
+  --bg-obsidian: #0B0E14;
+  --bg-dark-surface: #121721;
+  --bg-card: #161C26;
+  --bg-card-hover: #1E2634;
+  --bg-card-subtle: #222B3B;
   
-  /* User-Friendly Accents */
+  /* Vibrant Gamification Accent Tokens */
   --neon-cyan: #38BDF8;
   --neon-cyan-dark: #0284C7;
   
@@ -23,18 +23,17 @@
 
   --text-primary: #FFFFFF;
   --text-secondary: #E2E8F0;
-  --text-muted: #9198A1;
+  --text-muted: #94A3B8;
   
-  --border-color: #30363D;
+  --border-color: #263142;
   
-  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.5);
-  --shadow-hover: 0 15px 35px rgba(56, 189, 248, 0.15);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 15px 35px rgba(56, 189, 248, 0.2);
   
   --radius-lg: 16px;
   --radius-md: 10px;
   --radius-sm: 6px;
 
-  /* Standard Ultra-Readable Typography for All Users */
   --font-esports: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
   --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
   --font-body: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
@@ -64,7 +63,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text-primary);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.3;
 }
 
@@ -105,9 +104,9 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
 }
 
-/* 100% Dead-Centered SVG Icon Box Utility */
+/* Perfect Dead-Centered SVG Icon Box Utility & Logo Alignment */
 .icon-box {
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   text-align: center !important;
@@ -117,34 +116,36 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 0 !important;
   overflow: hidden !important;
   position: relative !important;
+  vertical-align: middle !important;
 }
 
 .icon-box svg, .badge svg, button svg {
-  display: inline-block !important;
-  vertical-align: middle !important;
+  display: block !important;
   margin: auto !important;
   flex-shrink: 0 !important;
   max-width: 100% !important;
   max-height: 100% !important;
 }
 
-/* Container Cards */
+/* Container Cards fitted perfectly */
 .garden-card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
-  padding: 1.6rem 1.8rem;
+  padding: 1.5rem 1.75rem;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-soft);
   position: relative;
   overflow: hidden;
-  transition: all 0.25s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .garden-card:hover {
   transform: translateY(-2px);
-  border-color: #484F58;
+  border-color: #38BDF8;
+  box-shadow: var(--shadow-hover);
 }
 
 .garden-card-header {
@@ -158,50 +159,59 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Form Controls with High Readability */
 input, select, textarea {
-  background-color: #0D1117;
+  background-color: #0B0E14;
   color: #FFFFFF;
-  border: 1px solid #30363D;
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 0.8rem 1rem;
+  padding: 0.75rem 1rem;
   font-size: 0.95rem;
   font-family: var(--font-body);
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input::placeholder, textarea::placeholder {
-  color: #8B949E;
+  color: #64748B;
 }
 
 input:focus, select:focus, textarea:focus {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
 }
 
 /* Select Dropdown Option Readability on Windows */
 select option {
-  background-color: #161B22;
+  background-color: #161C26;
   color: #FFFFFF;
-  padding: 0.5rem;
+  padding: 0.6rem;
 }
 
-/* Buttons */
+/* Buttons with Instant Active Press Effect */
+button, .btn-primary, .btn-secondary, .btn-flame {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+button:active, .btn-primary:active, .btn-secondary:active, .btn-flame:active {
+  transform: scale(0.97) !important;
+}
+
 .btn-primary {
   background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
   color: #FFFFFF;
   border: none;
   padding: 0.8rem 1.6rem;
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 800;
   font-family: var(--font-heading);
   border-radius: var(--radius-md);
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
-  transition: all 0.25s ease;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -212,27 +222,25 @@ select option {
 }
 
 .btn-secondary {
-  background: #21262D;
+  background: #222B3B;
   color: #FFFFFF;
-  border: 1px solid #30363D;
+  border: 1px solid var(--border-color);
   padding: 0.75rem 1.4rem;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
   font-family: var(--font-heading);
   border-radius: var(--radius-md);
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: all 0.25s ease;
   text-decoration: none;
   white-space: nowrap;
 }
 
 .btn-secondary:hover {
-  background: #30363D;
-  border-color: #8B949E;
+  background: #2D394E;
+  border-color: #475569;
   color: #FFFFFF;
   transform: translateY(-2px);
 }
@@ -243,16 +251,14 @@ select option {
   border: none;
   padding: 0.8rem 1.6rem;
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 800;
   font-family: var(--font-heading);
   border-radius: var(--radius-md);
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
-  transition: all 0.25s ease;
   white-space: nowrap;
 }
 
@@ -261,7 +267,7 @@ select option {
   transform: translateY(-2px);
 }
 
-/* Badges & Rank Tags */
+/* Badges & Gamification Rank Tags */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -269,7 +275,7 @@ select option {
   padding: 0.35rem 0.8rem;
   border-radius: var(--radius-sm);
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 800;
   font-family: var(--font-heading);
   white-space: nowrap;
 }
@@ -324,12 +330,12 @@ select option {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Custom Scrollbar */
@@ -343,10 +349,10 @@ select option {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #30363D;
+  background: #263142;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #484F58;
+  background: #3B4A61;
 }

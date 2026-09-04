@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { Droplets, Sparkles, Sun, Palette, Compass } from 'lucide-react';
+import { Zap, Sparkles, Palette, Compass } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { gardenAPI } from '../services/api';
 
@@ -8,13 +8,13 @@ const ThreeMemoryGardenCanvas = () => {
   const { user, garden, setGarden, speakText, voiceAssistance, t } = useAuth();
   const mountRef = useRef(null);
   
-  const [theme, setTheme] = useState('spring'); // 'spring' | 'sunset' | 'lavender' | 'assam' | 'loktak'
+  const [theme, setTheme] = useState('cyan'); // 'cyan' | 'gold' | 'purple' | 'emerald'
   const [vrMode, setVrMode] = useState(false);
-  const [isWatering, setIsWatering] = useState(false);
+  const [isCharging, setIsCharging] = useState(false);
   const [rewardMsg, setRewardMsg] = useState(null);
 
   const sceneRef = useRef(null);
-  const flowersGroupRef = useRef(null);
+  const nodesGroupRef = useRef(null);
 
   useEffect(() => {
     const currentMount = mountRef.current;
@@ -23,8 +23,7 @@ const ThreeMemoryGardenCanvas = () => {
     // 1. Scene setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-
-    scene.background = new THREE.Color(0x090C15);
+    scene.background = new THREE.Color(0x0B0E14);
 
     // 2. Camera setup
     const camera = new THREE.PerspectiveCamera(
@@ -52,117 +51,68 @@ const ThreeMemoryGardenCanvas = () => {
     dirLight.castShadow = true;
     scene.add(dirLight);
 
-    const pointLight = new THREE.PointLight(0xFFD700, 1.5, 20);
+    const pointLight = new THREE.PointLight(0xFBBF24, 1.5, 20);
     pointLight.position.set(-5, 8, -5);
     scene.add(pointLight);
 
     // 5. Ground / 3D Grid Pedestal Base
-    const gridHelper = new THREE.GridHelper(14, 14, 0x38BDF8, 0x1F242D);
+    const gridHelper = new THREE.GridHelper(14, 14, 0x38BDF8, 0x1E2634);
     gridHelper.position.y = -0.4;
     scene.add(gridHelper);
 
-    const getGroundColor = (t) => {
-      if (t === 'sunset') return 0xC87862;
-      if (t === 'lavender') return 0x7A66A3;
-      if (t === 'assam') return 0x1B4332; // Rich Tea Leaf Emerald
-      if (t === 'loktak') return 0x0A3641; // Deep Floating Lake Water
-      return 0x1F242D;
-    };
-
     const groundGeo = new THREE.CylinderGeometry(7, 7.5, 0.8, 32);
     const groundMat = new THREE.MeshStandardMaterial({
-      color: getGroundColor(theme),
-      roughness: 0.6,
-      metalness: 0.4
+      color: 0x161C26,
+      roughness: 0.5,
+      metalness: 0.5
     });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.position.y = -0.4;
     ground.receiveShadow = true;
     scene.add(ground);
 
-    // 6. 3D Trees
-    const treeGroup = new THREE.Group();
+    // 6. 3D Quantum Nodes Group
+    const nodesGroup = new THREE.Group();
+    nodesGroupRef.current = nodesGroup;
 
-    const getFoliageColor = (t) => {
-      if (t === 'lavender') return 0xC084FC;
-      if (t === 'assam') return 0x2D6A4F;
-      if (t === 'loktak') return 0x38BDF8;
-      return 0x34D399;
-    };
+    const nodeCount = Math.max(4, garden?.plants || 4);
+    const nodeColors = [0x38BDF8, 0xFBBF24, 0xC084FC, 0x34D399, 0xFB923C];
 
-    const create3DTree = (x, z) => {
-      const singleTree = new THREE.Group();
-      const trunkGeo = new THREE.CylinderGeometry(0.2, 0.35, 2.5, 8);
-      const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6E473B });
-      const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-      trunk.position.y = 1.25;
-      trunk.castShadow = true;
-      singleTree.add(trunk);
+    for (let i = 0; i < nodeCount; i++) {
+      const nodeGroup = new THREE.Group();
+      const color = nodeColors[i % nodeColors.length];
 
-      const foliageGeo = new THREE.DodecahedronGeometry(1.2, 1);
-      const foliageMat = new THREE.MeshStandardMaterial({
-        color: getFoliageColor(theme),
-        roughness: 0.4,
-        emissive: theme === 'lavender' ? 0x7E22CE : 0x059669,
-        emissiveIntensity: 0.2
+      // Octahedron Core Crystal
+      const crystalGeo = new THREE.OctahedronGeometry(0.7, 1);
+      const crystalMat = new THREE.MeshStandardMaterial({
+        color,
+        roughness: 0.2,
+        metalness: 0.8,
+        emissive: color,
+        emissiveIntensity: 0.4
       });
-      const foliage = new THREE.Mesh(foliageGeo, foliageMat);
-      foliage.position.y = 2.8;
-      foliage.castShadow = true;
-      singleTree.add(foliage);
+      const crystalMesh = new THREE.Mesh(crystalGeo, crystalMat);
+      crystalMesh.position.y = 1.0;
+      crystalMesh.castShadow = true;
+      nodeGroup.add(crystalMesh);
 
-      singleTree.position.set(x, 0, z);
-      return singleTree;
-    };
+      // Torus Orbit Ring
+      const ringGeo = new THREE.TorusGeometry(0.95, 0.05, 16, 32);
+      const ringMat = new THREE.MeshBasicMaterial({ color, wireframe: true });
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.position.y = 1.0;
+      ringMesh.rotation.x = Math.PI / 2;
+      nodeGroup.add(ringMesh);
 
-    const treeCount = garden?.trees ?? 2;
-    for (let i = 0; i < Math.max(2, treeCount); i++) {
-      const angle = (i / treeCount) * Math.PI * 1.5 - 0.7;
-      treeGroup.add(create3DTree(Math.cos(angle) * 4.5, Math.sin(angle) * 4.5));
+      const fAngle = (i / nodeCount) * Math.PI * 2;
+      const radius = 2.0 + (i % 3) * 1.2;
+      nodeGroup.position.set(Math.cos(fAngle) * radius, 0, Math.sin(fAngle) * radius);
+      nodesGroup.add(nodeGroup);
     }
-    scene.add(treeGroup);
+    scene.add(nodesGroup);
 
-    // 7. 3D Cyber Flowers Group
-    const flowersGroup = new THREE.Group();
-    flowersGroupRef.current = flowersGroup;
-
-    const flowerCount = Math.max(3, garden?.flowers ?? 3);
-    const flowerColors = [0x38BDF8, 0xFBBF24, 0xC084FC, 0x34D399, 0xFF4E50];
-
-    for (let i = 0; i < flowerCount; i++) {
-      const flower = new THREE.Group();
-      const stemGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.9, 8);
-      const stemMat = new THREE.MeshStandardMaterial({ color: 0x34D399 });
-      const stem = new THREE.Mesh(stemGeo, stemMat);
-      stem.position.y = 0.45;
-      flower.add(stem);
-
-      const color = flowerColors[i % flowerColors.length];
-      const petalGeo = new THREE.SphereGeometry(0.3, 8, 8);
-      petalGeo.scale(1, 0.3, 1);
-      const petalMat = new THREE.MeshStandardMaterial({ color, roughness: 0.3, emissive: color, emissiveIntensity: 0.3 });
-      const centerMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, emissive: 0xFFD700, emissiveIntensity: 0.5 });
-
-      const center = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 8), centerMat);
-      center.position.y = 0.9;
-      flower.add(center);
-
-      for (let p = 0; p < 5; p++) {
-        const petal = new THREE.Mesh(petalGeo, petalMat);
-        const pAngle = (p / 5) * Math.PI * 2;
-        petal.position.set(Math.cos(pAngle) * 0.25, 0.9, Math.sin(pAngle) * 0.25);
-        flower.add(petal);
-      }
-
-      const fAngle = (i / flowerCount) * Math.PI * 2;
-      const radius = 1.5 + (i % 3) * 1.1;
-      flower.position.set(Math.cos(fAngle) * radius, 0, Math.sin(fAngle) * radius);
-      flowersGroup.add(flower);
-    }
-    scene.add(flowersGroup);
-
-    // 8. Floating Particles
-    const particleCount = 50;
+    // 7. Floating Cyber Particles
+    const particleCount = 60;
     const particlesGeo = new THREE.BufferGeometry();
     const particlePositions = new Float32Array(particleCount * 3);
 
@@ -182,7 +132,7 @@ const ThreeMemoryGardenCanvas = () => {
     const particleSystem = new THREE.Points(particlesGeo, particleMat);
     scene.add(particleSystem);
 
-    // 9. Animation Loop & Orbit Rotation
+    // 8. Animation Loop
     let animationFrameId;
     let clock = new THREE.Clock();
 
@@ -192,14 +142,9 @@ const ThreeMemoryGardenCanvas = () => {
 
       scene.rotation.y = elapsedTime * 0.08;
 
-      const positions = particleSystem.geometry.attributes.position.array;
-      for (let i = 1; i < particleCount * 3; i += 3) {
-        positions[i] += Math.sin(elapsedTime + i) * 0.005;
-      }
-      particleSystem.geometry.attributes.position.needsUpdate = true;
-
-      flowersGroup.children.forEach((fl, idx) => {
-        fl.rotation.z = Math.sin(elapsedTime * 2 + idx) * 0.05;
+      nodesGroup.children.forEach((node, idx) => {
+        node.rotation.y = elapsedTime * (1 + idx * 0.2);
+        node.position.y = Math.sin(elapsedTime * 2 + idx) * 0.15;
       });
 
       renderer.render(scene, camera);
@@ -225,28 +170,28 @@ const ThreeMemoryGardenCanvas = () => {
     };
   }, [theme, garden]);
 
-  // Water 3D Garden Interaction
-  const handleWaterGarden = async () => {
-    setIsWatering(true);
+  // Charge 3D Matrix Interaction
+  const handleChargeMatrix = async () => {
+    setIsCharging(true);
     if (voiceAssistance) {
-      speakText("Watering your 3D Memory Garden! Flowers are blooming.");
+      speakText("Charging 3D Mind Matrix! Neural energy active.");
     }
 
-    if (flowersGroupRef.current) {
-      flowersGroupRef.current.children.forEach((fl) => {
-        fl.scale.set(1.4, 1.4, 1.4);
-        setTimeout(() => fl.scale.set(1, 1, 1), 600);
+    if (nodesGroupRef.current) {
+      nodesGroupRef.current.children.forEach((nd) => {
+        nd.scale.set(1.3, 1.3, 1.3);
+        setTimeout(() => nd.scale.set(1, 1, 1), 300);
       });
     }
 
     const updated = await gardenAPI.updateGarden(user?.id || user?._id, 'water');
     setGarden(updated);
 
-    setRewardMsg('💦 3D Water Droplets Applied! +50 XP Earned! 🌟');
+    setRewardMsg('⚡ Matrix Charged! +50 XP Earned! 🌟');
     setTimeout(() => {
-      setIsWatering(false);
+      setIsCharging(false);
       setRewardMsg(null);
-    }, 2000);
+    }, 1500);
   };
 
   return (
@@ -266,21 +211,24 @@ const ThreeMemoryGardenCanvas = () => {
             height: 44,
             borderRadius: '12px',
             backgroundColor: 'rgba(56, 189, 248, 0.15)',
-            border: '1px solid rgba(56, 189, 248, 0.35)'
+            border: '1px solid rgba(56, 189, 248, 0.35)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justify: 'center'
           }}>
             <Sparkles size={24} color="#38BDF8" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.35rem', color: '#FFFFFF', fontWeight: 800, margin: 0, fontFamily: 'var(--font-heading)' }}>
-              Interactive 3D WebGL Memory Garden 🌺
+            <h3 style={{ fontSize: '1.35rem', color: '#FFFFFF', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
+              Interactive 3D Mind Matrix Sanctum ⚡
             </h3>
-            <span style={{ fontSize: '0.85rem', color: '#9198A1', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 600 }}>
               Three.js Real-time 3D Engine & VR Headset Immersion
             </span>
           </div>
         </div>
 
-        {/* 3D Theme & VR Headset Selector */}
+        {/* 3D VR Headset Selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => setVrMode(!vrMode)}
@@ -289,60 +237,20 @@ const ThreeMemoryGardenCanvas = () => {
           >
             <span>{vrMode ? '🕶️ VR STEREO MODE ACTIVE' : t('vrMode')}</span>
           </button>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', backgroundColor: '#0D1117', padding: '0.3rem', borderRadius: '12px', border: '1px solid #30363D' }}>
-            <Palette size={16} color="#38BDF8" style={{ marginLeft: '0.4rem' }} />
-            <button
-              onClick={() => setTheme('spring')}
-              className={`badge ${theme === 'spring' ? 'badge-cyan' : ''}`}
-              style={{ border: 'none', cursor: 'pointer', padding: '0.35rem 0.65rem' }}
-            >
-              Spring
-            </button>
-            <button
-              onClick={() => setTheme('sunset')}
-              className={`badge ${theme === 'sunset' ? 'badge-peach' : ''}`}
-              style={{ border: 'none', cursor: 'pointer', padding: '0.35rem 0.65rem' }}
-            >
-              Sunset
-            </button>
-            <button
-              onClick={() => setTheme('lavender')}
-              className={`badge ${theme === 'lavender' ? 'badge-purple' : ''}`}
-              style={{ border: 'none', cursor: 'pointer', padding: '0.35rem 0.65rem' }}
-            >
-              Lavender
-            </button>
-            <button
-              onClick={() => setTheme('assam')}
-              className={`badge ${theme === 'assam' ? 'badge-green' : ''}`}
-              style={{ border: 'none', cursor: 'pointer', padding: '0.35rem 0.65rem' }}
-            >
-              Assam Tea 🍃
-            </button>
-            <button
-              onClick={() => setTheme('loktak')}
-              className={`badge ${theme === 'loktak' ? 'badge-cyan' : ''}`}
-              style={{ border: 'none', cursor: 'pointer', padding: '0.35rem 0.65rem' }}
-            >
-              Loktak Meadow 🪷
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* 3D WebGL Canvas Container with VR Dual-Eye Frame Overlay when VR Mode Active */}
-      <div style={{ position: 'relative', width: '100%', height: 380, borderRadius: '20px', overflow: 'hidden', border: '1px solid #30363D' }}>
+      {/* 3D WebGL Canvas Container */}
+      <div style={{ position: 'relative', width: '100%', height: 380, borderRadius: '20px', overflow: 'hidden', border: '1px solid #263142' }}>
         <div
           ref={mountRef}
           style={{
             width: '100%',
             height: '100%',
-            backgroundColor: '#090C15'
+            backgroundColor: '#0B0E14'
           }}
         />
 
-        {/* Simulated VR Headset Dual-Viewport Stereoscopic Lens Overlay */}
         {vrMode && (
           <div style={{
             position: 'absolute',
@@ -363,14 +271,13 @@ const ThreeMemoryGardenCanvas = () => {
           </div>
         )}
 
-        {/* Floating 3D Reward Badge Overlay */}
         {rewardMsg && (
           <div style={{
             position: 'absolute',
             top: 20,
             left: '50%',
             transform: 'translateX(-50%)',
-            backgroundColor: 'rgba(22, 27, 34, 0.95)',
+            backgroundColor: '#161C26',
             border: '1px solid #38BDF8',
             borderRadius: '9999px',
             padding: '0.6rem 1.4rem',
@@ -388,8 +295,8 @@ const ThreeMemoryGardenCanvas = () => {
           position: 'absolute',
           bottom: 14,
           left: 14,
-          backgroundColor: 'rgba(13, 17, 23, 0.85)',
-          border: '1px solid #30363D',
+          backgroundColor: '#0B0E14',
+          border: '1px solid #263142',
           padding: '0.4rem 0.85rem',
           borderRadius: '9999px',
           fontSize: '0.8rem',
@@ -403,7 +310,7 @@ const ThreeMemoryGardenCanvas = () => {
         </div>
       </div>
 
-      {/* 3D Garden Interaction Controls */}
+      {/* 3D Matrix Interaction Controls */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -412,22 +319,22 @@ const ThreeMemoryGardenCanvas = () => {
         gap: '1rem',
         marginTop: '1.25rem',
         paddingTop: '1rem',
-        borderTop: '1px solid #30363D'
+        borderTop: '1px solid #263142'
       }}>
         <div style={{ display: 'flex', gap: '1.2rem', fontSize: '0.92rem', fontWeight: 800 }}>
-          <div>🌱 Plants: <span style={{ color: '#34D399' }}>{garden?.plants ?? 1}</span></div>
-          <div>🌸 3D Flowers: <span style={{ color: '#C084FC' }}>{garden?.flowers ?? 0}</span></div>
-          <div>🌳 3D Trees: <span style={{ color: '#38BDF8' }}>{garden?.trees ?? 0}</span></div>
+          <div>💎 Cyber Crystals: <span style={{ color: '#38BDF8' }}>{garden?.plants ?? 1}</span></div>
+          <div>🧠 Neural Cores: <span style={{ color: '#C084FC' }}>{garden?.flowers ?? 1}</span></div>
+          <div>⭕ Quantum Rings: <span style={{ color: '#34D399' }}>{garden?.trees ?? 0}</span></div>
         </div>
 
         <button
-          onClick={handleWaterGarden}
-          disabled={isWatering}
+          onClick={handleChargeMatrix}
+          disabled={isCharging}
           className="btn-primary"
           style={{ padding: '0.75rem 1.6rem', fontSize: '0.95rem' }}
         >
-          <Droplets size={20} className={isWatering ? 'animate-pulse-gentle' : ''} />
-          <span>{isWatering ? 'WATERING 3D GARDEN...' : t('water3dGarden')}</span>
+          <Zap size={20} />
+          <span>{isCharging ? 'CHARGING MATRIX...' : t('water3dGarden')}</span>
         </button>
       </div>
     </div>

@@ -4,21 +4,21 @@ import * as THREE from 'three';
 import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
 import { gardenAPI } from '../services/api';
-import { Trees, Droplets, Sparkles, Flame, Shield, ArrowRight } from 'lucide-react';
+import { Cpu, Zap, Flame, ArrowRight } from 'lucide-react';
 
 const GardenPreview = () => {
-  const { user, garden, setGarden, speakText, voiceAssistance } = useAuth();
-  const [watering, setWatering] = useState(false);
+  const { user, garden, setGarden, speakText, voiceAssistance, t } = useAuth();
+  const [charging, setCharging] = useState(false);
   const mountRef = useRef(null);
-  const flowersGroupRef = useRef(null);
+  const nodesGroupRef = useRef(null);
 
-  // Render 3D Three.js WebGL Cyber Garden Preview Canvas
+  // Render 3D Three.js WebGL Cyber Mind Matrix Canvas
   useEffect(() => {
     const currentMount = mountRef.current;
     if (!currentMount) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x090C15);
+    scene.background = new THREE.Color(0x0B0E14);
 
     const camera = new THREE.PerspectiveCamera(45, currentMount.clientWidth / currentMount.clientHeight, 0.1, 100);
     camera.position.set(0, 3.5, 7);
@@ -29,73 +29,71 @@ const GardenPreview = () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     currentMount.appendChild(renderer.domElement);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0x00F2FE, 2, 20);
+    const pointLight = new THREE.PointLight(0x38BDF8, 2, 20);
     pointLight.position.set(2, 5, 3);
     scene.add(pointLight);
 
-    const goldLight = new THREE.PointLight(0xFFD700, 1.5, 15);
+    const goldLight = new THREE.PointLight(0xFBBF24, 1.5, 15);
     goldLight.position.set(-3, 3, -2);
     scene.add(goldLight);
 
-    // Group for 3D Cyber Flower Geometries
-    const flowersGroup = new THREE.Group();
-    flowersGroupRef.current = flowersGroup;
-    scene.add(flowersGroup);
+    const nodesGroup = new THREE.Group();
+    nodesGroupRef.current = nodesGroup;
+    scene.add(nodesGroup);
 
-    // 3D Grid Pedestal Base
-    const gridHelper = new THREE.GridHelper(10, 10, 0x00F2FE, 0x1A233A);
+    // 3D Matrix Pedestal Base Grid
+    const gridHelper = new THREE.GridHelper(10, 10, 0x38BDF8, 0x1E2634);
     gridHelper.position.y = -1;
     scene.add(gridHelper);
 
-    // Create 3D Cyber Flower Meshes
-    const plantCount = Math.max(3, garden?.plants || 3);
-    const flowerColors = [0x00F2FE, 0xFFD700, 0xA855F7, 0x00E676, 0xFF4E50];
+    // Create 3D Cyber Neural Crystal Nodes
+    const nodeCount = Math.max(4, garden?.plants || 4);
+    const nodeColors = [0x38BDF8, 0xFBBF24, 0xC084FC, 0x34D399, 0xFB923C];
 
-    for (let i = 0; i < plantCount; i++) {
-      const angle = (i / plantCount) * Math.PI * 2;
+    for (let i = 0; i < nodeCount; i++) {
+      const angle = (i / nodeCount) * Math.PI * 2;
       const radius = 2.2;
       const x = Math.cos(angle) * radius;
       const z = Math.sin(angle) * radius;
 
-      // 3D Flower Stem & Petals
-      const flowerNode = new THREE.Group();
-      flowerNode.position.set(x, -0.2, z);
+      const nodeGroup = new THREE.Group();
+      nodeGroup.position.set(x, -0.2, z);
 
-      // Core Crystal Gem
-      const gemGeo = new THREE.IcosahedronGeometry(0.55, 1);
-      const gemMat = new THREE.MeshStandardMaterial({
-        color: flowerColors[i % flowerColors.length],
+      // Core Octahedron Quantum Crystal
+      const crystalGeo = new THREE.OctahedronGeometry(0.5, 0);
+      const crystalMat = new THREE.MeshStandardMaterial({
+        color: nodeColors[i % nodeColors.length],
         roughness: 0.2,
         metalness: 0.8,
-        emissive: flowerColors[i % flowerColors.length],
-        emissiveIntensity: 0.4
+        emissive: nodeColors[i % nodeColors.length],
+        emissiveIntensity: 0.5
       });
-      const gemMesh = new THREE.Mesh(gemGeo, gemMat);
-      flowerNode.add(gemMesh);
+      const crystalMesh = new THREE.Mesh(crystalGeo, crystalMat);
+      nodeGroup.add(crystalMesh);
 
-      // Petal Rings
-      const ringGeo = new THREE.TorusGeometry(0.75, 0.05, 16, 32);
-      const ringMat = new THREE.MeshBasicMaterial({ color: flowerColors[i % flowerColors.length], wireframe: true });
+      // Quantum Energy Orbit Rings
+      const ringGeo = new THREE.TorusGeometry(0.7, 0.04, 16, 32);
+      const ringMat = new THREE.MeshBasicMaterial({ color: nodeColors[i % nodeColors.length], wireframe: true });
       const ringMesh = new THREE.Mesh(ringGeo, ringMat);
       ringMesh.rotation.x = Math.PI / 2;
-      flowerNode.add(ringMesh);
+      nodeGroup.add(ringMesh);
 
-      flowersGroup.add(flowerNode);
+      nodesGroup.add(nodeGroup);
     }
 
     // Floating Ambient Particles
     const particleGeo = new THREE.BufferGeometry();
-    const particleCount = 60;
+    const particleCount = 70;
     const posArray = new Float32Array(particleCount * 3);
 
     for (let i = 0; i < particleCount * 3; i++) {
       posArray[i] = (Math.random() - 0.5) * 10;
     }
     particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const particleMat = new THREE.PointsMaterial({ size: 0.06, color: 0x00F2FE, transparent: true, opacity: 0.7 });
+    const particleMat = new THREE.PointsMaterial({ size: 0.06, color: 0x38BDF8, transparent: true, opacity: 0.8 });
     const particleSystem = new THREE.Points(particleGeo, particleMat);
     scene.add(particleSystem);
 
@@ -106,9 +104,9 @@ const GardenPreview = () => {
       frameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      if (flowersGroupRef.current) {
-        flowersGroupRef.current.rotation.y = elapsedTime * 0.4;
-        flowersGroupRef.current.children.forEach((child, idx) => {
+      if (nodesGroupRef.current) {
+        nodesGroupRef.current.rotation.y = elapsedTime * 0.4;
+        nodesGroupRef.current.children.forEach((child, idx) => {
           child.position.y = -0.2 + Math.sin(elapsedTime * 2 + idx) * 0.15;
           child.rotation.y = elapsedTime * 1.5;
         });
@@ -138,22 +136,22 @@ const GardenPreview = () => {
     };
   }, [garden]);
 
-  const handleWater = async () => {
+  const handleCharge = async () => {
     soundFx.playXpGain();
-    setWatering(true);
+    setCharging(true);
     if (voiceAssistance) {
-      speakText("Watering 3D memory garden! Cognitive plants blooming.");
+      speakText("Charging 3D Mind Matrix! Neural crystals activated.");
     }
     const updated = await gardenAPI.updateGarden(user?.id || user?._id, 'water');
     setGarden(updated);
-    setTimeout(() => setWatering(false), 1200);
+    setTimeout(() => setCharging(false), 500); // Fast 500ms
   };
 
   return (
     <div className="garden-card animate-fade-in" style={{
-      background: 'linear-gradient(135deg, rgba(0, 242, 254, 0.08) 0%, rgba(15, 20, 36, 0.95) 100%)',
-      border: '1px solid rgba(0, 242, 254, 0.3)',
-      boxShadow: '0 0 25px rgba(0, 242, 254, 0.15)'
+      background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, #161C26 100%)',
+      border: '1px solid rgba(56, 189, 248, 0.3)',
+      boxShadow: '0 0 25px rgba(56, 189, 248, 0.15)'
     }}>
       <div className="garden-card-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -161,23 +159,26 @@ const GardenPreview = () => {
             width: 44,
             height: 44,
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #34D399 0%, #38BDF8 100%)'
+            background: 'linear-gradient(135deg, #38BDF8 0%, #34D399 100%)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justify: 'center'
           }}>
-            <Trees size={24} color="#050B14" />
+            <Cpu size={24} color="#0B0E14" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.25rem', color: '#F8FAFC', fontWeight: 900, fontFamily: 'var(--font-heading)' }}>
-              3D WEBGL MEMORY GARDEN
+            <h3 style={{ fontSize: '1.2rem', color: '#FFFFFF', fontWeight: 900, fontFamily: 'var(--font-heading)' }}>
+              {t('navGarden').toUpperCase()}
             </h3>
             <span style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
-              REAL-TIME 3D VISUALIZATION OF COGNITIVE PROGRESS
+              REAL-TIME 3D VISUALIZATION OF NEURAL RELICS
             </span>
           </div>
         </div>
 
         <span className="badge badge-cyan" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-          <Flame size={16} color="#FF4E50" fill="#FF4E50" />
-          <span>{garden?.streak ?? 1} DAY STREAK</span>
+          <Flame size={16} color="#FB923C" fill="#FB923C" />
+          <span>{garden?.streak ?? 0} DAY STREAK</span>
         </span>
       </div>
 
@@ -186,60 +187,60 @@ const GardenPreview = () => {
         ref={mountRef}
         style={{
           width: '100%',
-          height: '240px',
+          height: '220px',
           borderRadius: '16px',
-          backgroundColor: '#090C15',
-          border: '1px solid rgba(0, 242, 254, 0.2)',
+          backgroundColor: '#0B0E14',
+          border: '1px solid rgba(56, 189, 248, 0.25)',
           marginBottom: '1rem',
           position: 'relative',
           overflow: 'hidden'
         }}
       />
 
-      {/* Garden Stats Row */}
+      {/* Relic Stats Row */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '0.75rem',
         marginBottom: '1.1rem',
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundColor: '#0B0E14',
         padding: '0.75rem 1rem',
         borderRadius: '12px',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        border: '1px solid #263142',
         textAlign: 'center',
-        fontFamily: 'var(--font-esports)'
+        fontFamily: 'var(--font-heading)'
       }}>
         <div>
-          <span style={{ color: '#00E676', fontSize: '0.75rem' }}>PLANTS</span>
-          <div style={{ color: '#F8FAFC', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.plants ?? 1}</div>
+          <span style={{ color: '#38BDF8', fontSize: '0.75rem', fontWeight: 800 }}>CYBER CRYSTALS</span>
+          <div style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.plants ?? 1}</div>
         </div>
         <div>
-          <span style={{ color: '#A855F7', fontSize: '0.75rem' }}>FLOWERS</span>
-          <div style={{ color: '#F8FAFC', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.flowers ?? 0}</div>
+          <span style={{ color: '#C084FC', fontSize: '0.75rem', fontWeight: 800 }}>NEURAL CORES</span>
+          <div style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.flowers ?? 1}</div>
         </div>
         <div>
-          <span style={{ color: '#00F2FE', fontSize: '0.75rem' }}>TREES</span>
-          <div style={{ color: '#F8FAFC', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.trees ?? 0}</div>
+          <span style={{ color: '#34D399', fontSize: '0.75rem', fontWeight: 800 }}>QUANTUM RINGS</span>
+          <div style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '1.1rem' }}>{garden?.trees ?? 0}</div>
         </div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
         <button
-          onClick={handleWater}
-          disabled={watering}
+          onClick={handleCharge}
+          disabled={charging}
           className="btn-secondary"
           style={{ padding: '0.65rem 1.2rem', fontSize: '0.85rem' }}
         >
-          <Droplets size={18} color="#00F2FE" />
-          <span>{watering ? 'WATERING 3D GARDEN...' : 'WATER 3D GARDEN'}</span>
+          <Zap size={18} color="#38BDF8" />
+          <span>{charging ? 'CHARGING MATRIX...' : t('water3dGarden')}</span>
         </button>
 
         <Link 
           to="/garden" 
           onClick={() => soundFx.playClick()}
-          style={{ color: '#00F2FE', fontWeight: 800, fontFamily: 'var(--font-esports)', fontSize: '0.85rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+          style={{ color: '#38BDF8', fontWeight: 800, fontFamily: 'var(--font-heading)', fontSize: '0.85rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
         >
-          FULL 3D GARDEN <ArrowRight size={16} />
+          OPEN MIND SANCTUM <ArrowRight size={16} />
         </Link>
       </div>
     </div>

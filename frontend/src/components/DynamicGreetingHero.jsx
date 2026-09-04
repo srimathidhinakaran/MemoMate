@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
-import { Sun, Sunset, Moon, Sparkles, Flame, Gem, Trophy, Clock, Calendar, ShieldCheck, Zap, Crown, Target, ChevronRight } from 'lucide-react';
+import { Sun, Sunset, Moon, Sparkles, Flame, Trophy, Clock, Crown } from 'lucide-react';
 
 const DynamicGreetingHero = () => {
-  const { user, streak, gems, xpPoints, level, levelTitle, league, t } = useAuth();
+  const { user, streak, xpPoints, level, league, t } = useAuth();
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -35,8 +35,8 @@ const DynamicGreetingHero = () => {
       title: t('goodEvening'),
       icon: Sunset,
       badgeText: 'EVENING RECALL SESSION',
-      subtext: 'Unwind with pattern recall, memory garden expansion, and cognitive exercises.',
-      neonColor: '#A855F7'
+      subtext: 'Unwind with pattern recall, Mind Matrix expansion, and cognitive exercises.',
+      neonColor: '#C084FC'
     };
   } else if (hours < 5 || hours >= 22) {
     greetingConfig = {
@@ -48,7 +48,6 @@ const DynamicGreetingHero = () => {
     };
   }
 
-  const IconComponent = greetingConfig.icon;
   const timeFormatted = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   const dateFormatted = time.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
 
@@ -59,11 +58,11 @@ const DynamicGreetingHero = () => {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, rgba(15, 20, 36, 0.95) 0%, rgba(9, 12, 21, 0.98) 100%)',
+      background: 'linear-gradient(135deg, #161C26 0%, #0B0E14 100%)',
       borderRadius: '24px',
       padding: '2rem 2.4rem',
-      border: '1px solid rgba(0, 242, 254, 0.3)',
-      boxShadow: '0 0 40px rgba(0, 242, 254, 0.15)',
+      border: '1px solid rgba(56, 189, 248, 0.3)',
+      boxShadow: '0 0 40px rgba(56, 189, 248, 0.15)',
       position: 'relative',
       overflow: 'hidden'
     }}>
@@ -90,31 +89,32 @@ const DynamicGreetingHero = () => {
         {/* Left Section: Hero Player Profile & Greeting */}
         <div style={{ flex: '1 1 500px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.8rem' }}>
-            {/* Animated Rank Crest */}
             <div 
               onClick={() => soundFx.playClick()}
               style={{
-                width: 64,
-                height: 64,
+                width: 60,
+                height: 60,
                 borderRadius: '16px',
-                background: 'linear-gradient(135deg, #FFD700 0%, #FF4E50 100%)',
+                background: 'linear-gradient(135deg, #FBBF24 0%, #FB923C 100%)',
                 padding: '2px',
-                boxShadow: '0 0 25px rgba(255, 215, 0, 0.5)',
                 cursor: 'pointer'
               }}
             >
               <div className="icon-box" style={{
                 width: '100%',
                 height: '100%',
-                backgroundColor: '#090C15',
-                borderRadius: '14px'
+                backgroundColor: '#0B0E14',
+                borderRadius: '14px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justify: 'center'
               }}>
-                <Crown size={34} color="#FFD700" />
+                <Crown size={32} color="#FBBF24" />
               </div>
             </div>
 
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
                 <span className="badge badge-gold">
                   <Crown size={14} /> {t('activeMember')}
                 </span>
@@ -123,7 +123,7 @@ const DynamicGreetingHero = () => {
                 </span>
               </div>
               <h1 style={{
-                fontSize: '2.4rem',
+                fontSize: '2.2rem',
                 color: '#FFFFFF',
                 fontWeight: 900,
                 margin: 0,
@@ -135,23 +135,23 @@ const DynamicGreetingHero = () => {
             </div>
           </div>
 
-          <p style={{ color: '#9198A1', fontSize: '1.05rem', maxWidth: '640px', lineHeight: 1.5, marginBottom: '1.2rem' }}>
+          <p style={{ color: '#94A3B8', fontSize: '1rem', maxWidth: '640px', lineHeight: 1.5, marginBottom: '1.2rem' }}>
             {greetingConfig.subtext}
           </p>
 
           {/* Daily Goal Level Progress Bar */}
           <div style={{
-            backgroundColor: '#21262D',
-            border: '1px solid #30363D',
+            backgroundColor: '#222B3B',
+            border: '1px solid #263142',
             borderRadius: '14px',
             padding: '0.85rem 1.2rem',
             maxWidth: '560px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, fontFamily: 'var(--font-esports)', color: '#FBBF24', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#FBBF24', textTransform: 'uppercase' }}>
                 DAILY GOAL TIER {level || 1} PROGRESS
               </span>
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, fontFamily: 'var(--font-esports)', color: '#38BDF8' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#38BDF8' }}>
                 {currentXpInLevel} / {nextLevelXp} XP ({progressPercent}%)
               </span>
             </div>
@@ -160,7 +160,7 @@ const DynamicGreetingHero = () => {
             <div style={{
               width: '100%',
               height: '10px',
-              backgroundColor: '#0D1117',
+              backgroundColor: '#0B0E14',
               borderRadius: '9999px',
               overflow: 'hidden',
               position: 'relative'
@@ -170,13 +170,13 @@ const DynamicGreetingHero = () => {
                 height: '100%',
                 background: 'linear-gradient(90deg, #38BDF8 0%, #FBBF24 100%)',
                 borderRadius: '9999px',
-                transition: 'width 0.8s ease-out'
+                transition: 'width 0.5s ease-out'
               }} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.45rem', fontSize: '0.8rem', color: '#9198A1', fontWeight: 700 }}>
-              <span>CURRENT REWARD: 3D CYBER SUNFLOWER</span>
-              <span style={{ color: '#FB923C' }}>NEXT TIER: HEROIC CRYSTAL (+150 GEMS)</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.45rem', fontSize: '0.78rem', color: '#94A3B8', fontWeight: 700 }}>
+              <span>CURRENT REWARD: 3D QUANTUM CRYSTAL</span>
+              <span style={{ color: '#FB923C' }}>NEXT TIER: HEROIC CREST (+150 PTS)</span>
             </div>
           </div>
         </div>
@@ -200,11 +200,11 @@ const DynamicGreetingHero = () => {
           }}>
             <Clock size={18} color="#38BDF8" />
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '0.7rem', color: '#9198A1', fontWeight: 800, fontFamily: 'var(--font-esports)', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: 800, letterSpacing: '0.05em' }}>
                 DAILY PROGRAM
               </div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#F8FAFC', fontFamily: 'var(--font-esports)' }}>
-                {timeFormatted} <span style={{ color: '#00F2FE' }}>•</span> {dateFormatted}
+              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#FFFFFF' }}>
+                {timeFormatted} <span style={{ color: '#38BDF8' }}>•</span> {dateFormatted}
               </div>
             </div>
           </div>
@@ -212,39 +212,37 @@ const DynamicGreetingHero = () => {
           {/* Gaming Status Counters */}
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <div style={{
-              backgroundColor: 'rgba(255, 78, 80, 0.12)',
-              border: '1px solid rgba(255, 78, 80, 0.4)',
+              backgroundColor: 'rgba(251, 146, 60, 0.12)',
+              border: '1px solid rgba(251, 146, 60, 0.4)',
               padding: '0.6rem 1rem',
               borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              color: '#FF4E50',
+              color: '#FB923C',
               fontWeight: 800,
-              fontFamily: 'var(--font-esports)',
               fontSize: '0.85rem'
             }}>
-              <Flame size={20} fill="#FF4E50" />
+              <Flame size={20} fill="#FB923C" />
               <div>
                 <div style={{ fontSize: '0.65rem', color: '#94A3B8' }}>STREAK</div>
-                <div>{streak ?? 1} DAYS</div>
+                <div>{streak ?? 0} DAYS</div>
               </div>
             </div>
 
             <div style={{
-              backgroundColor: 'rgba(255, 215, 0, 0.12)',
-              border: '1px solid rgba(255, 215, 0, 0.4)',
+              backgroundColor: 'rgba(251, 191, 36, 0.12)',
+              border: '1px solid rgba(251, 191, 36, 0.4)',
               padding: '0.6rem 1rem',
               borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              color: '#FFD700',
+              color: '#FBBF24',
               fontWeight: 800,
-              fontFamily: 'var(--font-esports)',
               fontSize: '0.85rem'
             }}>
-              <Trophy size={20} color="#FFD700" />
+              <Trophy size={20} color="#FBBF24" />
               <div>
                 <div style={{ fontSize: '0.65rem', color: '#94A3B8' }}>LEAGUE</div>
                 <div>{league ? league.toUpperCase() : 'EMERALD LEAGUE'}</div>

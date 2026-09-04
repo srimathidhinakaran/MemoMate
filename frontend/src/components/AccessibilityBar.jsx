@@ -16,13 +16,13 @@ const AccessibilityBar = () => {
 
   return (
     <div style={{
-      backgroundColor: '#161B22',
-      borderBottom: '1px solid #30363D',
-      padding: '0.6rem 1.5rem',
+      backgroundColor: '#121721',
+      borderBottom: '1px solid #263142',
+      padding: '0.5rem 1.5rem',
       display: 'flex',
       alignItems: 'center',
       justify: 'space-between',
-      fontSize: '0.88rem',
+      fontSize: '0.85rem',
       color: '#FFFFFF',
       boxShadow: '0 2px 10px rgba(0, 0, 0, 0.4)',
       flexWrap: 'wrap',
@@ -32,31 +32,31 @@ const AccessibilityBar = () => {
         <div className="icon-box" style={{ width: 26, height: 26, borderRadius: '6px', backgroundColor: 'rgba(56, 189, 248, 0.15)' }}>
           <Eye size={16} color="#38BDF8" />
         </div>
-        <span style={{ color: '#FFFFFF', letterSpacing: '0.01em' }}>Elderly Accessibility & Language Bar</span>
+        <span style={{ color: '#FFFFFF', letterSpacing: '0.01em' }}>Accessibility & Indian Languages Bar</span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
-        {/* NER Regional Language Selector */}
+        {/* Indian Languages Selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <Globe size={16} color="#34D399" />
-          <span style={{ fontWeight: 700, color: '#9198A1', fontSize: '0.85rem' }}>NER Language:</span>
+          <span style={{ fontWeight: 700, color: '#94A3B8', fontSize: '0.85rem' }}>Language:</span>
           <select
             value={language || 'en'}
             onChange={(e) => updateLanguage(e.target.value)}
             style={{
-              padding: '0.3rem 0.6rem',
+              padding: '0.35rem 0.7rem',
               borderRadius: '6px',
               border: '1px solid #34D399',
-              backgroundColor: '#0D1117',
+              backgroundColor: '#0B0E14',
               color: '#34D399',
-              fontWeight: 700,
-              fontSize: '0.82rem',
+              fontWeight: 800,
+              fontSize: '0.85rem',
               cursor: 'pointer',
               outline: 'none'
             }}
           >
             {NER_LANGUAGES.map((lang) => (
-              <option key={lang.code} value={lang.code} style={{ backgroundColor: '#161B22', color: '#FFFFFF' }}>
+              <option key={lang.code} value={lang.code} style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
                 {lang.flag} {lang.name}
               </option>
             ))}
@@ -66,20 +66,18 @@ const AccessibilityBar = () => {
         {/* Text Size Adjuster */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <Type size={16} color="#38BDF8" style={{ marginRight: '0.1rem' }} />
-          <span style={{ fontWeight: 700, color: '#9198A1', marginRight: '0.3rem', fontSize: '0.85rem' }}>Text Size:</span>
+          <span style={{ fontWeight: 700, color: '#94A3B8', marginRight: '0.3rem', fontSize: '0.85rem' }}>Text Size:</span>
           
           <button
             onClick={() => setFontSize('font-normal')}
             style={{
               padding: '0.3rem 0.7rem',
               borderRadius: '6px',
-              border: fontSize === 'font-normal' ? '1px solid #38BDF8' : '1px solid #30363D',
-              backgroundColor: fontSize === 'font-normal' ? 'rgba(56, 189, 248, 0.2)' : '#0D1117',
-              color: fontSize === 'font-normal' ? '#FFFFFF' : '#9198A1',
+              border: fontSize === 'font-normal' ? '1px solid #38BDF8' : '1px solid #263142',
+              backgroundColor: fontSize === 'font-normal' ? 'rgba(56, 189, 248, 0.2)' : '#0B0E14',
+              color: fontSize === 'font-normal' ? '#FFFFFF' : '#94A3B8',
               fontWeight: fontSize === 'font-normal' ? 800 : 600,
-              fontSize: '0.8rem',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              fontSize: '0.8rem'
             }}
           >
             Normal
@@ -90,13 +88,11 @@ const AccessibilityBar = () => {
             style={{
               padding: '0.3rem 0.7rem',
               borderRadius: '6px',
-              border: fontSize === 'font-large' ? '1px solid #38BDF8' : '1px solid #30363D',
-              backgroundColor: fontSize === 'font-large' ? 'rgba(56, 189, 248, 0.2)' : '#0D1117',
-              color: fontSize === 'font-large' ? '#FFFFFF' : '#9198A1',
+              border: fontSize === 'font-large' ? '1px solid #38BDF8' : '1px solid #263142',
+              backgroundColor: fontSize === 'font-large' ? 'rgba(56, 189, 248, 0.2)' : '#0B0E14',
+              color: fontSize === 'font-large' ? '#FFFFFF' : '#94A3B8',
               fontWeight: fontSize === 'font-large' ? 800 : 600,
-              fontSize: '0.8rem',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              fontSize: '0.8rem'
             }}
           >
             Large
@@ -107,13 +103,11 @@ const AccessibilityBar = () => {
             style={{
               padding: '0.3rem 0.7rem',
               borderRadius: '6px',
-              border: fontSize === 'font-xlarge' ? '1px solid #38BDF8' : '1px solid #30363D',
-              backgroundColor: fontSize === 'font-xlarge' ? 'rgba(56, 189, 248, 0.2)' : '#0D1117',
-              color: fontSize === 'font-xlarge' ? '#FFFFFF' : '#9198A1',
+              border: fontSize === 'font-xlarge' ? '1px solid #38BDF8' : '1px solid #263142',
+              backgroundColor: fontSize === 'font-xlarge' ? 'rgba(56, 189, 248, 0.2)' : '#0B0E14',
+              color: fontSize === 'font-xlarge' ? '#FFFFFF' : '#94A3B8',
               fontWeight: fontSize === 'font-xlarge' ? 800 : 600,
-              fontSize: '0.8rem',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              fontSize: '0.8rem'
             }}
           >
             Extra Large
@@ -131,14 +125,12 @@ const AccessibilityBar = () => {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.45rem',
-            border: voiceAssistance ? '1px solid #34D399' : '1px solid #30363D',
-            backgroundColor: voiceAssistance ? 'rgba(52, 211, 153, 0.15)' : '#0D1117',
-            color: voiceAssistance ? '#34D399' : '#9198A1',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease'
+            border: voiceAssistance ? '1px solid #34D399' : '1px solid #263142',
+            backgroundColor: voiceAssistance ? 'rgba(52, 211, 153, 0.15)' : '#0B0E14',
+            color: voiceAssistance ? '#34D399' : '#94A3B8'
           }}
         >
-          {voiceAssistance ? <Volume2 size={16} color="#34D399" /> : <VolumeX size={16} color="#9198A1" />}
+          {voiceAssistance ? <Volume2 size={16} color="#34D399" /> : <VolumeX size={16} color="#94A3B8" />}
           <span>{voiceAssistance ? 'Voice Assistance ON' : 'Voice Assistance OFF'}</span>
         </button>
       </div>
