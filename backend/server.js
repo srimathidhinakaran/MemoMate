@@ -40,6 +40,22 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Serve static frontend build assets for full-stack deployment
+const fs = require('fs');
+const distPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(distPath));
+
+// Wildcard SPA route fallback for single-page application refreshes
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api')) {
+    const indexPath = path.join(distPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
+  }
+  res.status(404).json({ message: 'Resource or API route not found' });
+});
+
 // Database Connection with graceful standalone fallback
 mongoose.connect(MONGO_URI)
   .then(() => {
