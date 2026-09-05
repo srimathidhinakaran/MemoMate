@@ -4,7 +4,7 @@ import CognitiveScoreCard from '../components/CognitiveScoreCard';
 import ProgressChart from '../components/ProgressChart';
 import { HeartHandshake, User, Sparkles, Download, Zap } from 'lucide-react';
 
-const CaregiverDashboard = () => {
+const CaregiverDashboard = ({ initialUserId }) => {
   const [elderlyUsers, setElderlyUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,13 +12,14 @@ const CaregiverDashboard = () => {
   useEffect(() => {
     caregiverAPI.getUsers().then((users) => {
       setElderlyUsers(users);
-      if (users && users.length > 0) {
-        loadUserDetails(users[0].id || users[0]._id);
+      const targetId = initialUserId || (users && users.length > 0 ? (users[0].id || users[0]._id) : null);
+      if (targetId) {
+        loadUserDetails(targetId);
       } else {
         setLoading(false);
       }
     });
-  }, []);
+  }, [initialUserId]);
 
   const loadUserDetails = async (userId) => {
     setLoading(true);

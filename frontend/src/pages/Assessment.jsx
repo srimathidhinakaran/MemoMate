@@ -1,5 +1,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
+import SpatialMazeNavigator from '../games/SpatialMazeNavigator';
+import ToneRhythmRecall from '../games/ToneRhythmRecall';
 import ThreeDFlowerMatch from '../games/ThreeDFlowerMatch';
 import ThreeDTargetSearch from '../games/ThreeDTargetSearch';
 import ThreeDReactionOrbs from '../games/ThreeDReactionOrbs';
@@ -11,15 +13,32 @@ import MemoryMatch from '../games/MemoryMatch';
 import ReactionTest from '../games/ReactionTest';
 import ThreeMemoryGardenCanvas from '../components/ThreeMemoryGardenCanvas';
 import { soundFx } from '../utils/soundEffects';
-import { Brain, Target, RotateCcw, Zap, BookOpen, Layers, ArrowLeft, Box, Gamepad2 } from 'lucide-react';
+import { Brain, Target, RotateCcw, Zap, BookOpen, Layers, ArrowLeft, Box, Gamepad2, Compass, Music } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Assessment = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentGame = searchParams.get('game');
   const { t } = useAuth();
-
   const games = [
+    {
+      id: 'spatial-maze',
+      title: 'Spatial Maze Navigator',
+      category: 'Spatial Orientation',
+      icon: Compass,
+      color: '#38BDF8',
+      desc: 'Procedural 2D/3D orientation and spatial navigation maze challenge for elderly memory training.',
+      badge: 'NEW DYNAMIC'
+    },
+    {
+      id: 'tone-rhythm',
+      title: 'Acoustic Rhythm & Tone Recall',
+      category: 'Auditory Memory',
+      icon: Music,
+      color: '#C084FC',
+      desc: 'Interactive audio-visual harmonic tone sequence recall game with dynamic pattern scaling.',
+      badge: 'NEW DYNAMIC'
+    },
     {
       id: '3d-memory',
       title: 'Spatial Node Matrix',
@@ -109,6 +128,8 @@ const Assessment = () => {
   };
 
   const gameAliasMap = {
+    'spatial-maze': 'spatial-maze',
+    'tone-rhythm': 'tone-rhythm',
     'attention': '3d-target',
     '3d-target': '3d-target',
     'memory': '3d-memory',
@@ -141,6 +162,8 @@ const Assessment = () => {
           <span>{t('backToExercises') || 'BACK TO EXERCISE HUB'}</span>
         </button>
 
+        {activeGameKey === 'spatial-maze' && <SpatialMazeNavigator />}
+        {activeGameKey === 'tone-rhythm' && <ToneRhythmRecall />}
         {activeGameKey === '3d-memory' && <ThreeDFlowerMatch />}
         {activeGameKey === '3d-target' && <ThreeDTargetSearch />}
         {activeGameKey === '3d-reaction' && <ThreeDReactionOrbs />}

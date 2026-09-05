@@ -2,16 +2,24 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
-import { LayoutDashboard, Gamepad2, Trophy, Sparkles, GitCommit, LineChart, Cpu, HeartHandshake, Brain } from 'lucide-react';
+import { LayoutDashboard, Gamepad2, Trophy, Sparkles, GitCommit, LineChart, Cpu, HeartHandshake, Brain, ExternalLink, Globe } from 'lucide-react';
 
 const Sidebar = () => {
-  const { voiceAssistance, speakText, t } = useAuth();
+  const { voiceAssistance, speakText, t, externalGamificationUrl } = useAuth();
 
   const handleNav = (label) => {
     soundFx.playClick();
     if (voiceAssistance) {
       speakText(`Opening ${label}`);
     }
+  };
+
+  const handleExternalLaunch = () => {
+    soundFx.playLevelUp();
+    if (voiceAssistance) {
+      speakText("Launching External Gamification App");
+    }
+    window.open(externalGamificationUrl, '_blank', 'noopener,noreferrer');
   };
 
   const navItems = [
@@ -71,7 +79,36 @@ const Sidebar = () => {
         );
       })}
 
-      <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#0B0E14', borderRadius: '12px', border: '1px solid #263142' }}>
+      {/* External Gamification Web App Launcher */}
+      <button
+        onClick={handleExternalLaunch}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justify: 'space-between',
+          gap: '0.85rem',
+          padding: '0.85rem 1rem',
+          borderRadius: '10px',
+          fontWeight: 800,
+          fontSize: '0.9rem',
+          fontFamily: 'var(--font-heading)',
+          color: '#38BDF8',
+          backgroundColor: 'rgba(56, 189, 248, 0.12)',
+          border: '1px solid rgba(56, 189, 248, 0.4)',
+          cursor: 'pointer',
+          marginTop: '0.5rem',
+          transition: 'all 0.15s ease'
+        }}
+        title="Open External Gamification Web App"
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          <Globe size={20} color="#38BDF8" />
+          <span>{t('navExternalGamification') || 'Gamification Hub'}</span>
+        </div>
+        <ExternalLink size={16} color="#38BDF8" />
+      </button>
+
+      <div style={{ marginTop: '1.25rem', padding: '1rem', backgroundColor: '#0B0E14', borderRadius: '12px', border: '1px solid #263142' }}>
         <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '0.4rem', fontFamily: 'var(--font-heading)' }}>
           <Brain size={16} color="#38BDF8" />
           <span>{t('cognitiveCare') || 'COGNITIVE CARE'}</span>

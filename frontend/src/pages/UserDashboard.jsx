@@ -11,10 +11,11 @@ import CognitiveScoreCard from '../components/CognitiveScoreCard';
 import RecommendationCard from '../components/RecommendationCard';
 import CognitivePath from '../components/CognitivePath';
 import GardenPreview from '../components/GardenPreview';
+import ExternalGamificationCard from '../components/ExternalGamificationCard';
 import RewardUnlockModal from '../components/RewardUnlockModal';
 
 const UserDashboard = () => {
-  const { profile, recommendation, activeRewardModal, setActiveRewardModal } = useAuth();
+  const { t, profile, recommendation, activeRewardModal, setActiveRewardModal } = useAuth();
 
   return (
     <div className="page-view animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -26,6 +27,9 @@ const UserDashboard = () => {
 
       {/* 3. Live Cognitive Telemetry Ticker Stream */}
       <LiveActivityFeed />
+
+      {/* 4. Dedicated External Gamification App Launcher */}
+      <ExternalGamificationCard />
 
       {/* 3. Daily Streak Maintenance & Quests */}
       <div style={{

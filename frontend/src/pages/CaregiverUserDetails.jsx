@@ -12,7 +12,7 @@ const CaregiverUserDetails = () => {
         <ArrowLeft size={18} />
         <span>Back to Caregiver Overview</span>
       </Link>
-      <CaregiverDashboard />
+      <CaregiverDashboard initialUserId={userId} />
     </div>
   );
 };

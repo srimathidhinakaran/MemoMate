@@ -95,6 +95,16 @@ export const AuthProvider = ({ children }) => {
   const [recentScoreToast, setRecentScoreToast] = useState(null);
   const [activeRewardModal, setActiveRewardModal] = useState(null);
 
+  // Dedicated External Gamification App URL
+  const [externalGamificationUrl, setExternalGamificationUrl] = useState(() => {
+    return localStorage.getItem('memomate_external_gamification_url') || 'https://memomate-gamification.vercel.app';
+  });
+
+  const updateExternalGamificationUrl = (url) => {
+    setExternalGamificationUrl(url);
+    localStorage.setItem('memomate_external_gamification_url', url);
+  };
+
   // Global Cognitive Performance State
   const [profile, setProfile] = useState(() => {
     const savedProf = localStorage.getItem('memomate_profile');
@@ -489,6 +499,8 @@ export const AuthProvider = ({ children }) => {
       recentScoreToast,
       activeRewardModal,
       setActiveRewardModal,
+      externalGamificationUrl,
+      updateExternalGamificationUrl,
       completeDailyStreakCheckin,
       buyShopItem,
       claimQuestReward

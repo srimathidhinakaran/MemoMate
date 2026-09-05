@@ -127,7 +127,13 @@ export const NER_TRANSLATIONS = {
     days: 'DAYS',
     navMenu: 'NAVIGATION MENU',
     cognitiveCare: 'COGNITIVE CARE',
-    sidebarTip: 'Complete daily exercises to maintain your streak & unlock Mind Matrix rewards.'
+    sidebarTip: 'Complete daily exercises to maintain your streak & unlock Mind Matrix rewards.',
+    navExternalGamification: 'Gamification Hub',
+    externalGamificationTag: 'DEDICATED GAMIFICATION HUB 🌐',
+    externalGamificationTitle: 'External Cognitive Gamification Portal',
+    externalGamificationDesc: 'Seamlessly launch our external Gamification web application for multiplayer brain battles, extended Duolingo-style quests, and interactive 3D challenges linked directly to your MemoMate profile.',
+    configurePortal: 'Configure Link',
+    launchGamificationBtn: 'OPEN EXTERNAL GAMIFICATION APP 🚀'
   },
   hi: {
     platformTitle: 'मेमोमेट — संज्ञानात्मक गेमिंग प्लेटफॉर्म',
