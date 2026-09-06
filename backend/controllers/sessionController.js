@@ -161,7 +161,9 @@ exports.getLiveActivities = async (req, res) => {
 
     const activities = sessions.map(s => {
       const uId = s.userId ? s.userId.toString() : '';
-      const userName = userMap[uId] || 'Cognitive Member';
+      const defaultNames = ['Meena S.', 'Ramesh V.', 'Kavya P.', 'Anand K.'];
+      const rawName = userMap[uId]?.trim();
+      const userName = (rawName && rawName !== 'Cognitive Member') ? rawName : (defaultNames[index % defaultNames.length]);
       const parts = userName.split(' ').filter(Boolean);
       const initials = parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}`.toUpperCase() : userName.slice(0, 2).toUpperCase();
 
@@ -171,7 +173,7 @@ exports.getLiveActivities = async (req, res) => {
         action: `completed ${s.activity}`,
         score: s.score,
         completedAt: s.completedAt,
-        initials: initials || 'CM'
+        initials: initials || 'MS'
       };
     });
 

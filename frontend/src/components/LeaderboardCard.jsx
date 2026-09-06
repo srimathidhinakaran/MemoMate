@@ -6,7 +6,7 @@ import { gamificationAPI } from '../services/api';
 import { Trophy, Flame, Crown, ChevronRight } from 'lucide-react';
 
 const getCleanInitials = (name) => {
-  if (!name) return 'CM';
+  if (!name) return 'AM';
   const clean = name.replace(/\(.*?\)/g, '').trim();
   const parts = clean.split(' ').filter(Boolean);
   if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();

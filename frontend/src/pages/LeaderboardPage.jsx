@@ -5,7 +5,7 @@ import { gamificationAPI } from '../services/api';
 import { Trophy, Crown, Flame, Sparkles, Swords } from 'lucide-react';
 
 const getCleanInitials = (name) => {
-  if (!name) return 'CM';
+  if (!name) return 'AM';
   const clean = name.replace(/\(.*?\)/g, '').trim();
   const parts = clean.split(' ').filter(Boolean);
   if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
@@ -123,7 +123,7 @@ const LeaderboardPage = () => {
           <div>
             <div style={{ fontSize: '0.78rem', color: '#94A3B8', fontWeight: 700 }}>YOUR CURRENT RANK</div>
             <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFFFFF' }}>
-              {user?.name || 'Cognitive Member'}
+              {user?.name || 'Active Member'}
             </div>
             <div style={{ fontSize: '0.85rem', color: '#38BDF8', display: 'flex', gap: '0.8rem', marginTop: '0.2rem', fontWeight: 700 }}>
               <span>⚡ {xpPoints || 0} XP</span>
