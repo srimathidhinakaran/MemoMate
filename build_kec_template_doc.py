@@ -10,7 +10,7 @@ from docx.oxml.ns import qn
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak, KeepTogether
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, KeepTogether
 from reportlab.pdfgen import canvas
 
 def set_cell_background(cell, fill_hex):
@@ -34,7 +34,6 @@ def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
 def build_word_document(docx_path, media_files):
     doc = Document()
     
-    # Page setup A4, 0.6 inch margins to match official template border spacing
     section = doc.sections[0]
     section.page_width = Inches(8.27)
     section.page_height = Inches(11.69)
@@ -50,7 +49,7 @@ def build_word_document(docx_path, media_files):
     normal_style.paragraph_format.line_spacing = 1.15
     normal_style.paragraph_format.space_after = Pt(4)
 
-    # 1. TEMPLATE HEADER BANNER
+    # Header banner
     p_hdr = doc.add_paragraph()
     p_hdr.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p_hdr.paragraph_format.space_before = Pt(4)
@@ -69,7 +68,7 @@ def build_word_document(docx_path, media_files):
     r_sub.font.size = Pt(11)
     r_sub.font.bold = True
 
-    # 2. TOP INFORMATION BOX (2-column table)
+    # Top info grid table
     tbl_top = doc.add_table(rows=1, cols=2)
     tbl_top.alignment = WD_TABLE_ALIGNMENT.CENTER
     tbl_top.autofit = False
@@ -84,7 +83,7 @@ def build_word_document(docx_path, media_files):
     set_cell_background(cell_left, "FAFAFA")
     set_cell_background(cell_right, "FAFAFA")
 
-    # Left Column Content
+    # Left Column
     p_l1 = cell_left.paragraphs[0]
     p_l1.paragraph_format.space_after = Pt(3)
     r = p_l1.add_run("Department: "); r.bold = True; r.font.size = Pt(10.5)
@@ -105,28 +104,24 @@ def build_word_document(docx_path, media_files):
     r = p_l4.add_run("Team ID / Name: "); r.bold = True; r.font.size = Pt(10.5)
     r2 = p_l4.add_run("MemoMate_KEC"); r2.bold = True; r2.font.size = Pt(10.5)
 
-    # Right Column Content
+    # Right Column
     p_r1 = cell_right.paragraphs[0]
     p_r1.paragraph_format.space_after = Pt(2)
     r = p_r1.add_run("Team leader:\n"); r.bold = True; r.font.size = Pt(10.5)
-    r2 = p_r1.add_run("  Srimathi D (Roll No: 22CSR180)\n"); r2.font.size = Pt(10)
+    r2 = p_r1.add_run("  Sriman Kumar V (24CSR301)\n"); r2.font.size = Pt(10)
     
     r = p_r1.add_run("Team members:\n"); r.bold = True; r.font.size = Pt(10.5)
     m_text = (
-        "  Srimathi D (Roll No: 22CSR180)\n"
-        "  Team Member 2 (Roll No: 22CSR181)\n"
-        "  Team Member 3 (Roll No: 22CSR182)\n"
-        "  Team Member 4 (Roll No: 22CSR183)\n"
-        "  Team Member 5 (Roll No: 22CSR184)\n"
+        "  Sriman Kumar V (24CSR301)\n"
     )
     r2 = p_r1.add_run(m_text); r2.font.size = Pt(9.5)
 
     r = p_r1.add_run("Mentor/Co-mentors:\n"); r.bold = True; r.font.size = Pt(10.5)
-    r2 = p_r1.add_run("  Dr. R. Malathi; Associate Professor, Dept of CSE, KEC\n  Prof. P. Suresh; Assistant Professor, Dept of CSE, KEC"); r2.font.size = Pt(9.5)
+    r2 = p_r1.add_run("  Dr. M. Geetha M.E., Ph.D.; Associate Professor, CSE"); r2.font.size = Pt(9.5)
 
     doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
-    # Title section for Prototype Screenshots
+    # Title section
     p_sec = doc.add_paragraph()
     p_sec.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p_sec.paragraph_format.space_after = Pt(8)
@@ -136,22 +131,21 @@ def build_word_document(docx_path, media_files):
     r_sec.font.bold = True
     r_sec.font.color.rgb = RGBColor(0x00, 0x20, 0x60)
 
-    # Embed Screenshots with descriptions
     captions = [
         ("Figure 1: MemoMate Personalized User Dashboard & Daily Schedule Interface",
-         "Features personalized greeting ('Good Afternoon, Srimathi'), direct baseline assessment launch button, AI voice assistant entry point, accessibility toolbar (English/Hindi/Tamil/Assamese, themes, text sizing), active gamification counters (2-day streak, 134 gems, Level 4 / 983 XP, Rank #1), patient metadata badge, and daily schedule reminders (hydration, memory session, afternoon medication)."),
+         "Features personalized greeting ('Good Afternoon, Srimathi'), direct baseline assessment launch button, AI voice assistant entry point, accessibility toolbar (English/Hindi/Tamil/Assamese, themes, text sizing), active gamification counters (2-day streak, 134 gems, Level 4 / 983 XP, Rank #1), patient metadata badge, and daily schedule reminders."),
         
         ("Figure 2: Cognitive Metrics & 30-Day Trend Analytics Dashboard",
-         "Displays quantitative cognitive domain index scores (Memory Index: 88, Focus & Attention: 89, Recall Speed: 80, Reaction Time: 71) alongside dynamic status indicators ('Improving', 'Focus Needed', 'Consistent'). A 30-day SVG line graph tracks score trajectories across all four cognitive categories to evaluate patient improvement."),
+         "Displays quantitative cognitive domain index scores (Memory Index: 88, Focus & Attention: 89, Recall Speed: 80, Reaction Time: 71) alongside dynamic status indicators ('Improving', 'Focus Needed', 'Consistent'). A 30-day SVG line graph tracks score trajectories across all four cognitive categories."),
         
         ("Figure 3: Interactive 3D Mind Matrix Sanctum Engine (Three.js WebGL)",
          "Features an interactive WebGL 3D cognitive stimulation scene powered by Three.js. Supports orbit rotation, zoom, VR headset immersion mode, particle systems, orbiting target spheres, and real-time inventory tracking (6 Cyber Crystals, 10 Neural Cores, 3 Quantum Rings) with neural matrix charging feedback."),
         
         ("Figure 4: Family Memory Recognition & Reminiscence Exercise Module",
-         "Presents photo-based family recognition prompts ('Who is this family member?') with portrait imagery, hints ('Daughter • Loves drinking afternoon tea together...'), and multi-choice selections (Meena, Rahul, Ankit). Detailed profile cards show relationship tags, visiting schedules, and doctor contacts to reinforce familiar identities."),
+         "Presents photo-based family recognition prompts ('Who is this family member?') with portrait imagery, hints ('Daughter • Loves drinking afternoon tea together...'), and multi-choice selections (Meena, Rahul, Ankit). Detailed profile cards show relationship tags, visiting schedules, and doctor contacts."),
         
         ("Figure 5: MemoMate Cognitive Gaming Hub Suite",
-         "Showcases the 9-game cognitive suite including Quantum Speed Reflex, 3D Dual-N-Back & Number Recall, Spatial Maze Navigator, Acoustic Rhythm & Tone Recall, Card Memory Matrix, Focus Reflex & Math Matrix, Speed Reflex Reaction Test, 3D Holographic Matrix, and 3D Categorical Word Recall with procedural scaling tags and direct play controls.")
+         "Showcases the 9-game cognitive suite including Quantum Speed Reflex, 3D Dual-N-Back & Number Recall, Spatial Maze Navigator, Acoustic Rhythm & Tone Recall, Card Memory Matrix, Focus Reflex & Math Matrix, Speed Reflex Reaction Test, 3D Holographic Matrix, and 3D Categorical Word Recall.")
     ]
 
     for idx, (cap, desc) in enumerate(captions):
@@ -184,7 +178,7 @@ def build_word_document(docx_path, media_files):
             r_d.font.size = Pt(10.5)
 
     doc.save(docx_path)
-    print(f"SUCCESS: Generated Word template -> {docx_path}")
+    print(f"SUCCESS: Updated Word template -> {docx_path}")
 
 def build_pdf_document(pdf_path, media_files):
     class NumberedCanvas(canvas.Canvas):
@@ -208,12 +202,10 @@ def build_pdf_document(pdf_path, media_files):
             self.saveState()
             self.setStrokeColor(colors.HexColor('#002060'))
             self.setLineWidth(1.5)
-            # Outer double border matching template
             self.rect(25, 25, A4[0] - 50, A4[1] - 50)
             self.setLineWidth(0.5)
             self.rect(28, 28, A4[0] - 56, A4[1] - 56)
 
-            # Footer text
             self.setFont("Times-Italic", 9)
             self.setFillColor(colors.HexColor('#333333'))
             self.drawString(36, 34, "SIH 2026 @ Kongu Engineering College | PS ID: SIH26003 | Team MemoMate_KEC")
@@ -236,7 +228,7 @@ def build_pdf_document(pdf_path, media_files):
         fontName='Times-Bold',
         fontSize=13,
         leading=16,
-        alignment=1, # Center
+        alignment=1,
         textColor=colors.HexColor('#002060'),
         spaceAfter=2
     )
@@ -278,18 +270,16 @@ def build_pdf_document(pdf_path, media_files):
         fontName='Times-Roman',
         fontSize=10,
         leading=13,
-        alignment=4, # Justified
+        alignment=4,
         textColor=colors.HexColor('#222222'),
         spaceAfter=10
     )
 
     story = []
 
-    # Banner Title
     story.append(Paragraph("SMART INDIA HACKATHON 2026 @ KONGU ENGINEERING COLLEGE", style_title))
     story.append(Paragraph("(7th & 8th September 2026)", style_sub))
 
-    # Top Grid Table
     t_left = (
         "<b>Department:</b> Computer Science and Engineering<br/>"
         "<b>Project category:</b> Software<br/>"
@@ -298,16 +288,11 @@ def build_pdf_document(pdf_path, media_files):
     )
 
     t_right = (
-        "<b>Team leader:</b> Srimathi D (Roll No: 22CSR180)<br/>"
+        "<b>Team leader:</b> Sriman Kumar V (24CSR301)<br/>"
         "<b>Team members:</b><br/>"
-        "&nbsp;&nbsp;1. Srimathi D (Roll No: 22CSR180)<br/>"
-        "&nbsp;&nbsp;2. Team Member 2 (Roll No: 22CSR181)<br/>"
-        "&nbsp;&nbsp;3. Team Member 3 (Roll No: 22CSR182)<br/>"
-        "&nbsp;&nbsp;4. Team Member 4 (Roll No: 22CSR183)<br/>"
-        "&nbsp;&nbsp;5. Team Member 5 (Roll No: 22CSR184)<br/>"
+        "&nbsp;&nbsp;1. Sriman Kumar V (24CSR301)<br/>"
         "<b>Mentor/Co-mentors:</b><br/>"
-        "&nbsp;&nbsp;Dr. R. Malathi; Associate Professor, Dept of CSE, KEC<br/>"
-        "&nbsp;&nbsp;Prof. P. Suresh; Assistant Professor, Dept of CSE, KEC"
+        "&nbsp;&nbsp;Dr. M. Geetha M.E., Ph.D.; Associate Professor, CSE"
     )
 
     p_tl = Paragraph(t_left, ParagraphStyle('TL', fontName='Times-Roman', fontSize=10, leading=13))
@@ -359,7 +344,7 @@ def build_pdf_document(pdf_path, media_files):
             story.append(KeepTogether(element_group))
 
     doc.build(story, canvasmaker=NumberedCanvas)
-    print(f"SUCCESS: Generated PDF template -> {pdf_path}")
+    print(f"SUCCESS: Updated PDF template -> {pdf_path}")
 
 def main():
     media_dir = r'C:\Users\LENOVO\.gemini\antigravity-ide\brain\481a6e73-e62a-4a0d-baee-1a7d30e83efb'

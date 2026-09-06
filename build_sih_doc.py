@@ -205,7 +205,7 @@ def create_document():
     r_cov_subtitle.font.color.rgb = RGBColor(0x33, 0x33, 0x33)
 
     # Details Box Table on Cover Page
-    tbl_cov = doc.add_table(rows=7, cols=2)
+    tbl_cov = doc.add_table(rows=9, cols=2)
     tbl_cov.alignment = WD_TABLE_ALIGNMENT.CENTER
     tbl_cov.autofit = False
     
@@ -215,6 +215,8 @@ def create_document():
       ("Project Name / App:", "MemoMate"),
       ("Institution Name:", "Kongu Engineering College"),
       ("Department:", "Department of Computer Science and Engineering"),
+      ("Team Member(s):", "Sriman Kumar V (24CSR301) & Srimathi D"),
+      ("Faculty Mentor:", "Dr. M. Geetha M.E., Ph.D., Associate Professor, CSE"),
       ("Target Beneficiaries:", "Elderly Individuals, Dementia & MCI Patients, Caregivers, & NER Communities"),
       ("Submission Date:", "September 2026")
     ]
