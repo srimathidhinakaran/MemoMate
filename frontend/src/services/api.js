@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { cognitiveService } from './cognitiveService';
 
+const RENDER_API_URL = 'https://memomate-backend-ju43.onrender.com/api';
 const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-const API_BASE_URL = import.meta.env.VITE_API_URL || (isLocalhost ? 'http://localhost:5000/api' : '/api');
+const API_BASE_URL = import.meta.env.VITE_API_URL || (isLocalhost ? 'http://localhost:5000/api' : RENDER_API_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
