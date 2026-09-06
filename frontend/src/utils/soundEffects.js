@@ -9,13 +9,19 @@ class SoundEngine {
 
   init() {
     if (!this.audioCtx) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const AudioContext = typeof window !== 'undefined' ? (window.AudioContext || window.webkitAudioContext) : null;
       if (AudioContext) {
-        this.audioCtx = new AudioContext();
+        try {
+          this.audioCtx = new AudioContext();
+        } catch (e) {
+          console.warn("AudioContext init warning", e);
+        }
       }
     }
     if (this.audioCtx && this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume();
+      try {
+        this.audioCtx.resume();
+      } catch (e) {}
     }
   }
 
@@ -116,7 +122,6 @@ class SoundEngine {
 
     try {
       const now = this.audioCtx.currentTime;
-      // Arpeggio Fanfare: G4, C5, E5, G5, C6
       const arpeggio = [392.00, 523.25, 659.25, 783.99, 1046.50];
       
       arpeggio.forEach((freq, idx) => {
@@ -140,6 +145,45 @@ class SoundEngine {
       console.warn('Audio Context playLevelUp error:', e);
     }
   }
+
+  playSuccess() {
+    this.playXpGain();
+  }
+
+  playCardFlip() {
+    this.playClick();
+  }
+
+  playCardMatch() {
+    this.playXpGain();
+  }
+
+  playCardMismatch() {
+    this.playClick();
+  }
+
+  playGameWin() {
+    this.playLevelUp();
+  }
 }
 
-export const soundFx = new SoundEngine();
+const rawEngine = new SoundEngine();
+
+// Safe Proxy wrapper so calling any missing audio method never crashes the app
+export const soundFx = new Proxy(rawEngine, {
+  get(target, prop, receiver) {
+    if (prop in target) {
+      const val = Reflect.get(target, prop, receiver);
+      if (typeof val === 'function') {
+        return val.bind(target);
+      }
+      return val;
+    }
+    // Safe fallback method for any undefined soundFx invocation
+    return () => {
+      try {
+        target.playClick();
+      } catch (e) {}
+    };
+  }
+});
