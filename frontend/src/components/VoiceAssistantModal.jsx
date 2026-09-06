@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Mic, MicOff, Volume2, X, Sparkles, Calendar, Gamepad2, Droplets, Pill, AlertTriangle } from 'lucide-react';
 
 const VoiceAssistantModal = ({ isOpen, onClose }) => {
-  const { speakText, language, t, reminders, recommendation } = useAuth();
+  const { speakText, language, langConfig, t, reminders, recommendation } = useAuth();
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [responseMsg, setResponseMsg] = useState('');
@@ -79,23 +79,7 @@ const VoiceAssistantModal = ({ isOpen, onClose }) => {
 
     try {
       const recognition = new SpeechRecognition();
-
-      const langLocaleMap = {
-        en: 'en-US',
-        ta: 'ta-IN',
-        hi: 'hi-IN',
-        as: 'as-IN',
-        te: 'te-IN',
-        kn: 'kn-IN',
-        ml: 'ml-IN',
-        mr: 'mr-IN',
-        bn: 'bn-IN',
-        gu: 'gu-IN',
-        pa: 'pa-IN',
-        or: 'or-IN'
-      };
-
-      recognition.lang = langLocaleMap[language] || 'en-US';
+      recognition.lang = langConfig?.speechLocale || 'en-US';
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
 

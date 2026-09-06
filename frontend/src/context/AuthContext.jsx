@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI, cognitiveAPI, recommendationAPI, gardenAPI, gamificationAPI } from '../services/api';
 import { cognitiveService } from '../services/cognitiveService';
-import { NER_TRANSLATIONS } from '../utils/nerLanguages';
+import { NER_TRANSLATIONS, LANGUAGE_CONFIG } from '../utils/nerLanguages';
 
 const AuthContext = createContext(null);
 
@@ -136,9 +136,19 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  const langConfig = LANGUAGE_CONFIG[language] || LANGUAGE_CONFIG.en;
+
   const t = (key, params) => {
     const dict = NER_TRANSLATIONS[language] || NER_TRANSLATIONS.en;
-    let str = dict[key] || NER_TRANSLATIONS.en[key] || key;
+    let str = dict[key] || NER_TRANSLATIONS.en[key];
+
+    if (str === undefined) {
+      if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        console.warn(`[i18n Missing Key] key: "${key}", lang: "${language}"`);
+      }
+      str = key;
+    }
+
     if (params && typeof params === 'object') {
       Object.keys(params).forEach((k) => {
         str = str.replace(new RegExp(`{\\s*${k}\\s*}`, 'g'), params[k]);
@@ -668,6 +678,7 @@ export const AuthProvider = ({ children }) => {
       language,
       updateLanguage,
       t,
+      langConfig,
       profile,
       setProfile,
       recommendation,
