@@ -42,13 +42,11 @@ const connectDB = async () => {
 };
 
 app.use(async (req, res, next) => {
-  if (req.path.startsWith('/api')) {
-    await connectDB();
-  }
+  await connectDB();
   next();
 });
 
-// Routes
+// Routes (Supports both standalone /api routes and Vercel serverless / path routes)
 const authRoutes = require('./routes/authRoutes');
 const sessionRoutes = require('./routes/sessionRoutes');
 const cognitiveRoutes = require('./routes/cognitiveRoutes');
@@ -58,17 +56,30 @@ const caregiverRoutes = require('./routes/caregiverRoutes');
 const gamificationRoutes = require('./routes/gamificationRoutes');
 
 app.use('/api/auth', authRoutes);
-app.use('/api/sessions', sessionRoutes);
-app.use('/api/cognitive', cognitiveRoutes);
-app.use('/api/recommendations', recommendationRoutes);
-app.use('/api/garden', gardenRoutes);
-app.use('/api/caregiver', caregiverRoutes);
-app.use('/api/gamification', gamificationRoutes);
+app.use('/auth', authRoutes);
 
-app.get('/api/health', (req, res) => {
+app.use('/api/sessions', sessionRoutes);
+app.use('/sessions', sessionRoutes);
+
+app.use('/api/cognitive', cognitiveRoutes);
+app.use('/cognitive', cognitiveRoutes);
+
+app.use('/api/recommendations', recommendationRoutes);
+app.use('/recommendations', recommendationRoutes);
+
+app.use('/api/garden', gardenRoutes);
+app.use('/garden', gardenRoutes);
+
+app.use('/api/caregiver', caregiverRoutes);
+app.use('/caregiver', caregiverRoutes);
+
+app.use('/api/gamification', gamificationRoutes);
+app.use('/gamification', gamificationRoutes);
+
+app.get(['/api/health', '/health', '/'], (req, res) => {
   const isConnected = mongoose.connection.readyState === 1;
-  res.status(isConnected ? 200 : 503).json({
-    status: isConnected ? 'ok' : 'error',
+  res.status(200).json({
+    status: isConnected ? 'ok' : 'connecting',
     database: isConnected ? 'connected' : 'disconnected',
     app: 'MemoMate SIH 2026 API',
     timestamp: new Date()
