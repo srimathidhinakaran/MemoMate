@@ -32,14 +32,14 @@ const AccessibilityBar = () => {
         <div className="icon-box" style={{ width: 26, height: 26, borderRadius: '6px', backgroundColor: 'rgba(56, 189, 248, 0.15)' }}>
           <Eye size={16} color="#38BDF8" />
         </div>
-        <span style={{ color: '#FFFFFF', letterSpacing: '0.01em' }}>Accessibility & Multilingual Bar</span>
+        <span style={{ color: '#FFFFFF', letterSpacing: '0.01em' }}>{t('accessibilityBarTitle') || 'Accessibility & Multilingual Bar'}</span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
         {/* Multilingual Selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <Globe size={16} color="#34D399" />
-          <span style={{ fontWeight: 700, color: '#94A3B8', fontSize: '0.85rem' }}>Language:</span>
+          <span style={{ fontWeight: 700, color: '#94A3B8', fontSize: '0.85rem' }}>{t('languageLabel') || 'Language:'}</span>
           <select
             value={language || 'en'}
             onChange={(e) => updateLanguage(e.target.value)}

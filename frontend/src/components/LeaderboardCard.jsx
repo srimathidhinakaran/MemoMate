@@ -60,7 +60,7 @@ const LeaderboardCard = () => {
               {t('leaderboardTitle').toUpperCase()}
             </h3>
             <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
-              TOP ACTIVE MEMBERS • REAL-TIME STANDINGS
+              {t('leaderboardSub') || 'TOP ACTIVE MEMBERS • REAL-TIME STANDINGS'}
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@ const LeaderboardCard = () => {
             gap: '0.3rem'
           }}
         >
-          VIEW LEADERBOARD <ChevronRight size={16} />
+          {t('viewLeaderboard') || 'VIEW LEADERBOARD'} <ChevronRight size={16} />
         </Link>
       </div>
 
@@ -94,7 +94,7 @@ const LeaderboardCard = () => {
           color: '#94A3B8',
           fontSize: '0.88rem'
         }}>
-          No leaderboard rankings yet. Complete exercises to earn XP and top the board!
+          {t('noRankingsAvailable') || 'No leaderboard rankings yet. Complete exercises to earn XP and top the board!'}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -171,7 +171,7 @@ const LeaderboardCard = () => {
 
                   <div>
                     <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.95rem' }}>
-                      {displayName} {isUser && <span style={{ color: '#38BDF8', fontWeight: 800, marginLeft: '0.3rem' }}>(You)</span>}
+                      {displayName} {isUser && <span style={{ color: '#38BDF8', fontWeight: 800, marginLeft: '0.3rem' }}>{t('you') || '(You)'}</span>}
                     </div>
                     <div style={{ fontSize: '0.78rem', color: '#94A3B8', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <span>Age {item.age || 68}</span>

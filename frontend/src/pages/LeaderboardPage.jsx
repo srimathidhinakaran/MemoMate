@@ -84,17 +84,17 @@ const LeaderboardPage = () => {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem', flexWrap: 'wrap' }}>
             <span className="badge badge-gold">
-              <Swords size={14} /> GLOBAL DIVISION TIER #1
+              <Swords size={14} /> {t('globalDivisionTier') || 'GLOBAL DIVISION TIER #1'}
             </span>
             <span className="badge badge-cyan">
-              <Sparkles size={14} /> LIVE STANDINGS
+              <Sparkles size={14} /> {t('liveStandings') || 'LIVE STANDINGS'}
             </span>
           </div>
           <h1 style={{ fontSize: '2.2rem', margin: 0, fontWeight: 900, fontFamily: 'var(--font-heading)', color: '#FFFFFF' }}>
             {t('leaderboardTitle').toUpperCase()}
           </h1>
           <p style={{ color: '#94A3B8', fontSize: '1rem', marginTop: '0.4rem', maxWidth: '640px', lineHeight: 1.5 }}>
-            Top members in the Emerald Division promote to Sapphire Tier! Execute daily cognitive exercises to maintain your streak.
+            {t('leaderboardSub') || 'Top members in the Emerald Division promote to Sapphire Tier! Execute daily cognitive exercises to maintain your streak.'}
           </p>
         </div>
 
@@ -121,13 +121,13 @@ const LeaderboardPage = () => {
             #{currentUserRank}
           </div>
           <div>
-            <div style={{ fontSize: '0.78rem', color: '#94A3B8', fontWeight: 700 }}>YOUR CURRENT RANK</div>
+            <div style={{ fontSize: '0.78rem', color: '#94A3B8', fontWeight: 700 }}>{t('yourCurrentRank') || 'YOUR CURRENT RANK'}</div>
             <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFFFFF' }}>
-              {user?.name || 'Active Member'}
+              {user?.name || (t('activeMember') || 'Active Member')}
             </div>
             <div style={{ fontSize: '0.85rem', color: '#38BDF8', display: 'flex', gap: '0.8rem', marginTop: '0.2rem', fontWeight: 700 }}>
               <span>⚡ {xpPoints || 0} XP</span>
-              <span style={{ color: '#FB923C' }}>🔥 {streak || 0} DAY STREAK</span>
+              <span style={{ color: '#FB923C' }}>🔥 {streak || 0} {t('daysStreak') || 'DAY STREAK'}</span>
             </div>
           </div>
         </div>
@@ -167,7 +167,7 @@ const LeaderboardPage = () => {
           >
             <span style={{ fontSize: '1.1rem' }}>{lg.icon}</span>
             <span>{lg.name.toUpperCase()}</span>
-            {lg.current && <span style={{ fontSize: '0.65rem', backgroundColor: '#34D399', color: '#0B0E14', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 800 }}>ACTIVE</span>}
+            {lg.current && <span style={{ fontSize: '0.65rem', backgroundColor: '#34D399', color: '#0B0E14', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 800 }}>{t('activeTab') || 'ACTIVE'}</span>}
           </button>
         ))}
       </div>
@@ -180,14 +180,14 @@ const LeaderboardPage = () => {
             className={activeCategory === 'xp' ? 'btn-primary' : 'btn-secondary'}
             style={{ padding: '0.55rem 1.25rem', fontSize: '0.85rem' }}
           >
-            ⚡ TOTAL XP STANDINGS
+            ⚡ {t('totalXpStandings') || 'TOTAL XP STANDINGS'}
           </button>
           <button
             onClick={() => handleFilterClick('category', 'streak')}
             className={activeCategory === 'streak' ? 'btn-flame' : 'btn-secondary'}
             style={{ padding: '0.55rem 1.25rem', fontSize: '0.85rem' }}
           >
-            🔥 STREAK MASTERS
+            🔥 {t('streakMasters') || 'STREAK MASTERS'}
           </button>
         </div>
 
@@ -206,7 +206,7 @@ const LeaderboardPage = () => {
                 fontSize: '0.78rem'
               }}
             >
-              {tf === 'weekly' ? 'THIS WEEK' : (tf === 'today' ? 'TODAY' : 'ALL-TIME')}
+              {tf === 'weekly' ? (t('thisWeek') || 'THIS WEEK') : (tf === 'today' ? (t('today') || 'TODAY') : (t('allTime') || 'ALL-TIME'))}
             </button>
           ))}
         </div>
@@ -227,10 +227,10 @@ const LeaderboardPage = () => {
         }}>
           <Trophy size={48} color="#94A3B8" style={{ opacity: 0.5 }} />
           <h3 style={{ fontSize: '1.4rem', color: '#FFFFFF', fontWeight: 800, margin: 0, fontFamily: 'var(--font-heading)' }}>
-            No Rankings Available Yet
+            {t('noRankingsAvailable') || 'No Rankings Available Yet'}
           </h3>
           <p style={{ color: '#94A3B8', fontSize: '0.95rem', maxWidth: '480px', margin: 0, lineHeight: 1.5 }}>
-            Be the first community member to complete a cognitive exercise session to claim the #1 spot on the leaderboard!
+            {t('noRankingsDesc') || 'Be the first community member to complete a cognitive exercise session to claim the #1 spot on the leaderboard!'}
           </p>
         </div>
       ) : (

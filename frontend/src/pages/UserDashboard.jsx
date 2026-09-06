@@ -17,7 +17,7 @@ const UserDashboard = () => {
     return t('goodEvening') || 'Good Evening';
   };
 
-  const userName = user?.name || 'Lakshmi Devi';
+  const userName = user?.name || (t('activeMember') || 'Active Member');
   const isAssessed = profile?.assessed !== false && profile?.memoryScore !== null && profile?.memoryScore !== undefined;
 
   const handleStartPrimaryActivity = () => {
