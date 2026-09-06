@@ -1,14 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* High-Contrast Modern Gamification Theme */
+  /* High-Contrast Modern Gamification Theme (Default: Healthcare Warm) */
   --bg-obsidian: #0B0E14;
   --bg-dark-surface: #121721;
   --bg-card: #161C26;
   --bg-card-hover: #1E2634;
   --bg-card-subtle: #222B3B;
   
-  /* Vibrant Gamification Accent Tokens */
   --neon-cyan: #38BDF8;
   --neon-cyan-dark: #0284C7;
   
@@ -37,6 +36,73 @@
   --font-esports: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
   --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
   --font-body: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+}
+
+/* Theme: Pro Gamified Fire Mode */
+html.theme-fire-pro {
+  --bg-obsidian: #0A0807;
+  --bg-dark-surface: #16100E;
+  --bg-card: #1F1512;
+  --bg-card-hover: #2B1E1A;
+  --bg-card-subtle: #382721;
+  
+  --neon-cyan: #38BDF8;
+  --neon-cyan-dark: #0284C7;
+  
+  --flame-orange: #FF5500;
+  --flame-orange-dark: #CC4400;
+  
+  --battle-gold: #FFB703;
+  --emerald-rank: #10B981;
+  --border-color: #3D261E;
+  --shadow-hover: 0 15px 35px rgba(255, 85, 0, 0.25);
+}
+
+/* Theme: High Contrast Elderly Mode */
+html.theme-high-contrast {
+  --bg-obsidian: #000000;
+  --bg-dark-surface: #050505;
+  --bg-card: #111111;
+  --bg-card-hover: #222222;
+  --bg-card-subtle: #2A2A2A;
+  
+  --neon-cyan: #00FFFF;
+  --neon-cyan-dark: #00CCCC;
+  
+  --flame-orange: #FFD700;
+  --flame-orange-dark: #CCAC00;
+  
+  --battle-gold: #FFFF00;
+  --emerald-rank: #00FF66;
+  --text-primary: #FFFFFF;
+  --text-secondary: #FFFFE0;
+  --text-muted: #CCCCCC;
+  --border-color: #444444;
+  --shadow-hover: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+/* Theme: Soft Daylight Healthcare Mode */
+html.theme-daylight {
+  --bg-obsidian: #F0F4F8;
+  --bg-dark-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8FAFC;
+  --bg-card-subtle: #E2E8F0;
+  
+  --neon-cyan: #0284C7;
+  --neon-cyan-dark: #0369A1;
+  
+  --flame-orange: #EA580C;
+  --flame-orange-dark: #C2410C;
+  
+  --battle-gold: #D97706;
+  --emerald-rank: #059669;
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+  --border-color: #CBD5E1;
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 25px rgba(2, 132, 199, 0.15);
 }
 
 /* Accessibility Font Size Classes */

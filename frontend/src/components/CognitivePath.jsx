@@ -1,66 +1,68 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
 import { CheckCircle2, Target, Clock, Lock, ArrowDown, MapPin } from 'lucide-react';
 
 const CognitivePath = ({ recommendation }) => {
-  const targetActivity = recommendation?.recommendedActivity || '3D Focus Search 🎯';
+  const { t } = useAuth();
+  const targetActivity = recommendation?.recommendedActivity || t('reactionTestTitle') || 'Reaction Speed Test ⚡';
 
   const steps = [
     {
-      title: '3D Memory Match 🎨',
+      title: t('memoryMatchTitle') || '3D Memory Match 🎨',
       status: 'completed',
-      category: 'Memory',
-      badgeText: 'COMPLETED',
-      desc: 'Score: 85 / 100 — Session completed earlier today',
+      category: t('memoryScore') || 'Memory',
+      badgeText: (t('completed') || 'COMPLETED').toUpperCase(),
+      desc: t('sessionCompletedToday') || 'Score: 85 / 100 — Session completed earlier today',
       route: '/assessment?game=memory'
     },
     {
       title: targetActivity,
       status: 'current',
       category: recommendation?.weakArea || 'Attention',
-      badgeText: 'CURRENT FOCUS MISSION',
-      desc: `Recommended next battle mission based on AI telemetry`,
+      badgeText: (t('currentFocusMission') || 'CURRENT FOCUS MISSION').toUpperCase(),
+      desc: t('recommendedMissionDesc') || 'Recommended next battle mission based on AI telemetry',
       route: '/assessment?game=attention'
     },
     {
-      title: 'Number Recall 🔢',
+      title: t('numberRecallTitle') || 'Number Recall 🔢',
       status: 'next',
-      category: 'Recall',
-      badgeText: 'NEXT STAGE',
-      desc: 'Sequence memory recall exercise',
+      category: t('recallScore') || 'Recall',
+      badgeText: (t('nextStage') || 'NEXT STAGE').toUpperCase(),
+      desc: t('seqMemoryDesc') || 'Sequence memory recall exercise',
       route: '/assessment?game=number'
     },
     {
-      title: 'Pattern Recall 🧩',
+      title: t('patternRecallTitle') || 'Pattern Recall 🧩',
       status: 'upcoming',
-      category: 'Pattern Memory',
-      badgeText: 'UPCOMING STAGE',
-      desc: 'Grid spatial visualization challenge',
+      category: t('patternMemory') || 'Pattern Memory',
+      badgeText: (t('upcomingStage') || 'UPCOMING STAGE').toUpperCase(),
+      desc: t('gridSpatialDesc') || 'Grid spatial visualization challenge',
       route: '/assessment?game=pattern'
     }
   ];
 
   return (
     <div className="garden-card animate-fade-in">
-      <div className="garden-card-header">
+      <div className="garden-card-header" style={{ flexWrap: 'wrap', gap: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
           <MapPin size={22} color="#00F2FE" />
           <div>
             <h3 style={{ fontSize: '1.25rem', color: '#F8FAFC', fontWeight: 900, fontFamily: 'var(--font-heading)' }}>
-              BATTLE PATH ROADMAP
+              {t('battlePathTitle') || 'BATTLE PATH ROADMAP'}
             </h3>
             <p style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
-              YOUR COGNITIVE SEQUENCE ADAPTS DYNAMICALLY TO REAL-TIME SCORES
+              {t('battlePathSub') || 'YOUR COGNITIVE SEQUENCE ADAPTS DYNAMICALLY TO REAL-TIME SCORES'}
             </p>
           </div>
         </div>
         <Link 
           to="/path" 
           onClick={() => soundFx.playClick()}
-          style={{ color: '#00F2FE', fontWeight: 800, fontFamily: 'var(--font-esports)', fontSize: '0.85rem', textDecoration: 'none' }}
+          style={{ color: '#00F2FE', fontWeight: 800, fontFamily: 'var(--font-heading)', fontSize: '0.85rem', textDecoration: 'none' }}
         >
-          FULL ROADMAP →
+          {t('fullRoadmap') || 'FULL ROADMAP →'}
         </Link>
       </div>
 
@@ -74,6 +76,7 @@ const CognitivePath = ({ recommendation }) => {
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
+                flexWrap: 'wrap',
                 gap: '1.25rem',
                 backgroundColor: isCurrent ? 'rgba(255, 78, 80, 0.12)' : isCompleted ? 'rgba(0, 230, 118, 0.08)' : 'rgba(255, 255, 255, 0.03)',
                 border: isCurrent ? '1px solid #FF4E50' : isCompleted ? '1px solid rgba(0, 230, 118, 0.4)' : '1px solid rgba(255, 255, 255, 0.1)',
@@ -99,8 +102,8 @@ const CognitivePath = ({ recommendation }) => {
                   {step.status === 'upcoming' && <Lock size={20} color="#94A3B8" />}
                 </div>
 
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
+                <div style={{ flex: '1 1 200px', minWidth: '180px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#F8FAFC', fontFamily: 'var(--font-heading)' }}>
                       {step.title}
                     </span>
@@ -118,9 +121,9 @@ const CognitivePath = ({ recommendation }) => {
                     to={step.route} 
                     onClick={() => soundFx.playLevelUp()}
                     className="btn-flame" 
-                    style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', textDecoration: 'none' }}
+                    style={{ padding: '0.6rem 1.25rem', fontSize: '0.85rem', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, marginLeft: 'auto' }}
                   >
-                    PLAY MISSION
+                    {t('playMission') || 'PLAY MISSION'}
                   </Link>
                 )}
               </div>

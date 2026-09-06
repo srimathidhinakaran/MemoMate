@@ -164,21 +164,21 @@ const SpatialMazeNavigator = () => {
           </div>
           <div>
             <h2 style={{ fontSize: '1.4rem', color: '#FFFFFF', margin: 0, fontWeight: 900, fontFamily: 'var(--font-heading)' }}>
-              Spatial Maze Navigator
+              {t('spatialMazeTitle') || 'Spatial Maze Navigator'}
             </h2>
             <p style={{ color: '#94A3B8', fontSize: '0.85rem', margin: 0 }}>
-              Train spatial orientation & executive planning. Guide the blue orb to the green crystal.
+              {t('spatialMazeDesc') || 'Train spatial orientation & executive planning. Guide the blue orb to the green crystal.'}
             </p>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>MOVES TAKEN</div>
+            <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>{t('movesTaken') || 'MOVES TAKEN'}</div>
             <div style={{ fontSize: '1.2rem', color: '#FBBF24', fontWeight: 900 }}>{moves}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>TIME ELAPSED</div>
+            <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>{t('timeElapsed') || 'TIME ELAPSED'}</div>
             <div style={{ fontSize: '1.2rem', color: '#38BDF8', fontWeight: 900 }}>{elapsedTime}s</div>
           </div>
         </div>
@@ -291,7 +291,7 @@ const SpatialMazeNavigator = () => {
             <CheckCircle2 size={32} color="#34D399" />
           </div>
           <h3 style={{ fontSize: '1.5rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.4rem' }}>
-            MAZE SOLVED SUCCESSFULLY!
+            {t('mazeSolved') || 'MAZE SOLVED SUCCESSFULLY!'}
           </h3>
           <p style={{ color: '#94A3B8', fontSize: '0.95rem', marginBottom: '1.2rem' }}>
             Spatial cognition & path planning score updated across Memory & Attention metrics.
@@ -299,7 +299,7 @@ const SpatialMazeNavigator = () => {
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '1.5rem' }}>
             <div>
-              <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>COGNITIVE SCORE</div>
+              <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>{t('cognitiveScore') || 'COGNITIVE SCORE'}</div>
               <div style={{ fontSize: '2rem', color: '#38BDF8', fontWeight: 900 }}>+{resultScore} PTS</div>
             </div>
             <div>
@@ -310,7 +310,7 @@ const SpatialMazeNavigator = () => {
 
           <button onClick={initGame} className="btn-primary" style={{ padding: '0.75rem 1.8rem', fontSize: '0.95rem' }}>
             <RotateCcw size={18} />
-            <span>PLAY AGAIN (NEW PROCEDURAL MAZE)</span>
+            <span>{t('playAgainMaze') || 'PLAY AGAIN (NEW PROCEDURAL MAZE)'}</span>
           </button>
         </div>
       )}

@@ -45,10 +45,10 @@ const StreakTracker = () => {
           </div>
           <div>
             <h3 style={{ fontSize: '1.2rem', color: '#FFFFFF', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
-              DAILY STREAK ARENA
+              {t('streakArenaTitle') || 'DAILY STREAK ARENA'}
             </h3>
             <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
-              {t('streakCount').toUpperCase()}: <strong style={{ color: '#FB923C' }}>{streak || 0} DAYS</strong> | BEST: <strong style={{ color: '#FBBF24' }}>{highestStreak || 0} DAYS</strong>
+              {t('streakCount').toUpperCase()}: <strong style={{ color: '#FB923C' }}>{streak || 0} {t('days') || 'DAYS'}</strong> | BEST: <strong style={{ color: '#FBBF24' }}>{highestStreak || 0} {t('days') || 'DAYS'}</strong>
             </div>
           </div>
         </div>
@@ -68,14 +68,14 @@ const StreakTracker = () => {
           color: '#38BDF8'
         }}>
           <ShieldCheck size={16} color="#38BDF8" />
-          <span>STREAK SHIELD ACTIVE</span>
+          <span>{t('streakShield') || 'STREAK SHIELD ACTIVE'}</span>
         </div>
       </div>
 
       {/* 7-Day Mon-Sun Dynamic Check-in Calendar */}
       <div>
         <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
-          <span>WEEKLY CHECKIN CALENDAR</span>
+          <span>{t('weeklyCalendar') || 'WEEKLY CHECKIN CALENDAR'}</span>
           <span style={{ color: isCheckedInToday ? '#34D399' : '#FB923C' }}>
             {isCheckedInToday ? t('alreadyChecked') : t('checkinToday')}
           </span>
@@ -152,7 +152,7 @@ const StreakTracker = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <Zap size={20} color="#34D399" fill="#34D399" />
           <div style={{ fontSize: '0.85rem', color: '#FFFFFF', fontWeight: 700 }}>
-            <strong style={{ color: '#34D399' }}>1.25x XP MULTIPLIER ACTIVE!</strong> Play daily exercises to maintain your streak.
+            {t('xpMultiplierText') || '1.25x XP MULTIPLIER ACTIVE! Play daily exercises to maintain your streak.'}
           </div>
         </div>
 
@@ -162,7 +162,7 @@ const StreakTracker = () => {
           className={isCheckedInToday ? "btn-secondary" : "btn-flame"}
           style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
         >
-          {isCheckedInToday ? 'CHECKED IN TODAY ✓' : 'RECORD DAILY CHECKIN'}
+          {isCheckedInToday ? (t('alreadyChecked') || 'CHECKED IN TODAY ✓') : (t('recordCheckin') || 'RECORD DAILY CHECKIN')}
         </button>
       </div>
     </div>

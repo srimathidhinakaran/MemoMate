@@ -5,7 +5,7 @@ import CognitiveScoreCard from '../components/CognitiveScoreCard';
 import { TrendingUp, ArrowUpRight, Minus } from 'lucide-react';
 
 const ProgressPage = () => {
-  const { profile } = useAuth();
+  const { profile, t } = useAuth();
 
   const memoryScore = profile?.memoryScore || 88;
   const attentionScore = profile?.attentionScore || 64;
@@ -26,7 +26,7 @@ const ProgressPage = () => {
             <TrendingUp size={24} color="#38BDF8" />
           </div>
           <h1 style={{ fontSize: '1.8rem', color: '#FFFFFF', fontWeight: 800, fontFamily: 'var(--font-heading)', margin: 0 }}>
-            Cognitive Progress & Weekly Trends 📊
+            {t('navMetrics')} 📊
           </h1>
         </div>
         <p style={{ color: '#9198A1', fontSize: '0.96rem', margin: 0, lineHeight: 1.5 }}>
@@ -41,41 +41,41 @@ const ProgressPage = () => {
         gap: '1.25rem'
       }}>
         <div className="garden-card" style={{ padding: '1.25rem', backgroundColor: '#161B22', border: '1px solid #30363D' }}>
-          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Memory Trend</div>
+          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>{t('memoryScore')}</div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.6rem' }}>
-            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#38BDF8', fontFamily: 'var(--font-heading)' }}>Memory</span>
+            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#38BDF8', fontFamily: 'var(--font-heading)' }}>{memoryScore}</span>
             <span className="badge badge-cyan" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-              <ArrowUpRight size={15} /> Improving
+              <ArrowUpRight size={15} /> {t('improvingStatus') || 'Improving'}
             </span>
           </div>
         </div>
 
         <div className="garden-card" style={{ padding: '1.25rem', backgroundColor: '#161B22', border: '1px solid #30363D' }}>
-          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Attention Trend</div>
+          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>{t('attentionScore')}</div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.6rem' }}>
-            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#FF4E50', fontFamily: 'var(--font-heading)' }}>Attention</span>
+            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#FF4E50', fontFamily: 'var(--font-heading)' }}>{attentionScore}</span>
             <span className="badge badge-flame" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-              <Minus size={15} /> Focus Needed
+              <Minus size={15} /> {t('focusNeededStatus') || 'Focus Needed'}
             </span>
           </div>
         </div>
 
         <div className="garden-card" style={{ padding: '1.25rem', backgroundColor: '#161B22', border: '1px solid #30363D' }}>
-          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Recall Trend</div>
+          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>{t('recallScore')}</div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.6rem' }}>
-            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#A855F7', fontFamily: 'var(--font-heading)' }}>Recall</span>
+            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#A855F7', fontFamily: 'var(--font-heading)' }}>{recallScore}</span>
             <span className="badge badge-purple" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-              <ArrowUpRight size={15} /> Improving
+              <ArrowUpRight size={15} /> {t('improvingStatus') || 'Improving'}
             </span>
           </div>
         </div>
 
         <div className="garden-card" style={{ padding: '1.25rem', backgroundColor: '#161B22', border: '1px solid #30363D' }}>
-          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Reaction Trend</div>
+          <div style={{ fontSize: '0.82rem', color: '#9198A1', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>{t('reactionScore')}</div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.6rem' }}>
-            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#34D399', fontFamily: 'var(--font-heading)' }}>Reaction</span>
+            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#34D399', fontFamily: 'var(--font-heading)' }}>{reactionScore}</span>
             <span className="badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-              <Minus size={15} /> Consistent
+              <Minus size={15} /> {t('consistentStatus') || 'Consistent'}
             </span>
           </div>
         </div>

@@ -2,10 +2,10 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
-import { LayoutDashboard, Gamepad2, Trophy, Sparkles, GitCommit, LineChart, Cpu, HeartHandshake, Brain, ExternalLink, Globe } from 'lucide-react';
+import { LayoutDashboard, Gamepad2, Calendar, Users, Flower2, Mic, HeartHandshake, Trophy, Sparkles, LineChart, Brain, ExternalLink, Globe } from 'lucide-react';
 
 const Sidebar = () => {
-  const { voiceAssistance, speakText, t, externalGamificationUrl } = useAuth();
+  const { voiceAssistance, speakText, t, externalGamificationUrl, setVoiceModalOpen } = useAuth();
 
   const handleNav = (label) => {
     soundFx.playClick();
@@ -23,19 +23,20 @@ const Sidebar = () => {
   };
 
   const navItems = [
-    { path: '/dashboard', label: t('navDashboard'), icon: LayoutDashboard },
-    { path: '/leaderboard', label: t('navLeaderboard'), icon: Trophy },
-    { path: '/assessment', label: t('navExercises'), icon: Gamepad2 },
-    { path: '/analysis', label: t('navTelemetry'), icon: Sparkles },
-    { path: '/path', label: t('navPath'), icon: GitCommit },
-    { path: '/progress', label: t('navMetrics'), icon: LineChart },
-    { path: '/garden', label: t('navGarden'), icon: Cpu },
-    { path: '/caregiver', label: t('navCaregiver'), icon: HeartHandshake }
+    { path: '/dashboard', label: t('navHome') || 'Home', icon: LayoutDashboard },
+    { path: '/assessment', label: t('navPlay') || 'Play', icon: Gamepad2 },
+    { path: '/my-day', label: t('navMyDay') || 'My Day', icon: Calendar },
+    { path: '/my-people', label: t('navMyMemories') || 'My Memories', icon: Users },
+    { path: '/garden', label: t('navGarden') || 'Memory Garden', icon: Flower2 },
+    { path: '/caregiver', label: t('navCaregiver') || 'Caregiver Portal', icon: HeartHandshake },
+    { path: '/leaderboard', label: t('navLeaderboard') || 'Leaderboard', icon: Trophy },
+    { path: '/progress', label: t('navMetrics') || 'Metrics & Trends', icon: LineChart }
   ];
 
   return (
     <aside style={{
       width: 270,
+      flexShrink: 0,
       backgroundColor: '#121721',
       borderRadius: '16px',
       padding: '1.25rem 0.85rem',
@@ -78,6 +79,33 @@ const Sidebar = () => {
           </NavLink>
         );
       })}
+
+      {/* Talk to MemoMate Voice Assistant Trigger */}
+      <button
+        onClick={() => {
+          soundFx.playClick();
+          setVoiceModalOpen(true);
+        }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.85rem',
+          padding: '0.85rem 1rem',
+          borderRadius: '10px',
+          fontWeight: 800,
+          fontSize: '0.9rem',
+          fontFamily: 'var(--font-heading)',
+          color: '#34D399',
+          backgroundColor: 'rgba(52, 211, 153, 0.12)',
+          border: '1px solid rgba(52, 211, 153, 0.4)',
+          cursor: 'pointer',
+          marginTop: '0.3rem',
+          transition: 'all 0.15s ease'
+        }}
+      >
+        <Mic size={20} color="#34D399" />
+        <span>{t('talkToMemoMate') || 'Talk to MemoMate'}</span>
+      </button>
 
       {/* External Gamification Web App Launcher */}
       <button

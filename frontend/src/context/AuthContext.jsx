@@ -26,18 +26,117 @@ export const AuthProvider = ({ children }) => {
   });
   const [loading, setLoading] = useState(false);
   
+  // Theme state: 'theme-healthcare' | 'theme-fire-pro' | 'theme-high-contrast' | 'theme-daylight'
+  const [theme, setTheme] = useState(() => localStorage.getItem('memomate_theme') || 'theme-healthcare');
+
   // Accessibility Font Size state: 'font-normal' | 'font-large' | 'font-xlarge'
   const [fontSize, setFontSize] = useState(() => localStorage.getItem('memomate_fontsize') || 'font-normal');
   
-  // Audio / Voice Assistance toggle
+  // Audio / Voice Assistance toggle & Voice Modal state
   const [voiceAssistance, setVoiceAssistance] = useState(false);
+  const [isVoiceModalOpen, setVoiceModalOpen] = useState(false);
+
+  // Network Offline / Online status
+  const [networkStatus, setNetworkStatus] = useState(() => navigator.onLine ? 'ONLINE' : 'OFFLINE');
 
   // Language state: defaults to 'en'
   const [language, setLanguage] = useState(() => localStorage.getItem('memomate_language') || 'en');
 
+  // Family Members state
+  const [familyMembers, setFamilyMembers] = useState(() => {
+    const saved = localStorage.getItem('memomate_family_members');
+    return saved ? JSON.parse(saved) : [
+      { id: 'fam_1', name: 'Meena', relation: 'Daughter', visitSchedule: 'Every evening at 5:00 PM', notes: 'Loves drinking afternoon tea together and talking about family memories', photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop' },
+      { id: 'fam_2', name: 'Rahul', relation: 'Son', visitSchedule: 'Sunday mornings', notes: 'Engineers in Guwahati, calls every Sunday at 10:00 AM', photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop' },
+      { id: 'fam_3', name: 'Ankit', relation: 'Grandson', visitSchedule: 'Weekend afternoons', notes: 'Loves listening to stories about Bihu festivals and school stories', photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop' },
+      { id: 'fam_4', name: 'Dr. Sarma', relation: 'Family Doctor', visitSchedule: 'Bi-weekly checkups', notes: 'Family physician for over 15 years', photoUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop' }
+    ];
+  });
+
+  // Reminders Schedule state
+  const [reminders, setReminders] = useState(() => {
+    const saved = localStorage.getItem('memomate_reminders');
+    return saved ? JSON.parse(saved) : [
+      { id: 'rem_1', time: '08:00 AM', title: 'Hydration Reminder', category: 'hydration', detail: 'Drink 1 full glass of water', status: 'completed' },
+      { id: 'rem_2', time: '09:00 AM', title: 'Cognitive Memory Session', category: 'cognitive', detail: '3D Memory & Spatial Match', status: 'pending' },
+      { id: 'rem_3', time: '12:30 PM', title: 'Afternoon Medication', category: 'medicine', detail: 'Blood Pressure & Multivitamin', status: 'pending' },
+      { id: 'rem_4', time: '02:00 PM', title: 'Hydration Check', category: 'hydration', detail: 'Drink 1 glass of fresh water', status: 'pending' },
+      { id: 'rem_5', time: '05:00 PM', title: 'Evening Garden Walk', category: 'activity', detail: 'Walk in garden with Meena', status: 'pending' },
+      { id: 'rem_6', time: 'Tomorrow 10:00 AM', title: 'Doctor Appointment', category: 'appointment', detail: 'Dr. Barua Regular Checkup', status: 'pending' }
+    ];
+  });
+
+  // Caregiver Alerts state
+  const [caregiverAlerts, setCaregiverAlerts] = useState(() => {
+    const saved = localStorage.getItem('memomate_caregiver_alerts');
+    return saved ? JSON.parse(saved) : [
+      { id: 'alt_1', severity: 'ATTENTION', title: 'Attention Score Trend Alert', message: 'Attention score decreased across 3 consecutive sessions. Recommended focus exercise scheduled.', time: 'Today 9:15 AM', acknowledged: false },
+      { id: 'alt_2', severity: 'WATCH', title: 'Hydration Reminder Pending', message: 'Afternoon hydration reminder pending confirmation.', time: 'Today 2:30 PM', acknowledged: false },
+      { id: 'alt_3', severity: 'INFO', title: 'Memory Improvement', message: 'Memory index improved by 8% this week.', time: 'Yesterday', acknowledged: true }
+    ];
+  });
+
+  useEffect(() => {
+    document.documentElement.className = `${fontSize} ${theme}`;
+    localStorage.setItem('memomate_theme', theme);
+  }, [theme, fontSize]);
+
+  useEffect(() => {
+    const handleOnline = () => setNetworkStatus('ONLINE');
+    const handleOffline = () => setNetworkStatus('OFFLINE');
+    const handleSyncStatus = (e) => setNetworkStatus(e.detail || 'ONLINE');
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('memomate_sync_status', handleSyncStatus);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('memomate_sync_status', handleSyncStatus);
+    };
+  }, []);
+
+  const updateTheme = (newTheme) => {
+    setTheme(newTheme);
+    localStorage.setItem('memomate_theme', newTheme);
+  };
+
   const updateLanguage = (langCode) => {
     setLanguage(langCode);
     localStorage.setItem('memomate_language', langCode);
+  };
+
+  const toggleReminderStatus = (reminderId) => {
+    setReminders((prev) => {
+      const updated = prev.map((r) => r.id === reminderId ? { ...r, status: r.status === 'completed' ? 'pending' : 'completed' } : r);
+      localStorage.setItem('memomate_reminders', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const addReminder = (newRem) => {
+    setReminders((prev) => {
+      const updated = [...prev, { ...newRem, id: 'rem_' + Date.now(), status: 'pending' }];
+      localStorage.setItem('memomate_reminders', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const addFamilyMember = (newFam) => {
+    setFamilyMembers((prev) => {
+      const updated = [...prev, { ...newFam, id: 'fam_' + Date.now() }];
+      localStorage.setItem('memomate_family_members', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const acknowledgeAlert = (alertId) => {
+    setCaregiverAlerts((prev) => {
+      const updated = prev.map((a) => a.id === alertId ? { ...a, acknowledged: true } : a);
+      localStorage.setItem('memomate_caregiver_alerts', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const t = (key) => {
@@ -469,10 +568,15 @@ export const AuthProvider = ({ children }) => {
       login,
       register,
       logout,
+      theme,
+      updateTheme,
       fontSize,
       setFontSize,
       voiceAssistance,
       setVoiceAssistance,
+      isVoiceModalOpen,
+      setVoiceModalOpen,
+      networkStatus,
       speakText,
       language,
       updateLanguage,
@@ -483,6 +587,13 @@ export const AuthProvider = ({ children }) => {
       setRecommendation,
       garden,
       setGarden,
+      familyMembers,
+      addFamilyMember,
+      reminders,
+      toggleReminderStatus,
+      addReminder,
+      caregiverAlerts,
+      acknowledgeAlert,
       updateStateFromSession,
       xpPoints,
       gems,

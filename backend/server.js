@@ -65,6 +65,19 @@ mongoose.connect(MONGO_URI)
     console.warn('⚠️ MongoDB connection issue (using in-memory fallback for API stability):', err.message);
   });
 
-app.listen(PORT, () => {
-  console.log(`🚀 MemoMate Server running on http://localhost:${PORT}`);
-});
+const startServer = (portToUse) => {
+  const server = app.listen(portToUse, () => {
+    console.log(`🚀 MemoMate Server running on http://localhost:${portToUse}`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`⚠️ Port ${portToUse} is already in use. Retrying on port ${Number(portToUse) + 1}...`);
+      startServer(Number(portToUse) + 1);
+    } else {
+      console.error('Server execution error:', err);
+    }
+  });
+};
+
+startServer(PORT);

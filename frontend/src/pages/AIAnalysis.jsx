@@ -5,7 +5,7 @@ import CognitiveScoreCard from '../components/CognitiveScoreCard';
 import { Sparkles, ArrowRight, ShieldCheck, Zap, Activity } from 'lucide-react';
 
 const AIAnalysis = () => {
-  const { profile, recommendation } = useAuth();
+  const { profile, recommendation, t } = useAuth();
   const navigate = useNavigate();
 
   const [analyzing, setAnalyzing] = useState(true);
@@ -49,7 +49,7 @@ const AIAnalysis = () => {
             <Sparkles size={32} color="#38BDF8" />
           </div>
           <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 800, margin: '0 0 0.5rem', fontFamily: 'var(--font-heading)' }}>
-            Analyzing Cognitive Performance...
+            {t('evaluatingCognitivePerformance')}
           </h2>
           <p style={{ color: '#9198A1', fontSize: '0.92rem', margin: 0, lineHeight: 1.5 }}>
             Evaluating recent exercise session scores across Memory, Attention, Recall, and Reaction.
@@ -70,15 +70,15 @@ const AIAnalysis = () => {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
           <span className="badge badge-cyan" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-            <Sparkles size={14} /> Performance Analysis
+            <Sparkles size={14} /> {t('performanceAnalysis')}
           </span>
           <span className="badge badge-purple" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-            <Zap size={14} /> Adaptive Recommendation Engine
+            <Zap size={14} /> {t('adaptiveRecommendationEngine')}
           </span>
         </div>
 
         <h1 style={{ fontSize: '2.1rem', color: '#FFFFFF', fontWeight: 800, margin: '0 0 0.4rem', fontFamily: 'var(--font-heading)' }}>
-          AI Performance Breakdown 🌿
+          {t('navTelemetry')} 🌿
         </h1>
         <p style={{ color: '#9198A1', fontSize: '0.96rem', margin: 0, maxWidth: '680px', lineHeight: 1.5 }}>
           Our system continuously observes performance and adapts your daily cognitive path.

@@ -4,12 +4,16 @@ import { useAuth } from './context/AuthContext';
 import AccessibilityBar from './components/AccessibilityBar';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import VoiceAssistantModal from './components/VoiceAssistantModal';
 
 import Login from './pages/Login';
 import Register from './pages/Register';
 import UserDashboard from './pages/UserDashboard';
+import MyDayPage from './pages/MyDayPage';
+import MyPeoplePage from './pages/MyPeoplePage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import Assessment from './pages/Assessment';
+import NERCulturalGame from './games/NERCulturalGame';
 import AIAnalysis from './pages/AIAnalysis';
 import CognitivePathPage from './pages/CognitivePathPage';
 import ProgressPage from './pages/ProgressPage';
@@ -18,7 +22,7 @@ import CaregiverDashboard from './pages/CaregiverDashboard';
 import CaregiverUserDetails from './pages/CaregiverUserDetails';
 
 const App = () => {
-  const { user } = useAuth();
+  const { user, isVoiceModalOpen, setVoiceModalOpen } = useAuth();
   const location = useLocation();
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
@@ -32,6 +36,12 @@ const App = () => {
     <div className="app-container">
       <AccessibilityBar />
       <Navbar />
+
+      {/* Global Voice Assistant Modal Overlay */}
+      <VoiceAssistantModal
+        isOpen={isVoiceModalOpen}
+        onClose={() => setVoiceModalOpen(false)}
+      />
 
       {isAuthPage || !user ? (
         <main style={{
@@ -58,6 +68,9 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<UserDashboard />} />
+              <Route path="/my-day" element={<MyDayPage />} />
+              <Route path="/my-people" element={<MyPeoplePage />} />
+              <Route path="/cultural-game" element={<NERCulturalGame />} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
               <Route path="/assessment" element={<Assessment />} />
               <Route path="/analysis" element={<AIAnalysis />} />

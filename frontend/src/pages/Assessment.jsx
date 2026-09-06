@@ -11,10 +11,7 @@ import WordRecall from '../games/WordRecall';
 import AttentionChallenge from '../games/AttentionChallenge';
 import MemoryMatch from '../games/MemoryMatch';
 import ReactionTest from '../games/ReactionTest';
-import ThreeMemoryGardenCanvas from '../components/ThreeMemoryGardenCanvas';
-import { soundFx } from '../utils/soundEffects';
-import { Brain, Target, RotateCcw, Zap, BookOpen, Layers, ArrowLeft, Box, Gamepad2, Compass, Music } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import NERCulturalGame from '../games/NERCulturalGame';
 
 const Assessment = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,103 +19,160 @@ const Assessment = () => {
   const { t } = useAuth();
   const games = [
     {
+      id: 'ner-cultural',
+      titleKey: 'nerCulturalTitle',
+      categoryKey: 'culturalPersonalizationCategory',
+      descKey: 'nerCulturalDesc',
+      badgeKey: 'regionalHeritageBadge',
+      title: 'North Eastern Cultural Memories',
+      category: 'Regional Personalization',
+      desc: 'Culturally familiar memory & object recognition for elderly patients in North Eastern Region.',
+      badge: 'NER HERITAGE',
+      icon: Compass,
+      color: '#34D399'
+    },
+    {
       id: 'spatial-maze',
+      titleKey: 'spatialMazeTitle',
+      categoryKey: 'spatialOrientationCategory',
+      descKey: 'spatialMazeDesc',
+      badgeKey: 'newDynamicBadge',
       title: 'Spatial Maze Navigator',
       category: 'Spatial Orientation',
-      icon: Compass,
-      color: '#38BDF8',
       desc: 'Procedural 2D/3D orientation and spatial navigation maze challenge for elderly memory training.',
-      badge: 'NEW DYNAMIC'
+      badge: 'NEW DYNAMIC',
+      icon: Compass,
+      color: '#38BDF8'
     },
     {
       id: 'tone-rhythm',
+      titleKey: 'toneRhythmTitle',
+      categoryKey: 'auditoryMemoryCategory',
+      descKey: 'toneRhythmDesc',
+      badgeKey: 'newDynamicBadge',
       title: 'Acoustic Rhythm & Tone Recall',
       category: 'Auditory Memory',
-      icon: Music,
-      color: '#C084FC',
       desc: 'Interactive audio-visual harmonic tone sequence recall game with dynamic pattern scaling.',
-      badge: 'NEW DYNAMIC'
+      badge: 'NEW DYNAMIC',
+      icon: Music,
+      color: '#C084FC'
     },
     {
       id: '3d-memory',
+      titleKey: 'spatialNodeTitle',
+      categoryKey: 'memoryMatrixCategory',
+      descKey: 'spatialNodeDesc',
+      badgeKey: 'dynamic3dBadge',
       title: 'Spatial Node Matrix',
       category: '3D Memory Matrix',
-      icon: Box,
-      color: '#38BDF8',
       desc: 'Interactive 3D Three.js WebGL Quantum Node flip game with procedural color pairs.',
-      badge: 'DYNAMIC 3D'
+      badge: 'DYNAMIC 3D',
+      icon: Box,
+      color: '#38BDF8'
     },
     {
       id: '3d-target',
+      titleKey: 'targetFocusTitle',
+      categoryKey: 'targetPrecisionCategory',
+      descKey: 'targetFocusDesc',
+      badgeKey: 'dynamic3dBadge',
       title: '3D Target Focus Search',
       category: 'Target Precision',
-      icon: Target,
-      color: '#FB923C',
       desc: 'Interactive 3D Target Search using Three.js raycasting to find target quantum crystals.',
-      badge: 'DYNAMIC 3D'
+      badge: 'DYNAMIC 3D',
+      icon: Target,
+      color: '#FB923C'
     },
     {
       id: '3d-reaction',
+      titleKey: 'quantumSpeedTitle',
+      categoryKey: 'reactionSpeedCategory',
+      descKey: 'quantumSpeedDesc',
+      badgeKey: 'dynamic3dBadge',
       title: 'Quantum Speed Reflex',
       category: 'Reaction Speed',
-      icon: Zap,
-      color: '#FBBF24',
       desc: 'Orbiting WebGL 3D Target Orbs measuring real-time spatial reaction speed in milliseconds.',
-      badge: 'DYNAMIC 3D'
+      badge: 'DYNAMIC 3D',
+      icon: Zap,
+      color: '#FBBF24'
     },
     {
       id: 'focus-reflex',
+      titleKey: 'focusReflexTitle',
+      categoryKey: 'executiveFocusCategory',
+      descKey: 'focusReflexDesc',
+      badgeKey: 'proceduralBadge',
       title: 'Focus Reflex & Math Matrix',
       category: 'Executive Focus',
-      icon: Zap,
-      color: '#34D399',
       desc: 'Procedural focus and mental calculation challenges scaling dynamically with your level.',
-      badge: 'PROCEDURAL'
+      badge: 'PROCEDURAL',
+      icon: Zap,
+      color: '#34D399'
     },
     {
       id: 'card-match',
+      titleKey: 'cardMatchTitle',
+      categoryKey: 'visualMemoryCategory',
+      descKey: 'cardMatchDesc',
+      badgeKey: 'proceduralBadge',
       title: 'Card Memory Matrix',
       category: 'Visual Memory',
-      icon: Brain,
-      color: '#C084FC',
       desc: 'Procedurally generated card matching game to train visual recall and concentration.',
-      badge: 'PROCEDURAL'
+      badge: 'PROCEDURAL',
+      icon: Brain,
+      color: '#C084FC'
     },
     {
       id: 'speed-reaction',
+      titleKey: 'speedReactionTitle',
+      categoryKey: 'motorSpeedCategory',
+      descKey: 'speedReactionDesc',
+      badgeKey: 'proceduralBadge',
       title: 'Speed Reflex Reaction Test',
       category: 'Motor Speed',
-      icon: Zap,
-      color: '#FB923C',
       desc: 'Motor reaction speed test measuring response velocity in milliseconds.',
-      badge: 'PROCEDURAL'
+      badge: 'PROCEDURAL',
+      icon: Zap,
+      color: '#FB923C'
     },
     {
       id: 'number',
+      titleKey: 'numberRecallGameTitle',
+      categoryKey: 'sequenceRecallCategory',
+      descKey: 'numberRecallGameDesc',
+      badgeKey: 'dynamic3dBadge',
       title: '3D Dual-N-Back & Number Recall',
       category: 'Sequence Recall',
-      icon: RotateCcw,
-      color: '#C084FC',
       desc: 'Procedural digit sequence memorization scaling from 3 to 10 digits based on progress.',
-      badge: 'DYNAMIC 3D'
+      badge: 'DYNAMIC 3D',
+      icon: RotateCcw,
+      color: '#C084FC'
     },
     {
       id: 'pattern',
+      titleKey: 'holographicTitle',
+      categoryKey: 'patternMemoryCategory',
+      descKey: 'holographicDesc',
+      badgeKey: 'dynamic3dBadge',
       title: '3D Holographic Matrix',
       category: 'Pattern Memory',
-      icon: Layers,
-      color: '#34D399',
       desc: '3D grid matrix of illuminated WebGL cubes to reinforce spatial pattern recognition.',
-      badge: 'DYNAMIC 3D'
+      badge: 'DYNAMIC 3D',
+      icon: Layers,
+      color: '#34D399'
     },
     {
       id: 'word',
+      titleKey: 'wordRecallTitle',
+      categoryKey: 'categoricalRecallCategory',
+      descKey: 'wordRecallDesc',
+      badgeKey: 'dynamic3dBadge',
       title: '3D Categorical Word Recall',
       category: 'Categorical Recall',
-      icon: BookOpen,
-      color: '#38BDF8',
       desc: 'Revolving 3D Three.js WebGL word spheres for multi-category item recall.',
-      badge: 'DYNAMIC 3D'
+      badge: 'DYNAMIC 3D',
+      icon: BookOpen,
+      color: '#38BDF8'
     }
   ];
 
@@ -162,6 +216,7 @@ const Assessment = () => {
           <span>{t('backToExercises') || 'BACK TO EXERCISE HUB'}</span>
         </button>
 
+        {activeGameKey === 'ner-cultural' && <NERCulturalGame />}
         {activeGameKey === 'spatial-maze' && <SpatialMazeNavigator />}
         {activeGameKey === 'tone-rhythm' && <ToneRhythmRecall />}
         {activeGameKey === '3d-memory' && <ThreeDFlowerMatch />}
@@ -203,6 +258,11 @@ const Assessment = () => {
       }}>
         {games.map((g) => {
           const Icon = g.icon;
+          const gameTitle = t(g.titleKey) || g.title;
+          const gameCategory = t(g.categoryKey) || g.category;
+          const gameDesc = t(g.descKey) || g.desc;
+          const gameBadge = t(g.badgeKey) || g.badge;
+
           return (
             <div
               key={g.id}
@@ -215,7 +275,7 @@ const Assessment = () => {
               }}
             >
               <span className="badge badge-cyan" style={{ position: 'absolute', top: 16, right: 16 }}>
-                {g.badge}
+                {gameBadge}
               </span>
 
               <div>
@@ -234,15 +294,15 @@ const Assessment = () => {
                 </div>
 
                 <div className="badge badge-purple" style={{ marginBottom: '0.5rem', fontSize: '0.75rem' }}>
-                  {g.category}
+                  {gameCategory}
                 </div>
 
                 <h3 style={{ fontSize: '1.3rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.4rem', fontFamily: 'var(--font-heading)' }}>
-                  {g.title}
+                  {gameTitle}
                 </h3>
 
                 <p style={{ color: '#94A3B8', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '1.4rem' }}>
-                  {g.desc}
+                  {gameDesc}
                 </p>
               </div>
 

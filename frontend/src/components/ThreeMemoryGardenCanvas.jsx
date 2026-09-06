@@ -306,7 +306,7 @@ const ThreeMemoryGardenCanvas = () => {
           alignItems: 'center',
           gap: '0.4rem'
         }}>
-          <Compass size={14} /> 3D Camera Orbit Active
+          <Compass size={14} /> {t('orbitGuide') || '3D Camera Orbit Active'}
         </div>
       </div>
 

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { soundFx } from '../utils/soundEffects';
-import { Brain, UserCheck, LogOut, ShieldCheck, Award, Sparkles, Flame, Gem, Trophy, Volume2, VolumeX } from 'lucide-react';
+import { Brain, UserCheck, LogOut, ShieldCheck, Award, Sparkles, Flame, Gem, Trophy, Volume2, VolumeX, Mic, Wifi, WifiOff } from 'lucide-react';
 
 const Navbar = () => {
-  const { user, logout, speakText, voiceAssistance, xpPoints, level, streak, gems, recentScoreToast, t } = useAuth();
+  const { user, logout, speakText, voiceAssistance, xpPoints, level, streak, gems, recentScoreToast, t, networkStatus, setVoiceModalOpen } = useAuth();
   const navigate = useNavigate();
   const [soundEnabled, setSoundEnabled] = useState(soundFx.enabled);
 
@@ -169,6 +169,42 @@ const Navbar = () => {
               </>
             )}
 
+            {/* Talk to MemoMate Prominent Voice Button */}
+            <button
+              onClick={() => {
+                soundFx.playClick();
+                setVoiceModalOpen(true);
+              }}
+              className="btn-primary"
+              style={{
+                padding: '0.45rem 0.95rem',
+                fontSize: '0.82rem',
+                backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                border: '1px solid #38BDF8',
+                color: '#38BDF8'
+              }}
+            >
+              <Mic size={16} color="#38BDF8" />
+              <span>{t('talkToMemoMate') || 'Talk to MemoMate'}</span>
+            </button>
+
+            {/* Offline / Online Network Indicator */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              backgroundColor: networkStatus === 'ONLINE' ? 'rgba(52, 211, 153, 0.12)' : (networkStatus === 'SYNCING' ? 'rgba(56, 189, 248, 0.12)' : 'rgba(251, 191, 36, 0.12)'),
+              padding: '0.45rem 0.75rem',
+              borderRadius: '8px',
+              border: networkStatus === 'ONLINE' ? '1px solid rgba(52, 211, 153, 0.35)' : (networkStatus === 'SYNCING' ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid rgba(251, 191, 36, 0.35)'),
+              fontSize: '0.8rem',
+              fontWeight: 800,
+              color: networkStatus === 'ONLINE' ? '#34D399' : (networkStatus === 'SYNCING' ? '#38BDF8' : '#FBBF24')
+            }}>
+              {networkStatus === 'ONLINE' ? <Wifi size={14} /> : <WifiOff size={14} />}
+              <span>{t(`offlineStatus${networkStatus.charAt(0) + networkStatus.slice(1).toLowerCase()}`) || networkStatus}</span>
+            </div>
+
             {/* Sound FX Toggle Button */}
             <button
               onClick={toggleSound}
@@ -202,10 +238,10 @@ const Navbar = () => {
               }}>
                 <UserCheck size={18} color="#38BDF8" />
                 <span style={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.9rem' }}>
-                  {user.name} ({user.age} yrs)
+                  {user.name} ({user.age} {t('ageSuffix') || 'yrs'})
                 </span>
                 <span className={`badge ${user.role === 'caregiver' ? 'badge-purple' : 'badge-cyan'}`}>
-                  {user.role === 'caregiver' ? 'Caregiver' : 'Patient'}
+                  {user.role === 'caregiver' ? 'Caregiver' : (t('patientRole') || 'Patient')}
                 </span>
               </div>
             )}

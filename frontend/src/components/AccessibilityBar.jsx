@@ -1,10 +1,10 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Type, Volume2, VolumeX, Eye, Globe } from 'lucide-react';
+import { Type, Volume2, VolumeX, Eye, Globe, Palette } from 'lucide-react';
 import { NER_LANGUAGES } from '../utils/nerLanguages';
 
 const AccessibilityBar = () => {
-  const { fontSize, setFontSize, voiceAssistance, setVoiceAssistance, speakText, language, updateLanguage } = useAuth();
+  const { fontSize, setFontSize, theme, updateTheme, voiceAssistance, setVoiceAssistance, speakText, language, updateLanguage, t } = useAuth();
 
   const handleVoiceToggle = () => {
     const nextState = !voiceAssistance;
@@ -32,11 +32,11 @@ const AccessibilityBar = () => {
         <div className="icon-box" style={{ width: 26, height: 26, borderRadius: '6px', backgroundColor: 'rgba(56, 189, 248, 0.15)' }}>
           <Eye size={16} color="#38BDF8" />
         </div>
-        <span style={{ color: '#FFFFFF', letterSpacing: '0.01em' }}>Accessibility & Indian Languages Bar</span>
+        <span style={{ color: '#FFFFFF', letterSpacing: '0.01em' }}>Accessibility & Multilingual Bar</span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
-        {/* Indian Languages Selector */}
+        {/* Multilingual Selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <Globe size={16} color="#34D399" />
           <span style={{ fontWeight: 700, color: '#94A3B8', fontSize: '0.85rem' }}>Language:</span>
@@ -57,16 +57,50 @@ const AccessibilityBar = () => {
           >
             {NER_LANGUAGES.map((lang) => (
               <option key={lang.code} value={lang.code} style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
-                {lang.flag} {lang.name}
+                {lang.name}
               </option>
             ))}
+          </select>
+        </div>
+
+        {/* Theme Selector */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <Palette size={16} color="#FB923C" />
+          <span style={{ fontWeight: 700, color: '#94A3B8', fontSize: '0.85rem' }}>{t('themeLabel') || 'Theme:'}</span>
+          <select
+            value={theme || 'theme-healthcare'}
+            onChange={(e) => updateTheme(e.target.value)}
+            style={{
+              padding: '0.35rem 0.7rem',
+              borderRadius: '6px',
+              border: '1px solid #FB923C',
+              backgroundColor: '#0B0E14',
+              color: '#FB923C',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              cursor: 'pointer',
+              outline: 'none'
+            }}
+          >
+            <option value="theme-healthcare" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
+              {t('themeHealthcare') || 'Healthcare Warm'}
+            </option>
+            <option value="theme-fire-pro" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
+              {t('themeFirePro') || 'Pro Gamified Fire'}
+            </option>
+            <option value="theme-high-contrast" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
+              {t('themeHighContrast') || 'High Contrast Elderly'}
+            </option>
+            <option value="theme-daylight" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
+              {t('themeDaylight') || 'Soft Daylight'}
+            </option>
           </select>
         </div>
 
         {/* Text Size Adjuster */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <Type size={16} color="#38BDF8" style={{ marginRight: '0.1rem' }} />
-          <span style={{ fontWeight: 700, color: '#94A3B8', marginRight: '0.3rem', fontSize: '0.85rem' }}>Text Size:</span>
+          <span style={{ fontWeight: 700, color: '#94A3B8', marginRight: '0.3rem', fontSize: '0.85rem' }}>{t('textSizeLabel') || 'Text Size:'}</span>
           
           <button
             onClick={() => setFontSize('font-normal')}
@@ -80,7 +114,7 @@ const AccessibilityBar = () => {
               fontSize: '0.8rem'
             }}
           >
-            Normal
+            {t('textNormal') || 'Normal'}
           </button>
           
           <button
@@ -95,7 +129,7 @@ const AccessibilityBar = () => {
               fontSize: '0.8rem'
             }}
           >
-            Large
+            {t('textLarge') || 'Large'}
           </button>
           
           <button
@@ -110,7 +144,7 @@ const AccessibilityBar = () => {
               fontSize: '0.8rem'
             }}
           >
-            Extra Large
+            {t('textExtraLarge') || 'Extra Large'}
           </button>
         </div>
 
@@ -131,7 +165,7 @@ const AccessibilityBar = () => {
           }}
         >
           {voiceAssistance ? <Volume2 size={16} color="#34D399" /> : <VolumeX size={16} color="#94A3B8" />}
-          <span>{voiceAssistance ? 'Voice Assistance ON' : 'Voice Assistance OFF'}</span>
+          <span>{voiceAssistance ? (t('voiceAssistanceOn') || 'Voice Assistance ON') : (t('voiceAssistanceOff') || 'Voice Assistance OFF')}</span>
         </button>
       </div>
     </div>

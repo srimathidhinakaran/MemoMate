@@ -272,8 +272,8 @@ const ThreeDFlowerMatch = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <span className="badge badge-cyan">Moves: {moves}</span>
-          <span className="badge badge-gold">Matched: {matchedCount} / 6</span>
+          <span className="badge badge-cyan">{t('movesTaken') || 'Moves'}: {moves}</span>
+          <span className="badge badge-gold">{t('matchedPairs') || 'Matched'}: {matchedCount} / 6</span>
         </div>
       </div>
 

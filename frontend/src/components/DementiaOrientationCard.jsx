@@ -122,10 +122,10 @@ const DementiaOrientationCard = () => {
             <span>{t('currentSeason')}</span>
           </div>
           <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF' }}>
-            Autumn / Post-Monsoon 🌿
+            {t('autumnSeason') || 'Autumn / Post-Monsoon 🌿'}
           </div>
           <div style={{ fontSize: '0.82rem', color: '#94A3B8', fontWeight: 600, marginTop: '0.2rem' }}>
-            Pleasant climate for cognitive wellness
+            {t('pleasantClimate') || 'Pleasant climate for cognitive wellness'}
           </div>
         </div>
 

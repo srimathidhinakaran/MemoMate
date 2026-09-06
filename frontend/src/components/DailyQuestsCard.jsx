@@ -42,7 +42,7 @@ const DailyQuestsCard = () => {
               {t('dailyQuests').toUpperCase()}
             </h3>
             <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>
-              RESETS AT MIDNIGHT • EARN GEMS & XP
+              {t('resetsAtMidnight') || 'RESETS AT MIDNIGHT • EARN GEMS & XP'}
             </div>
           </div>
         </div>
@@ -56,6 +56,12 @@ const DailyQuestsCard = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
         {quests.map((q) => {
           const progressPercent = Math.min(100, Math.round((q.current / q.target) * 100));
+          const questKeyMap = {
+            'quest_1': 'quest1Title',
+            'quest_2': 'quest2Title',
+            'quest_3': 'quest3Title'
+          };
+          const questTitle = t(questKeyMap[q.id]) || q.title;
 
           return (
             <div
@@ -75,7 +81,7 @@ const DailyQuestsCard = () => {
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
                   <span style={{ fontWeight: 800, color: q.completed ? '#94A3B8' : '#FFFFFF', fontSize: '0.92rem' }}>
-                    {q.title}
+                    {questTitle}
                   </span>
                   <span style={{ fontSize: '0.85rem', fontWeight: 800, color: q.completed ? '#34D399' : '#38BDF8' }}>
                     {q.current} / {q.target}

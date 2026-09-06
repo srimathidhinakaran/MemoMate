@@ -9,6 +9,9 @@ const RewardShopCard = () => {
   const shopItems = [
     {
       id: 'cyber_crystal',
+      titleKey: 'quantumCrystalTitle',
+      descKey: 'quantumCrystalDesc',
+      categoryKey: 'cyberRelicCategory',
       title: 'Quantum Crystal Relic',
       desc: 'Unlocks dynamic glowing 3D quantum crystals in your interactive Mind Matrix Sanctum.',
       cost: 50,
@@ -17,6 +20,9 @@ const RewardShopCard = () => {
     },
     {
       id: 'ai_llama_booster',
+      titleKey: 'neuralBoosterTitle',
+      descKey: 'neuralBoosterDesc',
+      categoryKey: 'telemetryPowerupCategory',
       title: 'Neural Core Booster',
       desc: 'Boosts cognitive analysis precision with instant AI neural telemetry.',
       cost: 80,
@@ -25,6 +31,9 @@ const RewardShopCard = () => {
     },
     {
       id: 'streak_freeze',
+      titleKey: 'streakShieldTitle',
+      descKey: 'streakShieldDesc',
+      categoryKey: 'battleShieldCategory',
       title: 'Streak Freeze Shield',
       desc: 'Protects your daily workout streak for 1 day if a session is missed.',
       cost: 40,
@@ -33,6 +42,9 @@ const RewardShopCard = () => {
     },
     {
       id: 'heroic_crest',
+      titleKey: 'heroicCrestTitle',
+      descKey: 'heroicCrestDesc',
+      categoryKey: 'profileAvatarCategory',
       title: 'Heroic Memory Crest',
       desc: 'Displays legendary Heroic rank aura on profile & global leaderboard.',
       cost: 120,
@@ -101,6 +113,9 @@ const RewardShopCard = () => {
         {shopItems.map((item) => {
           const isUnlocked = unlockedItems?.includes(item.id);
           const Icon = item.icon;
+          const itemTitle = t(item.titleKey) || item.title;
+          const itemDesc = t(item.descKey) || item.desc;
+          const itemCategory = t(item.categoryKey) || item.category;
 
           return (
             <div
@@ -119,7 +134,7 @@ const RewardShopCard = () => {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                   <span className="badge badge-cyan" style={{ fontSize: '0.7rem' }}>
-                    {item.category}
+                    {itemCategory}
                   </span>
                   <div style={{
                     display: 'flex',
@@ -137,12 +152,12 @@ const RewardShopCard = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.3rem 0' }}>
                   <Icon size={20} color="#FBBF24" />
                   <h4 style={{ fontSize: '1rem', color: '#FFFFFF', fontWeight: 800, margin: 0 }}>
-                    {item.title}
+                    {itemTitle}
                   </h4>
                 </div>
 
                 <p style={{ fontSize: '0.82rem', color: '#94A3B8', lineHeight: 1.4, margin: 0 }}>
-                  {item.desc}
+                  {itemDesc}
                 </p>
               </div>
 
@@ -170,7 +185,7 @@ const RewardShopCard = () => {
                   style={{ width: '100%', padding: '0.5rem', fontSize: '0.8rem' }}
                   disabled={gems < item.cost}
                 >
-                  {gems >= item.cost ? `${t('unlockFor') || 'UNLOCK FOR'} 💎 ${item.cost}` : 'LOCKED'}
+                  {gems >= item.cost ? `${t('unlockBtn') || 'UNLOCK FOR'} 💎 ${item.cost}` : (t('lockedBtn') || 'LOCKED')}
                 </button>
               )}
             </div>

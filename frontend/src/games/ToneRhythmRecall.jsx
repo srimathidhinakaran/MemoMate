@@ -152,17 +152,17 @@ const ToneRhythmRecall = () => {
           </div>
           <div>
             <h2 style={{ fontSize: '1.4rem', color: '#FFFFFF', margin: 0, fontWeight: 900, fontFamily: 'var(--font-heading)' }}>
-              Acoustic Rhythm & Tone Recall
+              {t('toneRhythmTitle') || 'Acoustic Rhythm & Tone Recall'}
             </h2>
             <p style={{ color: '#94A3B8', fontSize: '0.85rem', margin: 0 }}>
-              Train auditory memory & sequential pattern recall with harmonic tones.
+              {t('toneRhythmDesc') || 'Train auditory memory & sequential pattern recall with harmonic tones.'}
             </p>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>SEQUENCE ROUND</div>
+            <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>{t('sequenceRound') || 'SEQUENCE ROUND'}</div>
             <div style={{ fontSize: '1.2rem', color: '#C084FC', fontWeight: 900 }}>{round}</div>
           </div>
         </div>
@@ -179,6 +179,8 @@ const ToneRhythmRecall = () => {
         }}>
           {PADS.map((pad) => {
             const isActive = activePad === pad.id;
+            const padLabelKey = pad.id === 0 ? 'cyanColor' : pad.id === 1 ? 'emeraldColor' : pad.id === 2 ? 'goldColor' : 'purpleColor';
+            const padText = t(padLabelKey) || pad.label;
             return (
               <button
                 key={pad.id}
@@ -205,7 +207,7 @@ const ToneRhythmRecall = () => {
                 }}
               >
                 <Volume2 size={32} />
-                <span>{pad.label}</span>
+                <span>{padText}</span>
               </button>
             );
           })}
@@ -214,7 +216,7 @@ const ToneRhythmRecall = () => {
         {gameState === 'IDLE' && (
           <button onClick={startGame} className="btn-primary" style={{ padding: '0.85rem 2rem', fontSize: '1rem' }}>
             <Play size={20} />
-            <span>START TONE RECALL EXERCISE</span>
+            <span>{t('startToneRecall') || 'START TONE RECALL EXERCISE'}</span>
           </button>
         )}
 
@@ -254,18 +256,18 @@ const ToneRhythmRecall = () => {
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '1.5rem' }}>
             <div>
-              <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>ROUNDS PASSED</div>
+              <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>{t('roundsPassed') || 'ROUNDS PASSED'}</div>
               <div style={{ fontSize: '2rem', color: '#C084FC', fontWeight: 900 }}>{round - 1}</div>
             </div>
             <div>
-              <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>COGNITIVE SCORE</div>
+              <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>{t('cognitiveScore') || 'COGNITIVE SCORE'}</div>
               <div style={{ fontSize: '2rem', color: '#38BDF8', fontWeight: 900 }}>+{score} PTS</div>
             </div>
           </div>
 
           <button onClick={startGame} className="btn-primary" style={{ padding: '0.75rem 1.8rem', fontSize: '0.95rem' }}>
             <RotateCcw size={18} />
-            <span>TRY AGAIN</span>
+            <span>{t('tryAgain') || 'TRY AGAIN'}</span>
           </button>
         </div>
       )}
