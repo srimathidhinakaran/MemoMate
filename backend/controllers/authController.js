@@ -117,7 +117,10 @@ exports.register = async (req, res) => {
         email: user.email,
         role: user.role,
         preferredLanguage: user.preferredLanguage,
-        preferredTheme: user.preferredTheme
+        preferredTheme: user.preferredTheme,
+        familySetupCompleted: user.familySetupCompleted || false,
+        initialAssessmentCompleted: user.initialAssessmentCompleted || false,
+        familyMembers: user.familyMembers || []
       }
     });
   } catch (error) {
@@ -158,7 +161,10 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
         preferredLanguage: user.preferredLanguage || 'en',
-        preferredTheme: user.preferredTheme || 'theme-nature'
+        preferredTheme: user.preferredTheme || 'theme-nature',
+        familySetupCompleted: user.familySetupCompleted || false,
+        initialAssessmentCompleted: user.initialAssessmentCompleted || false,
+        familyMembers: user.familyMembers || []
       }
     });
   } catch (error) {
@@ -180,21 +186,73 @@ exports.getMe = async (req, res) => {
 
 exports.updatePreferences = async (req, res) => {
   try {
-    const { preferredLanguage, preferredTheme } = req.body;
+    const { preferredLanguage, preferredTheme, familyMembers, familySetupCompleted, initialAssessmentCompleted } = req.body;
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    if (preferredLanguage) user.preferredLanguage = preferredLanguage;
-    if (preferredTheme) user.preferredTheme = preferredTheme;
+    if (preferredLanguage !== undefined) user.preferredLanguage = preferredLanguage;
+    if (preferredTheme !== undefined) user.preferredTheme = preferredTheme;
+    if (familyMembers !== undefined) user.familyMembers = familyMembers;
+    if (familySetupCompleted !== undefined) user.familySetupCompleted = familySetupCompleted;
+    if (initialAssessmentCompleted !== undefined) user.initialAssessmentCompleted = initialAssessmentCompleted;
 
     await user.save();
 
     res.json({
-      message: 'Preferences updated',
-      preferredLanguage: user.preferredLanguage,
-      preferredTheme: user.preferredTheme
+      message: 'User profile updated',
+      user: {
+        id: user._id,
+        name: user.name,
+        age: user.age,
+        email: user.email,
+        role: user.role,
+        preferredLanguage: user.preferredLanguage,
+        preferredTheme: user.preferredTheme,
+        familySetupCompleted: user.familySetupCompleted,
+        initialAssessmentCompleted: user.initialAssessmentCompleted,
+        familyMembers: user.familyMembers
+      }
     });
   } catch (error) {
     res.status(500).json({ message: 'Error updating user preferences', error: error.message });
+  }
+};
+
+exports.updateFamilySetup = async (req, res) => {
+  try {
+    const { familyMembers } = req.body;
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (Array.isArray(familyMembers)) {
+      user.familyMembers = familyMembers;
+    }
+    user.familySetupCompleted = true;
+    await user.save();
+
+    res.json({
+      message: 'Family setup completed',
+      familySetupCompleted: true,
+      familyMembers: user.familyMembers
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error saving family setup', error: error.message });
+  }
+};
+
+exports.updateAssessmentCompleted = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.initialAssessmentCompleted = true;
+    await user.save();
+
+    res.json({
+      message: 'Assessment completed status updated',
+      initialAssessmentCompleted: true
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating assessment completion status', error: error.message });
   }
 };

@@ -170,46 +170,66 @@ const MyPeoplePage = () => {
         </div>
       )}
 
-      {/* Family Directory Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '1.4rem'
-      }}>
-        {familyMembers.map((person) => (
-          <div key={person.id} className="garden-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <img
-                src={person.photoUrl}
-                alt={person.name}
-                style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: '16px',
-                  objectFit: 'cover',
-                  border: '1px solid #38BDF8'
-                }}
-              />
-              <div>
-                <h3 style={{ fontSize: '1.25rem', color: '#FFFFFF', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
-                  {person.name}
-                </h3>
-                <span className="badge badge-purple" style={{ marginTop: '0.2rem' }}>
-                  {person.relation}
-                </span>
-              </div>
-            </div>
-
-            <div style={{ backgroundColor: '#0D1117', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #263142', fontSize: '0.85rem', color: '#94A3B8', lineHeight: 1.5 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#38BDF8', fontWeight: 700, marginBottom: '0.2rem' }}>
-                <Calendar size={14} />
-                <span>{person.visitSchedule}</span>
-              </div>
-              {person.notes}
-            </div>
+      {/* Family Members Grid */}
+      {familyMembers.length === 0 ? (
+        <div className="garden-card animate-fade-in" style={{ textAlign: 'center', padding: '3rem 1.5rem', backgroundColor: '#161C26' }}>
+          <div className="icon-box" style={{ width: 64, height: 64, borderRadius: '50%', backgroundColor: 'rgba(192, 132, 252, 0.15)', border: '1px solid #C084FC', margin: '0 auto 1.25rem' }}>
+            <Heart size={36} color="#C084FC" />
           </div>
-        ))}
-      </div>
+          <h2 style={{ fontSize: '1.4rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.5rem' }}>
+            {t('emptyFamilyList') || 'No family members added yet.'}
+          </h2>
+          <p style={{ color: '#94A3B8', fontSize: '0.95rem', maxWidth: 480, margin: '0 auto 1.5rem' }}>
+            {t('emptyFamilySub') || 'Add your family members to personalize your Daily Stories & memory check exercises.'}
+          </p>
+          <button onClick={() => setIsAddModalOpen(true)} className="btn-primary" style={{ padding: '0.85rem 1.75rem' }}>
+            <UserPlus size={18} />
+            <span>{t('addFamilyMember') || 'Add Family Member'}</span>
+          </button>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>
+          {familyMembers.map((person) => (
+            <div key={person.id} className="garden-card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {person.photoUrl ? (
+                  <img
+                    src={person.photoUrl}
+                    alt={person.name}
+                    style={{
+                      width: 72,
+                      height: 72,
+                      borderRadius: '16px',
+                      objectFit: 'cover',
+                      border: '1px solid #38BDF8'
+                    }}
+                  />
+                ) : (
+                  <div style={{ width: 72, height: 72, borderRadius: '16px', backgroundColor: 'rgba(56, 189, 248, 0.15)', border: '1px solid #38BDF8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#38BDF8', fontSize: '1.8rem' }}>
+                    {person.name ? person.name.charAt(0).toUpperCase() : '?'}
+                  </div>
+                )}
+                <div>
+                  <h3 style={{ fontSize: '1.25rem', color: '#FFFFFF', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
+                    {person.name}
+                  </h3>
+                  <span className="badge badge-purple" style={{ marginTop: '0.2rem' }}>
+                    {person.relation}
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ backgroundColor: '#0D1117', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #263142', fontSize: '0.85rem', color: '#94A3B8', lineHeight: 1.5 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#38BDF8', fontWeight: 700, marginBottom: '0.2rem' }}>
+                  <Calendar size={14} />
+                  <span>{person.visitSchedule || 'Regular visits'}</span>
+                </div>
+                {person.notes || 'Beloved family member'}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Add Family Member Modal */}
       {isAddModalOpen && (

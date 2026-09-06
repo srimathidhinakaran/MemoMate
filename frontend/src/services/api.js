@@ -83,10 +83,7 @@ export const getStoredReminders = (userId) => {
 export const getStoredFamily = (userId) => {
   const uId = userId || 'user_default';
   const saved = localStorage.getItem(`memomate_family_${uId}`);
-  return saved ? JSON.parse(saved) : [
-    { id: 'fam_1', name: 'Meena', relation: 'Daughter', visitSchedule: 'Every evening at 5:00 PM', notes: 'Loves drinking afternoon tea together and talking about family memories', photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop' },
-    { id: 'fam_2', name: 'Rahul', relation: 'Son', visitSchedule: 'Sunday mornings', notes: 'Engineers in Guwahati, calls every Sunday at 10:00 AM', photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop' }
-  ];
+  return saved ? JSON.parse(saved) : [];
 };
 
 export const authAPI = {
@@ -112,7 +109,10 @@ export const authAPI = {
         password: userData.password,
         role: userData.role || 'elderly',
         preferredLanguage: userData.preferredLanguage || 'en',
-        preferredTheme: userData.preferredTheme || 'theme-nature'
+        preferredTheme: userData.preferredTheme || 'theme-nature',
+        familySetupCompleted: false,
+        initialAssessmentCompleted: false,
+        familyMembers: []
       };
       saveAccountToDB(newUser);
       const token = 'demo_token_' + Date.now();
@@ -150,7 +150,10 @@ export const authAPI = {
         password: credentials.password,
         role: emailClean.includes('caregiver') ? 'caregiver' : 'elderly',
         preferredLanguage: 'en',
-        preferredTheme: 'theme-nature'
+        preferredTheme: 'theme-nature',
+        familySetupCompleted: false,
+        initialAssessmentCompleted: false,
+        familyMembers: []
       };
       saveAccountToDB(fallbackUser);
       return { token: 'demo_token_' + Date.now(), user: fallbackUser };
@@ -184,6 +187,36 @@ export const authAPI = {
         localStorage.setItem('memomate_user', JSON.stringify(updated));
       }
       return preferences;
+    }
+  },
+
+  updateFamilySetup: async (familyMembers) => {
+    try {
+      const res = await api.put('/auth/family-setup', { familyMembers });
+      return res.data;
+    } catch (err) {
+      const uStr = localStorage.getItem('memomate_user');
+      if (uStr) {
+        const u = JSON.parse(uStr);
+        const updated = { ...u, familyMembers, familySetupCompleted: true };
+        localStorage.setItem('memomate_user', JSON.stringify(updated));
+      }
+      return { familySetupCompleted: true, familyMembers };
+    }
+  },
+
+  updateAssessmentCompleted: async () => {
+    try {
+      const res = await api.put('/auth/assessment-completed');
+      return res.data;
+    } catch (err) {
+      const uStr = localStorage.getItem('memomate_user');
+      if (uStr) {
+        const u = JSON.parse(uStr);
+        const updated = { ...u, initialAssessmentCompleted: true };
+        localStorage.setItem('memomate_user', JSON.stringify(updated));
+      }
+      return { initialAssessmentCompleted: true };
     }
   }
 };

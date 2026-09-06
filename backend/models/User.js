@@ -35,6 +35,21 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'theme-nature'
   },
+  familySetupCompleted: {
+    type: Boolean,
+    default: false
+  },
+  initialAssessmentCompleted: {
+    type: Boolean,
+    default: false
+  },
+  familyMembers: [{
+    id: String,
+    name: String,
+    relation: String,
+    notes: String,
+    photoUrl: String
+  }],
   createdAt: {
     type: Date,
     default: Date.now

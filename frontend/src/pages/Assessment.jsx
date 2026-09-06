@@ -41,7 +41,7 @@ const Assessment = () => {
   const currentGame = searchParams.get('game');
   const isBaselineMode = searchParams.get('baseline') === 'true';
 
-  const { t, setProfile, setRecommendation } = useAuth();
+  const { t, setProfile, setRecommendation, completeInitialAssessment } = useAuth();
 
   // Baseline Assessment state (4-step mini flow for new users)
   const [baselineStep, setBaselineStep] = useState(0); // 0: Welcome, 1: Memory, 2: Attention, 3: Recall, 4: Reaction, 5: Complete
@@ -238,11 +238,12 @@ const Assessment = () => {
   const activeGameKey = currentGame ? (gameAliasMap[currentGame] || currentGame) : null;
 
   // Handle Baseline Assessment Complete
-  const handleFinishBaseline = () => {
+  const handleFinishBaseline = async () => {
     soundFx.playGameWin();
     const { profile, recommendation } = cognitiveService.saveBaselineAssessment(baselineScores);
     setProfile(profile);
     setRecommendation(recommendation);
+    await completeInitialAssessment();
     navigate('/dashboard');
   };
 

@@ -107,34 +107,34 @@ const Sidebar = () => {
         <span>{t('talkToMemoMate') || 'Talk to MemoMate'}</span>
       </button>
 
-      {/* External Gamification Web App Launcher */}
-      <button
-        onClick={handleExternalLaunch}
-        style={{
+      {/* Gamification Hub Route Launcher */}
+      <NavLink
+        to="/gamification-hub"
+        onClick={() => handleNav(t('navExternalGamification') || 'Gamification Hub')}
+        style={({ isActive }) => ({
           display: 'flex',
           alignItems: 'center',
           justify: 'space-between',
           gap: '0.85rem',
           padding: '0.85rem 1rem',
           borderRadius: '10px',
+          textDecoration: 'none',
           fontWeight: 800,
           fontSize: '0.9rem',
           fontFamily: 'var(--font-heading)',
-          color: '#38BDF8',
-          backgroundColor: 'rgba(56, 189, 248, 0.12)',
+          color: isActive ? '#FFFFFF' : '#38BDF8',
+          backgroundColor: isActive ? 'rgba(56, 189, 248, 0.25)' : 'rgba(56, 189, 248, 0.12)',
           border: '1px solid rgba(56, 189, 248, 0.4)',
-          cursor: 'pointer',
           marginTop: '0.5rem',
           transition: 'all 0.15s ease'
-        }}
-        title="Open External Gamification Web App"
+        })}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
           <Globe size={20} color="#38BDF8" />
           <span>{t('navExternalGamification') || 'Gamification Hub'}</span>
         </div>
-        <ExternalLink size={16} color="#38BDF8" />
-      </button>
+        <Trophy size={16} color="#38BDF8" />
+      </NavLink>
 
       <div style={{ marginTop: '1.25rem', padding: '1rem', backgroundColor: '#0B0E14', borderRadius: '12px', border: '1px solid #263142' }}>
         <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '0.4rem', fontFamily: 'var(--font-heading)' }}>

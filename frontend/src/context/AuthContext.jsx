@@ -43,15 +43,19 @@ export const AuthProvider = ({ children }) => {
   // Language state: defaults to 'en'
   const [language, setLanguage] = useState(() => localStorage.getItem('memomate_language') || 'en');
 
-  // Family Members state
+  // Family Members state (isolated per user, starts empty for new users)
   const [familyMembers, setFamilyMembers] = useState(() => {
-    const saved = localStorage.getItem('memomate_family_members');
-    return saved ? JSON.parse(saved) : [
-      { id: 'fam_1', name: 'Meena', relation: 'Daughter', visitSchedule: 'Every evening at 5:00 PM', notes: 'Loves drinking afternoon tea together and talking about family memories', photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop' },
-      { id: 'fam_2', name: 'Rahul', relation: 'Son', visitSchedule: 'Sunday mornings', notes: 'Engineers in Guwahati, calls every Sunday at 10:00 AM', photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop' },
-      { id: 'fam_3', name: 'Ankit', relation: 'Grandson', visitSchedule: 'Weekend afternoons', notes: 'Loves listening to stories about Bihu festivals and school stories', photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop' },
-      { id: 'fam_4', name: 'Dr. Sarma', relation: 'Family Doctor', visitSchedule: 'Bi-weekly checkups', notes: 'Family physician for over 15 years', photoUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop' }
-    ];
+    const uStr = localStorage.getItem('memomate_user');
+    if (!uStr) return [];
+    try {
+      const u = JSON.parse(uStr);
+      const uId = u.id || u._id || 'user_default';
+      const saved = localStorage.getItem(`memomate_family_${uId}`);
+      if (saved) return JSON.parse(saved);
+      return u.familyMembers || [];
+    } catch (e) {
+      return [];
+    }
   });
 
   // Reminders Schedule state
@@ -269,6 +273,15 @@ export const AuthProvider = ({ children }) => {
     if (user) {
       const userId = user.id || user._id;
 
+      const savedFam = localStorage.getItem(`memomate_family_${userId}`);
+      if (savedFam) {
+        try { setFamilyMembers(JSON.parse(savedFam)); } catch (e) { setFamilyMembers(user.familyMembers || []); }
+      } else if (user.familyMembers) {
+        setFamilyMembers(user.familyMembers);
+      } else {
+        setFamilyMembers([]);
+      }
+
       if (user.preferredLanguage) {
         setLanguage(user.preferredLanguage);
         localStorage.setItem('memomate_language', user.preferredLanguage);
@@ -322,6 +335,36 @@ export const AuthProvider = ({ children }) => {
       setUser(updatedUser);
       localStorage.setItem('memomate_user', JSON.stringify(updatedUser));
       authAPI.updatePreferences({ preferredLanguage: langCode }).catch(() => {});
+    }
+  };
+
+  const completeFamilySetup = async (updatedMembers) => {
+    const userId = user?.id || user?._id || 'user_default';
+    const membersToSave = updatedMembers || familyMembers;
+    localStorage.setItem(`memomate_family_${userId}`, JSON.stringify(membersToSave));
+    setFamilyMembers(membersToSave);
+
+    if (user) {
+      const updatedUser = {
+        ...user,
+        familyMembers: membersToSave,
+        familySetupCompleted: true
+      };
+      setUser(updatedUser);
+      localStorage.setItem('memomate_user', JSON.stringify(updatedUser));
+      await authAPI.updateFamilySetup(membersToSave).catch(() => {});
+    }
+  };
+
+  const completeInitialAssessment = async () => {
+    if (user) {
+      const updatedUser = {
+        ...user,
+        initialAssessmentCompleted: true
+      };
+      setUser(updatedUser);
+      localStorage.setItem('memomate_user', JSON.stringify(updatedUser));
+      await authAPI.updateAssessmentCompleted().catch(() => {});
     }
   };
 
@@ -632,7 +675,10 @@ export const AuthProvider = ({ children }) => {
       garden,
       setGarden,
       familyMembers,
+      setFamilyMembers,
       addFamilyMember,
+      completeFamilySetup,
+      completeInitialAssessment,
       reminders,
       toggleReminderStatus,
       addReminder,
