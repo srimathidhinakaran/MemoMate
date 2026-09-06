@@ -82,14 +82,36 @@ const Register = () => {
             backgroundColor: 'rgba(239, 68, 68, 0.15)',
             border: '1px solid rgba(239, 68, 68, 0.4)',
             color: '#FCA5A5',
-            padding: '0.85rem 1rem',
+            padding: '0.9rem 1rem',
             borderRadius: '10px',
             marginBottom: '1.25rem',
             fontSize: '0.88rem',
             fontWeight: 600,
-            textAlign: 'center'
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            alignItems: 'center'
           }}>
-            {error}
+            <div>{error}</div>
+            <Link
+              to="/login"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                border: '1px solid #38BDF8',
+                color: '#38BDF8',
+                padding: '0.4rem 0.85rem',
+                borderRadius: '8px',
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                textDecoration: 'none'
+              }}
+            >
+              Log in with this email →
+            </Link>
           </div>
         )}
 
