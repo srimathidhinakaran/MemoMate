@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { cognitiveService } from './cognitiveService';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -135,22 +136,21 @@ export const sessionAPI = {
       window.dispatchEvent(new Event('memomate_activity_updated'));
       return res.data;
     } catch (err) {
-      const score = Number(sessionData.score);
-      const cat = sessionData.category;
-      
-      const currentProfile = getStoredProfile();
-      const newProf = { ...currentProfile };
+      // Use deterministic cognitiveService engine to update profile, history & recommendations
+      const recorded = cognitiveService.recordGameSession({
+        gameId: sessionData.activity || 'Exercise',
+        gameTitle: sessionData.activity || 'Cognitive Exercise',
+        category: sessionData.category || 'memory',
+        score: Number(sessionData.score) || 80,
+        accuracy: Number(sessionData.accuracy) || 85,
+        responseTimeMs: Number(sessionData.reactionTime) || 1200,
+        difficulty: sessionData.difficulty || 'Medium'
+      });
 
-      // Update actual metric based on game played
-      if (cat === 'memory' || cat === 'pattern' || cat === '3d-memory') newProf.memoryScore = Math.round(newProf.memoryScore * 0.65 + score * 0.35);
-      if (cat === 'attention' || cat === '3d-target' || cat === 'focus') newProf.attentionScore = Math.round(newProf.attentionScore * 0.65 + score * 0.35);
-      if (cat === 'recall' || cat === 'word' || cat === 'number') newProf.recallScore = Math.round(newProf.recallScore * 0.65 + score * 0.35);
-      if (cat === 'reaction' || cat === '3d-reaction') newProf.reactionScore = Math.round(newProf.reactionScore * 0.65 + score * 0.35);
-      
-      newProf.overallScore = Math.round((newProf.memoryScore + newProf.attentionScore + newProf.recallScore + newProf.reactionScore) / 4);
-      localStorage.setItem('memomate_profile', JSON.stringify(newProf));
+      const newProf = recorded.profile;
+      const recommendation = recorded.recommendation;
 
-      // Record real activity entry in local storage for fallback mode
+      // Record activity feed entry
       const userStr = localStorage.getItem('memomate_user');
       const currentUser = userStr ? JSON.parse(userStr) : null;
       if (currentUser) {
@@ -161,7 +161,7 @@ export const sessionAPI = {
           id: 'act_' + Date.now(),
           user: currentUser.name || 'Active User',
           action: `completed ${sessionData.activity || 'Exercise'}`,
-          score: score,
+          score: Number(sessionData.score) || 80,
           completedAt: new Date().toISOString(),
           initials: initials || 'AU'
         };
@@ -170,7 +170,6 @@ export const sessionAPI = {
         const updatedActs = [newAct, ...storedActs].slice(0, 15);
         localStorage.setItem('memomate_recent_activities', JSON.stringify(updatedActs));
 
-        // Also update local gamification XP
         const savedXp = localStorage.getItem('memomate_xp');
         const savedGems = localStorage.getItem('memomate_gems');
         const savedStreak = localStorage.getItem('memomate_streak');
@@ -178,8 +177,8 @@ export const sessionAPI = {
         const currentGems = savedGems !== null ? Number(savedGems) : 10;
         const currentStreak = savedStreak !== null ? Number(savedStreak) : 0;
 
-        const newXp = currentXp + Math.round(score * 1.5);
-        const newGems = currentGems + Math.round(score * 0.25);
+        const newXp = currentXp + Math.round((sessionData.score || 80) * 1.5);
+        const newGems = currentGems + Math.round((sessionData.score || 80) * 0.25);
 
         localStorage.setItem('memomate_xp', newXp);
         localStorage.setItem('memomate_gems', newGems);
@@ -188,44 +187,24 @@ export const sessionAPI = {
           xpPoints: newXp,
           gems: newGems,
           level: Math.floor(newXp / 300) + 1,
-          currentStreak: currentStreak
+          currentStreak
         };
         localStorage.setItem('memomate_gamification', JSON.stringify(gamObj));
       }
 
       window.dispatchEvent(new Event('memomate_activity_updated'));
 
-      // Determine new weakest area
-      let weakArea = 'attention';
-      let minScore = newProf.attentionScore;
-      if (newProf.memoryScore < minScore) { weakArea = 'memory'; minScore = newProf.memoryScore; }
-      if (newProf.recallScore < minScore) { weakArea = 'recall'; minScore = newProf.recallScore; }
-      if (newProf.reactionScore < minScore) { weakArea = 'reaction'; minScore = newProf.reactionScore; }
-
-      let recommendedActivity = '3D Focus Search 🎯';
-      if (weakArea === 'memory') recommendedActivity = '3D Memory Match 🎨';
-      if (weakArea === 'recall') recommendedActivity = 'Number Recall 🔢';
-      if (weakArea === 'reaction') recommendedActivity = '3D Reaction Orbs ⚡';
-
-      const recommendation = {
-        weakArea,
-        recommendedActivity,
-        difficulty: minScore < 65 ? 'Easy' : 'Medium',
-        reason: `Our Scikit-Learn ML Model analyzed your recent scores (${minScore}) and detected ${weakArea} as your primary focus area.`
-      };
-      localStorage.setItem('memomate_recommendation', JSON.stringify(recommendation));
-
       const currentGarden = getStoredGarden();
       const newGarden = {
         ...currentGarden,
         totalActivities: currentGarden.totalActivities + 1,
-        flowers: currentGarden.totalActivities % 2 === 0 ? currentGarden.flowers + 1 : currentGarden.flowers,
-        plants: currentGarden.totalActivities % 3 === 0 ? currentGarden.plants + 1 : currentGarden.plants
+        flowers: (currentGarden.totalActivities + 1) % 2 === 0 ? currentGarden.flowers + 1 : currentGarden.flowers,
+        plants: (currentGarden.totalActivities + 1) % 3 === 0 ? currentGarden.plants + 1 : currentGarden.plants
       };
       localStorage.setItem('memomate_garden', JSON.stringify(newGarden));
 
       return {
-        session: { ...sessionData, completedAt: new Date() },
+        session: recorded.session,
         profile: newProf,
         recommendation,
         garden: newGarden

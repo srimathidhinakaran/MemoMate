@@ -2,10 +2,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import CognitiveScoreCard from '../components/CognitiveScoreCard';
-import RecommendationCard from '../components/RecommendationCard';
 import GardenPreview from '../components/GardenPreview';
 import RewardUnlockModal from '../components/RewardUnlockModal';
-import { Brain, Play, Calendar, Users, Mic, CheckCircle2, Clock, Droplets, Pill, Activity, ArrowRight, HelpCircle, Sparkles } from 'lucide-react';
+import { Brain, Play, Calendar, Users, Mic, Clock, Sparkles, ArrowRight, HelpCircle } from 'lucide-react';
 
 const UserDashboard = () => {
   const { user, t, profile, recommendation, reminders, activeRewardModal, setActiveRewardModal, setVoiceModalOpen } = useAuth();
@@ -19,13 +18,18 @@ const UserDashboard = () => {
   };
 
   const userName = user?.name || 'Lakshmi Devi';
+  const isAssessed = profile?.assessed !== false && profile?.memoryScore !== null && profile?.memoryScore !== undefined;
 
   const handleStartPrimaryActivity = () => {
-    let targetGame = '3d-memory';
+    if (!isAssessed) {
+      navigate('/assessment?baseline=true');
+      return;
+    }
+
+    let targetGame = recommendation?.recommendedGameId || '3d-memory';
     if (recommendation?.weakArea === 'attention') targetGame = '3d-target';
     if (recommendation?.weakArea === 'recall') targetGame = 'number';
     if (recommendation?.weakArea === 'reaction') targetGame = '3d-reaction';
-    if (recommendation?.weakArea === 'pattern') targetGame = 'pattern';
 
     navigate(`/assessment?game=${targetGame}`);
   };
@@ -47,7 +51,7 @@ const UserDashboard = () => {
               {getGreetingTime()}, {userName}
             </h1>
             <p style={{ color: '#E2E8F0', fontSize: '1.15rem', marginTop: '0.4rem', margin: 0, fontWeight: 600 }}>
-              Here is your day with MemoMate.
+              {isAssessed ? (t('hereIsYourDay') || 'Here is your cognitive day with MemoMate.') : (t('letsUnderstandStarting') || "Let's establish your cognitive baseline profile today.")}
             </p>
           </div>
 
@@ -64,7 +68,11 @@ const UserDashboard = () => {
               }}
             >
               <Play size={24} />
-              <span>{t('startTodaysActivity') || "START TODAY'S ACTIVITY"}</span>
+              <span>
+                {!isAssessed
+                  ? (t('startBaseline') || 'START BASELINE ASSESSMENT')
+                  : (t('startTodaysActivity') || "START TODAY'S ACTIVITY")}
+              </span>
             </button>
 
             <button
@@ -90,11 +98,11 @@ const UserDashboard = () => {
       <div className="garden-card animate-fade-in">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <h2 style={{ fontSize: '1.3rem', color: '#FFFFFF', fontWeight: 800, margin: 0, fontFamily: 'var(--font-heading)' }}>
-            Today's Activities & Reminders
+            {t('todaysSchedule') || "Today's Schedule & Reminders"}
           </h2>
           <button onClick={() => navigate('/my-day')} className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
             <Calendar size={16} />
-            <span>VIEW FULL MY DAY SCHEDULE</span>
+            <span>{t('viewFullSchedule') || 'VIEW FULL MY DAY SCHEDULE'}</span>
           </button>
         </div>
 
@@ -118,7 +126,7 @@ const UserDashboard = () => {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontSize: '0.78rem', color: '#94A3B8', fontWeight: 700 }}>{rem.time}</span>
                   <span className={`badge ${isDone ? 'badge-green' : 'badge-cyan'}`}>
-                    {isDone ? 'Completed' : 'Pending'}
+                    {isDone ? (t('completed') || 'Completed') : (t('pending') || 'Pending')}
                   </span>
                 </div>
                 <div style={{ fontSize: '1rem', fontWeight: 800, color: '#FFFFFF' }}>
@@ -143,7 +151,7 @@ const UserDashboard = () => {
         </div>
 
         <p style={{ fontSize: '1.05rem', color: '#F8FAFC', lineHeight: 1.6, margin: '0 0 1rem' }}>
-          "Your memory accuracy reached <strong style={{ color: '#34D399' }}>86%</strong> during your last 3 sessions and your response time improved by <strong style={{ color: '#38BDF8' }}>14%</strong>. MemoMate therefore adjusted your next activity difficulty to target <strong style={{ color: '#FBBF24' }}>{recommendation?.weakArea || 'attention'}</strong>."
+          {recommendation?.reason || `MemoMate analyzed your recent sessions and selected today's activity to strengthen your ${recommendation?.weakArea || 'attention'} skills.`}
         </p>
 
         <div style={{
@@ -158,7 +166,7 @@ const UserDashboard = () => {
           gap: '0.6rem'
         }}>
           <Sparkles size={18} color="#38BDF8" />
-          <span>Closed-Loop Adaptation: PLAY → RECORD → ANALYSE → IDENTIFY WEAK AREA → ADAPT DIFFICULTY → RECOMMEND</span>
+          <span>Closed-Loop Adaptation: PLAY → RECORD PERFORMANCE → ANALYSE → WEAK AREA DETECTION → ADAPT DIFFICULTY</span>
         </div>
       </div>
 
@@ -168,10 +176,7 @@ const UserDashboard = () => {
           {t('cognitiveMetricsHeader') || 'Current Cognitive Performance Profile'}
         </h2>
         <CognitiveScoreCard
-          memory={profile?.memoryScore || 88}
-          attention={profile?.attentionScore || 64}
-          recall={profile?.recallScore || 76}
-          reaction={profile?.reactionScore || 71}
+          onStartBaseline={() => navigate('/assessment?baseline=true')}
         />
       </div>
 

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI, cognitiveAPI, recommendationAPI, gardenAPI, gamificationAPI } from '../services/api';
+import { cognitiveService } from '../services/cognitiveService';
 import { NER_TRANSLATIONS } from '../utils/nerLanguages';
 
 const AuthContext = createContext(null);
@@ -204,17 +205,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('memomate_external_gamification_url', url);
   };
 
-  // Global Cognitive Performance State
-  const [profile, setProfile] = useState(() => {
-    const savedProf = localStorage.getItem('memomate_profile');
-    return savedProf ? JSON.parse(savedProf) : {
-      memoryScore: 70,
-      attentionScore: 70,
-      recallScore: 70,
-      reactionScore: 70,
-      overallScore: 70
-    };
-  });
+  // Global Cognitive Performance State initialized cleanly from cognitiveService
+  const [profile, setProfile] = useState(() => cognitiveService.getProfile());
 
   const [recommendation, setRecommendation] = useState(() => {
     const savedRec = localStorage.getItem('memomate_recommendation');
@@ -346,15 +338,27 @@ export const AuthProvider = ({ children }) => {
       setToken(data.token);
       localStorage.setItem('memomate_token', data.token);
       localStorage.setItem('memomate_user', JSON.stringify(data.user));
-      // Reset XP to 0 & streak to 0 for brand new account
+      // Reset XP, streak & cognitive profile to unassessed state for brand new account
       setXpPoints(0);
       setGems(10);
       setStreak(0);
       setHighestStreak(0);
+      const newProf = {
+        assessed: false,
+        memoryScore: null,
+        attentionScore: null,
+        recallScore: null,
+        reactionScore: null,
+        overallScore: null,
+        history: []
+      };
+      setProfile(newProf);
       localStorage.setItem('memomate_xp', '0');
       localStorage.setItem('memomate_gems', '10');
       localStorage.setItem('memomate_streak', '0');
       localStorage.setItem('memomate_highest_streak', '0');
+      localStorage.setItem('memomate_profile', JSON.stringify(newProf));
+      localStorage.removeItem('memomate_game_sessions');
       localStorage.setItem('memomate_gamification', JSON.stringify({ xpPoints: 0, gems: 10, currentStreak: 0 }));
       return data;
     } finally {

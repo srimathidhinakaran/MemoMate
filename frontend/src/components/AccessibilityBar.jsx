@@ -82,17 +82,23 @@ const AccessibilityBar = () => {
               outline: 'none'
             }}
           >
-            <option value="theme-healthcare" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
-              {t('themeHealthcare') || 'Healthcare Warm'}
+            <option value="theme-nature" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
+              🌿 {t('themeNature') || 'Calm Nature'}
             </option>
-            <option value="theme-fire-pro" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
-              {t('themeFirePro') || 'Pro Gamified Fire'}
+            <option value="theme-sunrise" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
+              🌅 {t('themeSunrise') || 'Sunrise'}
+            </option>
+            <option value="theme-forest" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
+              🌲 {t('themeForest') || 'Forest'}
+            </option>
+            <option value="theme-ocean" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
+              🌊 {t('themeOcean') || 'Ocean'}
+            </option>
+            <option value="theme-lavender" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
+              🪻 {t('themeLavender') || 'Lavender'}
             </option>
             <option value="theme-high-contrast" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
-              {t('themeHighContrast') || 'High Contrast Elderly'}
-            </option>
-            <option value="theme-daylight" style={{ backgroundColor: '#161C26', color: '#FFFFFF' }}>
-              {t('themeDaylight') || 'Soft Daylight'}
+              👁️ {t('themeHighContrast') || 'High Contrast'}
             </option>
           </select>
         </div>
