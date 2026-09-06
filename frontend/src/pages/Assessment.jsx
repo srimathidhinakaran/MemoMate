@@ -307,7 +307,7 @@ const Assessment = () => {
                 }} />
               </div>
               <button onClick={() => setBaselineStep(2)} className="btn-primary" style={{ padding: '0.85rem 2rem' }}>
-                <span>NEXT: ATTENTION TEST →</span>
+                <span>{t('nextAttentionTest') || 'NEXT: ATTENTION TEST →'}</span>
               </button>
             </div>
           )}
@@ -322,7 +322,7 @@ const Assessment = () => {
                 }} />
               </div>
               <button onClick={() => setBaselineStep(3)} className="btn-primary" style={{ padding: '0.85rem 2rem' }}>
-                <span>NEXT: RECALL TEST →</span>
+                <span>{t('nextRecallTest') || 'NEXT: RECALL TEST →'}</span>
               </button>
             </div>
           )}
@@ -337,7 +337,7 @@ const Assessment = () => {
                 }} />
               </div>
               <button onClick={() => setBaselineStep(4)} className="btn-primary" style={{ padding: '0.85rem 2rem' }}>
-                <span>NEXT: REACTION TEST →</span>
+                <span>{t('nextReactionTest') || 'NEXT: REACTION TEST →'}</span>
               </button>
             </div>
           )}
@@ -352,7 +352,7 @@ const Assessment = () => {
                 }} />
               </div>
               <button onClick={() => setBaselineStep(5)} className="btn-primary" style={{ padding: '0.85rem 2rem' }}>
-                <span>CALCULATE PROFILE →</span>
+                <span>{t('calculateProfileBtn') || 'CALCULATE PROFILE →'}</span>
               </button>
             </div>
           )}
