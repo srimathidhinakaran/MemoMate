@@ -30,6 +30,24 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Database Connection Handler
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) return;
+  try {
+    await mongoose.connect(MONGO_URI);
+    console.log('MongoDB connection: SUCCESS');
+  } catch (err) {
+    console.error('MongoDB connection: FAILED -', err.message);
+  }
+};
+
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    await connectDB();
+  }
+  next();
+});
+
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const sessionRoutes = require('./routes/sessionRoutes');
@@ -57,15 +75,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Database Connection
-mongoose.connect(MONGO_URI)
-  .then(() => {
-    console.log('MongoDB connection: SUCCESS');
-  })
-  .catch((err) => {
-    console.error('MongoDB connection: FAILED -', err.message);
-  });
-
 const startServer = (portToUse) => {
   const server = app.listen(portToUse, () => {
     console.log(`🚀 MemoMate Server running on http://localhost:${portToUse}`);
@@ -81,4 +90,10 @@ const startServer = (portToUse) => {
   });
 };
 
-startServer(PORT);
+connectDB().then(() => {
+  if (require.main === module) {
+    startServer(PORT);
+  }
+});
+
+module.exports = app;
