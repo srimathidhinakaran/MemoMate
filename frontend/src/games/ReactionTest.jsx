@@ -5,7 +5,7 @@ import { sessionAPI } from '../services/api';
 import { soundFx } from '../utils/soundEffects';
 import { Zap, ArrowLeft, RotateCcw, Award } from 'lucide-react';
 
-const ReactionTest = () => {
+const ReactionTest = ({ onComplete }) => {
   const navigate = useNavigate();
   const { user, updateStateFromSession, speakText, voiceAssistance, t } = useAuth();
 
@@ -55,6 +55,9 @@ const ReactionTest = () => {
 
     if (result) {
       updateStateFromSession(result);
+    }
+    if (onComplete) {
+      onComplete({ score: calculatedScore, reactionTime: ms });
     }
   };
 

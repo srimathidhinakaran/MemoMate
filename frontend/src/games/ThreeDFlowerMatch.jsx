@@ -10,7 +10,7 @@ const NODE_COLORS = [
   0x38BDF8, 0xFBBF24, 0xC084FC, 0x34D399, 0xFB923C, 0xEA580C
 ];
 
-const ThreeDFlowerMatch = () => {
+const ThreeDFlowerMatch = ({ onComplete }) => {
   const { user, updateStateFromSession, speakText, voiceAssistance, t } = useAuth();
   const navigate = useNavigate();
   const mountRef = useRef(null);
@@ -199,6 +199,9 @@ const ThreeDFlowerMatch = () => {
 
     setScoreResult({ score, totalMoves, timeSpent });
     setIsCompleted(true);
+    if (onComplete) {
+      onComplete({ score, totalMoves, timeSpent });
+    }
 
     if (voiceAssistance) {
       speakText(`${t('spatialNodeTitle')}. ${score}.`);

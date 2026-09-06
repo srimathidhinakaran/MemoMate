@@ -6,7 +6,7 @@ import { sessionAPI } from '../services/api';
 import { soundFx } from '../utils/soundEffects';
 import { Target, CheckCircle2, RotateCcw, ArrowRight } from 'lucide-react';
 
-const ThreeDTargetSearch = () => {
+const ThreeDTargetSearch = ({ onComplete }) => {
   const { user, updateStateFromSession, speakText, voiceAssistance, t } = useAuth();
   const navigate = useNavigate();
   const mountRef = useRef(null);
@@ -126,6 +126,9 @@ const ThreeDTargetSearch = () => {
 
             setScoreResult({ score, timeSpent });
             setIsCompleted(true);
+            if (onComplete) {
+              onComplete({ score, timeSpent });
+            }
 
             if (voiceAssistance) {
               speakText(`${t('targetFocusTitle')}. ${score}`);

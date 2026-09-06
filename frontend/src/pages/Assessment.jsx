@@ -301,7 +301,9 @@ const Assessment = () => {
               <span className="badge badge-cyan">STEP 1 OF 4 • MEMORY</span>
               <h2 style={{ color: '#FFFFFF', fontSize: '1.4rem' }}>Memory Match Activity</h2>
               <div style={{ width: '100%', minHeight: '300px' }}>
-                <ThreeDFlowerMatch />
+                <ThreeDFlowerMatch onComplete={(res) => {
+                  if (res?.score) setBaselineScores(prev => ({ ...prev, memoryScore: res.score }));
+                }} />
               </div>
               <button onClick={() => setBaselineStep(2)} className="btn-primary" style={{ padding: '0.85rem 2rem' }}>
                 <span>NEXT: ATTENTION TEST →</span>
@@ -314,7 +316,9 @@ const Assessment = () => {
               <span className="badge badge-flame">STEP 2 OF 4 • ATTENTION</span>
               <h2 style={{ color: '#FFFFFF', fontSize: '1.4rem' }}>Target Search Activity</h2>
               <div style={{ width: '100%', minHeight: '300px' }}>
-                <ThreeDTargetSearch />
+                <ThreeDTargetSearch onComplete={(res) => {
+                  if (res?.score) setBaselineScores(prev => ({ ...prev, attentionScore: res.score }));
+                }} />
               </div>
               <button onClick={() => setBaselineStep(3)} className="btn-primary" style={{ padding: '0.85rem 2rem' }}>
                 <span>NEXT: RECALL TEST →</span>
@@ -327,7 +331,9 @@ const Assessment = () => {
               <span className="badge badge-purple">STEP 3 OF 4 • RECALL</span>
               <h2 style={{ color: '#FFFFFF', fontSize: '1.4rem' }}>Digit Sequence Recall</h2>
               <div style={{ width: '100%', minHeight: '300px' }}>
-                <NumberRecall />
+                <NumberRecall onComplete={(res) => {
+                  if (res?.score) setBaselineScores(prev => ({ ...prev, recallScore: res.score }));
+                }} />
               </div>
               <button onClick={() => setBaselineStep(4)} className="btn-primary" style={{ padding: '0.85rem 2rem' }}>
                 <span>NEXT: REACTION TEST →</span>
@@ -340,7 +346,9 @@ const Assessment = () => {
               <span className="badge badge-green">STEP 4 OF 4 • REACTION</span>
               <h2 style={{ color: '#FFFFFF', fontSize: '1.4rem' }}>Reflex Speed Test</h2>
               <div style={{ width: '100%', minHeight: '300px' }}>
-                <ReactionTest />
+                <ReactionTest onComplete={(res) => {
+                  if (res?.score) setBaselineScores(prev => ({ ...prev, reactionScore: res.score }));
+                }} />
               </div>
               <button onClick={() => setBaselineStep(5)} className="btn-primary" style={{ padding: '0.85rem 2rem' }}>
                 <span>CALCULATE PROFILE →</span>
@@ -363,19 +371,19 @@ const Assessment = () => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', width: '100%', maxWidth: '400px' }}>
                 <div style={{ backgroundColor: '#0D1117', padding: '1rem', borderRadius: '12px', border: '1px solid #263142' }}>
                   <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>Memory</div>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#38BDF8' }}>80/100</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#38BDF8' }}>{baselineScores.memoryScore}/100</div>
                 </div>
                 <div style={{ backgroundColor: '#0D1117', padding: '1rem', borderRadius: '12px', border: '1px solid #263142' }}>
                   <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>Attention</div>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FB923C' }}>75/100</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FB923C' }}>{baselineScores.attentionScore}/100</div>
                 </div>
                 <div style={{ backgroundColor: '#0D1117', padding: '1rem', borderRadius: '12px', border: '1px solid #263142' }}>
                   <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>Recall</div>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#C084FC' }}>78/100</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#C084FC' }}>{baselineScores.recallScore}/100</div>
                 </div>
                 <div style={{ backgroundColor: '#0D1117', padding: '1rem', borderRadius: '12px', border: '1px solid #263142' }}>
                   <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>Reaction</div>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#34D399' }}>72/100</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#34D399' }}>{baselineScores.reactionScore}/100</div>
                 </div>
               </div>
 

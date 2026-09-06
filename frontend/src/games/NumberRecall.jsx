@@ -6,7 +6,7 @@ import { soundFx } from '../utils/soundEffects';
 import { sessionAPI } from '../services/api';
 import { RotateCcw, CheckCircle2, ArrowRight } from 'lucide-react';
 
-const NumberRecall = () => {
+const NumberRecall = ({ onComplete }) => {
   const { user, updateStateFromSession, speakText, voiceAssistance, level, t } = useAuth();
   const navigate = useNavigate();
   const mountRef = useRef(null);
@@ -151,6 +151,9 @@ const NumberRecall = () => {
       userInput
     });
     setStage('completed');
+    if (onComplete) {
+      onComplete({ score: calculatedScore, isCorrect });
+    }
     if (isCorrect) soundFx.playLevelUp();
   };
 
