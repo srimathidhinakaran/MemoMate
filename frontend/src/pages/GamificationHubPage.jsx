@@ -27,8 +27,8 @@ const GamificationHubPage = () => {
               <Trophy size={32} color="#38BDF8" />
             </div>
             <div>
-              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#38BDF8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                {t('externalGamificationTag') || 'DEDICATED GAMIFICATION HUB 🌐'}
+              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#F59E0B', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                {t('externalGamificationTag') || 'FUTURE IMPLEMENTATION • UNDER WORKING 🚧'}
               </div>
               <h1 style={{ fontSize: '1.9rem', color: '#FFFFFF', fontWeight: 900, fontFamily: 'var(--font-heading)', margin: '0.2rem 0' }}>
                 {t('gamificationHubTitle') || 'Gamification & Mind Matrix Hub'}

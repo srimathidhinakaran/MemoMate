@@ -130,10 +130,10 @@ const Sidebar = () => {
         })}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <Globe size={20} color="#38BDF8" />
+          <Globe size={20} color="#F59E0B" />
           <span>{t('navExternalGamification') || 'Gamification Hub'}</span>
         </div>
-        <Trophy size={16} color="#38BDF8" />
+        <span style={{ fontSize: '0.65rem', padding: '0.2rem 0.5rem', borderRadius: '6px', backgroundColor: 'rgba(245, 158, 11, 0.2)', color: '#FBBF24', border: '1px solid #F59E0B', fontWeight: 800 }}>SOON</span>
       </NavLink>
 
       <div style={{ marginTop: '1.25rem', padding: '1rem', backgroundColor: '#0B0E14', borderRadius: '12px', border: '1px solid #263142' }}>
