@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { cognitiveService } from './cognitiveService';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api');
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -17,31 +17,6 @@ api.interceptors.request.use((config) => {
   }
   return config;
 }, (error) => Promise.reject(error));
-
-// Secure hashing utility for persistent standalone account validation
-const hashPassword = (password) => {
-  let hash = 0;
-  if (!password || password.length === 0) return 'empty_hash';
-  for (let i = 0; i < password.length; i++) {
-    const char = password.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash |= 0;
-  }
-  return 'hash_' + Math.abs(hash) + '_' + password.length;
-};
-
-// Retrieve local persistent accounts database
-const getAccountsDB = () => {
-  try {
-    return JSON.parse(localStorage.getItem('memomate_user_accounts_db') || '[]');
-  } catch (e) {
-    return [];
-  }
-};
-
-const saveAccountsDB = (accounts) => {
-  localStorage.setItem('memomate_user_accounts_db', JSON.stringify(accounts));
-};
 
 export const getStoredProfile = (userId) => cognitiveService.getProfile(userId);
 
@@ -86,45 +61,7 @@ export const authAPI = {
       if (err.response && err.response.data && err.response.data.message) {
         throw new Error(err.response.data.message);
       }
-      
-      // Fallback: Real client-side database authentication
-      const emailClean = (userData.email || '').toLowerCase().trim();
-      const accounts = getAccountsDB();
-      
-      const existing = accounts.find(u => u.email.toLowerCase() === emailClean);
-      if (existing) {
-        throw new Error('An account with this email already exists. Please log in instead.');
-      }
-
-      if (!userData.name || !userData.email || !userData.password) {
-        throw new Error('Full Name, Email, and Password are required.');
-      }
-
-      if (userData.password.length < 6) {
-        throw new Error('Password must be at least 6 characters long.');
-      }
-
-      const userId = 'user_' + Date.now();
-      const passwordHash = hashPassword(userData.password);
-
-      const newUser = {
-        id: userId,
-        _id: userId,
-        name: userData.name.trim(),
-        age: Number(userData.age) || 68,
-        email: emailClean,
-        passwordHash,
-        role: userData.role || 'elderly',
-        preferredLanguage: userData.preferredLanguage || 'en',
-        preferredTheme: userData.preferredTheme || 'theme-nature',
-        createdAt: new Date().toISOString()
-      };
-
-      accounts.push(newUser);
-      saveAccountsDB(accounts);
-
-      const token = 'jwt_token_' + userId + '_' + Date.now();
-      return { token, user: newUser };
+      throw new Error('Unable to connect to the server. Please check backend API server connection.');
     }
   },
 
@@ -136,23 +73,7 @@ export const authAPI = {
       if (err.response && err.response.data && err.response.data.message) {
         throw new Error(err.response.data.message);
       }
-
-      // Fallback: Real client-side database authentication
-      const emailClean = (credentials.email || '').toLowerCase().trim();
-      const accounts = getAccountsDB();
-
-      const user = accounts.find(u => u.email.toLowerCase() === emailClean);
-      if (!user) {
-        throw new Error('Invalid email or password.');
-      }
-
-      const inputHash = hashPassword(credentials.password);
-      if (user.passwordHash !== inputHash) {
-        throw new Error('Invalid email or password.');
-      }
-
-      const token = 'jwt_token_' + user.id + '_' + Date.now();
-      return { token, user };
+      throw new Error('Unable to connect to the server. Please check backend API server connection.');
     }
   },
 
@@ -161,6 +82,11 @@ export const authAPI = {
       const res = await api.get('/auth/me');
       return res.data;
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        localStorage.removeItem('memomate_token');
+        localStorage.removeItem('memomate_user');
+        return null;
+      }
       const stored = localStorage.getItem('memomate_user');
       return stored ? JSON.parse(stored) : null;
     }
@@ -176,14 +102,6 @@ export const authAPI = {
         const u = JSON.parse(uStr);
         const updated = { ...u, ...preferences };
         localStorage.setItem('memomate_user', JSON.stringify(updated));
-        
-        // Also update stored account record in accounts DB
-        const accounts = getAccountsDB();
-        const idx = accounts.findIndex(acc => acc.id === u.id);
-        if (idx !== -1) {
-          accounts[idx] = { ...accounts[idx], ...preferences };
-          saveAccountsDB(accounts);
-        }
       }
       return preferences;
     }

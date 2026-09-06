@@ -10,8 +10,24 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/memomate';
 
-// Middleware
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:5000',
+  'https://memo-blind.vercel.app',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
@@ -32,37 +48,22 @@ app.use('/api/caregiver', caregiverRoutes);
 app.use('/api/gamification', gamificationRoutes);
 
 app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'online',
+  const isConnected = mongoose.connection.readyState === 1;
+  res.status(isConnected ? 200 : 503).json({
+    status: isConnected ? 'ok' : 'error',
+    database: isConnected ? 'connected' : 'disconnected',
     app: 'MemoMate SIH 2026 API',
-    mongoState: mongoose.connection.readyState === 1 ? 'connected' : 'standalone_mode',
     timestamp: new Date()
   });
 });
 
-// Serve static frontend build assets for full-stack deployment
-const fs = require('fs');
-const distPath = path.join(__dirname, '../frontend/dist');
-app.use(express.static(distPath));
-
-// Wildcard SPA route fallback for single-page application refreshes
-app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api')) {
-    const indexPath = path.join(distPath, 'index.html');
-    if (fs.existsSync(indexPath)) {
-      return res.sendFile(indexPath);
-    }
-  }
-  res.status(404).json({ message: 'Resource or API route not found' });
-});
-
-// Database Connection with graceful standalone fallback
+// Database Connection
 mongoose.connect(MONGO_URI)
   .then(() => {
-    console.log('🌱 Connected to MongoDB successfully.');
+    console.log('MongoDB connection: SUCCESS');
   })
   .catch((err) => {
-    console.warn('⚠️ MongoDB connection issue (using in-memory fallback for API stability):', err.message);
+    console.error('MongoDB connection: FAILED -', err.message);
   });
 
 const startServer = (portToUse) => {
