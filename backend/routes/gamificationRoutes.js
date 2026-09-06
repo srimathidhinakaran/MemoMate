@@ -15,19 +15,17 @@ router.get('/leaderboard', async (req, res) => {
         userMap[u._id.toString()] = u;
       });
 
-      const defaultNames = ['Ramesh V.', 'Sunita K.', 'Anand P.', 'Meena S.', 'Vijay R.'];
-      const formatted = list.map((item, idx) => {
-        const u = userMap[item.userId];
-        const rawName = u?.name?.trim();
-        const cleanName = (rawName && rawName !== 'Cognitive Member') ? rawName : (defaultNames[idx % defaultNames.length]);
+      const validList = list.filter(item => userMap[item.userId] && userMap[item.userId].name && userMap[item.userId].name.trim() !== '' && userMap[item.userId].name !== 'Cognitive Member');
 
+      const formatted = validList.map((item, idx) => {
+        const u = userMap[item.userId];
         return {
           rank: idx + 1,
           userId: item.userId,
-          name: cleanName,
-          age: u?.age || 68,
+          name: u.name,
+          age: u.age || 68,
           xpPoints: item.xpPoints,
-          currentStreak: item.currentStreak,
+          currentStreak: item.currentStreak || 0,
           league: item.league || 'Emerald League',
           avatar: u?.role === 'caregiver' ? '👨‍⚕️' : '⚡'
         };

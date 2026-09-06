@@ -22,10 +22,7 @@ api.interceptors.request.use((config) => {
 
 export const getAccountsDB = () => {
   const saved = localStorage.getItem('memomate_accounts');
-  const defaultAccounts = [
-    { id: 'usr_demo_elderly', name: 'Elderly Demo User', email: 'patient@example.com', password: 'password123', age: 68, role: 'elderly', preferredLanguage: 'en', preferredTheme: 'theme-nature' },
-    { id: 'usr_demo_caregiver', name: 'Caregiver Dr. Ananya', email: 'caregiver@example.com', password: 'password123', age: 38, role: 'caregiver', preferredLanguage: 'en', preferredTheme: 'theme-nature' }
-  ];
+  const defaultAccounts = [];
   if (!saved) {
     localStorage.setItem('memomate_accounts', JSON.stringify(defaultAccounts));
     return defaultAccounts;
