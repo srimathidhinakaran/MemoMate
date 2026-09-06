@@ -8,7 +8,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/memomate';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://srimathidhinakaran2006_db_user:Srimathi%402006@cluster0.4jky0as.mongodb.net/memomate?retryWrites=true&w=majority';
 
 const allowedOrigins = [
   'http://localhost:5173',
