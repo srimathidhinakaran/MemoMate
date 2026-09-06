@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { cognitiveService } from './cognitiveService';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api');
+const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const API_BASE_URL = import.meta.env.VITE_API_URL || (isLocalhost ? 'http://localhost:5000/api' : '/api');
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -17,6 +18,41 @@ api.interceptors.request.use((config) => {
   }
   return config;
 }, (error) => Promise.reject(error));
+
+export const getAccountsDB = () => {
+  const saved = localStorage.getItem('memomate_accounts');
+  const defaultAccounts = [
+    { id: 'usr_demo_elderly', name: 'Elderly Demo User', email: 'patient@example.com', password: 'password123', age: 68, role: 'elderly', preferredLanguage: 'en', preferredTheme: 'theme-nature' },
+    { id: 'usr_demo_caregiver', name: 'Caregiver Dr. Ananya', email: 'caregiver@example.com', password: 'password123', age: 38, role: 'caregiver', preferredLanguage: 'en', preferredTheme: 'theme-nature' }
+  ];
+  if (!saved) {
+    localStorage.setItem('memomate_accounts', JSON.stringify(defaultAccounts));
+    return defaultAccounts;
+  }
+  try {
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.setItem('memomate_accounts', JSON.stringify(defaultAccounts));
+      return defaultAccounts;
+    }
+    return parsed;
+  } catch (e) {
+    localStorage.setItem('memomate_accounts', JSON.stringify(defaultAccounts));
+    return defaultAccounts;
+  }
+};
+
+export const saveAccountToDB = (account) => {
+  const accounts = getAccountsDB();
+  const existingIdx = accounts.findIndex(a => a.email.toLowerCase() === account.email.toLowerCase());
+  if (existingIdx >= 0) {
+    accounts[existingIdx] = { ...accounts[existingIdx], ...account };
+  } else {
+    accounts.push(account);
+  }
+  localStorage.setItem('memomate_accounts', JSON.stringify(accounts));
+  return account;
+};
 
 export const getStoredProfile = (userId) => cognitiveService.getProfile(userId);
 
@@ -61,7 +97,25 @@ export const authAPI = {
       if (err.response && err.response.data && err.response.data.message) {
         throw new Error(err.response.data.message);
       }
-      throw new Error('Unable to connect to the server. Please check backend API server connection.');
+      console.warn('Backend server unreachable. Falling back to local offline session for registration.');
+      const accounts = getAccountsDB();
+      const existing = accounts.find(a => a.email.toLowerCase() === userData.email.toLowerCase().trim());
+      if (existing) {
+        throw new Error('An account with this email already exists. Please log in instead.');
+      }
+      const newUser = {
+        id: 'usr_' + Date.now(),
+        name: userData.name.trim(),
+        age: Number(userData.age) || 68,
+        email: userData.email.toLowerCase().trim(),
+        password: userData.password,
+        role: userData.role || 'elderly',
+        preferredLanguage: userData.preferredLanguage || 'en',
+        preferredTheme: userData.preferredTheme || 'theme-nature'
+      };
+      saveAccountToDB(newUser);
+      const token = 'demo_token_' + Date.now();
+      return { token, user: newUser };
     }
   },
 
@@ -73,7 +127,32 @@ export const authAPI = {
       if (err.response && err.response.data && err.response.data.message) {
         throw new Error(err.response.data.message);
       }
-      throw new Error('Unable to connect to the server. Please check backend API server connection.');
+      console.warn('Backend server unreachable. Falling back to local offline session for login.');
+      const accounts = getAccountsDB();
+      const emailClean = credentials.email.toLowerCase().trim();
+      const target = accounts.find(a => a.email.toLowerCase() === emailClean);
+
+      if (target) {
+        if (target.password && credentials.password && target.password !== credentials.password) {
+          throw new Error('Invalid email or password.');
+        }
+        const token = 'demo_token_' + Date.now();
+        return { token, user: target };
+      }
+
+      // Fall back user creation for smooth offline access
+      const fallbackUser = {
+        id: 'usr_' + Date.now(),
+        name: emailClean.split('@')[0] || 'MemoUser',
+        age: 68,
+        email: emailClean,
+        password: credentials.password,
+        role: emailClean.includes('caregiver') ? 'caregiver' : 'elderly',
+        preferredLanguage: 'en',
+        preferredTheme: 'theme-nature'
+      };
+      saveAccountToDB(fallbackUser);
+      return { token: 'demo_token_' + Date.now(), user: fallbackUser };
     }
   },
 
