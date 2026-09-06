@@ -5,6 +5,7 @@ import AccessibilityBar from './components/AccessibilityBar';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import VoiceAssistantModal from './components/VoiceAssistantModal';
+import RewardUnlockModal from './components/RewardUnlockModal';
 
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -24,7 +25,7 @@ import FamilySetup from './pages/FamilySetup';
 import GamificationHubPage from './pages/GamificationHubPage';
 
 const App = () => {
-  const { user, isVoiceModalOpen, setVoiceModalOpen } = useAuth();
+  const { user, isVoiceModalOpen, setVoiceModalOpen, activeRewardModal, setActiveRewardModal } = useAuth();
   const location = useLocation();
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
@@ -72,6 +73,14 @@ const App = () => {
         isOpen={isVoiceModalOpen}
         onClose={() => setVoiceModalOpen(false)}
       />
+
+      {/* Global Level Up / Celebratory Reward Modal Overlay */}
+      {activeRewardModal && (
+        <RewardUnlockModal
+          reward={activeRewardModal}
+          onClose={() => setActiveRewardModal(null)}
+        />
+      )}
 
       {isAuthPage || !user ? (
         <main style={{

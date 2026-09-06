@@ -211,14 +211,6 @@ const UserDashboard = () => {
         {/* 3D Garden Preview */}
         <GardenPreview />
       </div>
-
-      {/* Celebratory Reward Unlock Modal */}
-      {activeRewardModal && (
-        <RewardUnlockModal
-          reward={activeRewardModal}
-          onClose={() => setActiveRewardModal(null)}
-        />
-      )}
     </div>
   );
 };

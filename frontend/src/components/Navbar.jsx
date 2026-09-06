@@ -291,22 +291,24 @@ const Navbar = () => {
           position: 'fixed',
           bottom: 24,
           right: 24,
-          backgroundColor: '#161C26',
-          border: '1px solid #38BDF8',
-          borderRadius: '14px',
-          padding: '1.1rem 1.5rem',
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7)',
-          zIndex: 100,
+          backgroundColor: 'var(--bg-card, #161C26)',
+          border: '1.5px solid var(--neon-cyan, #38BDF8)',
+          borderRadius: '16px',
+          padding: '1.1rem 1.6rem',
+          boxShadow: '0 12px 35px rgba(0, 0, 0, 0.85), 0 0 20px rgba(56, 189, 248, 0.25)',
+          zIndex: 9999,
           display: 'flex',
           alignItems: 'center',
           gap: '1rem',
-          animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+          backdropFilter: 'blur(10px)',
+          animation: 'fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards'
         }}>
           <div className="icon-box" style={{
-            width: 42,
-            height: 42,
-            borderRadius: '10px',
-            backgroundColor: 'rgba(56, 189, 248, 0.15)',
+            width: 44,
+            height: 44,
+            borderRadius: '12px',
+            backgroundColor: 'rgba(56, 189, 248, 0.2)',
+            border: '1px solid rgba(56, 189, 248, 0.4)',
             display: 'inline-flex',
             alignItems: 'center',
             justify: 'center'
@@ -314,10 +316,10 @@ const Navbar = () => {
             <Sparkles size={24} color="#38BDF8" />
           </div>
           <div>
-            <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.95rem' }}>
+            <div style={{ fontWeight: 900, color: '#FFFFFF', fontSize: '0.95rem', letterSpacing: '0.03em', fontFamily: 'var(--font-heading)' }}>
               EXERCISE COMPLETED!
             </div>
-            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 600 }}>
+            <div style={{ fontSize: '0.88rem', color: '#E2E8F0', fontWeight: 600, marginTop: '0.1rem' }}>
               {recentScoreToast.activity}: <strong style={{ color: '#38BDF8' }}>+{recentScoreToast.score} PTS</strong> | <strong style={{ color: '#FBBF24' }}>+{recentScoreToast.xp} XP</strong>
             </div>
           </div>
