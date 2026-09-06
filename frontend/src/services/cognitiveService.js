@@ -1,13 +1,23 @@
 // Centralized Cognitive Score & Adaptive AI Engine for MemoMate
 
-const PROFILE_KEY = 'memomate_profile';
-const SESSIONS_KEY = 'memomate_game_sessions';
-const RECOMMENDATION_KEY = 'memomate_recommendation';
+const getCurrentUserId = () => {
+  try {
+    const u = JSON.parse(localStorage.getItem('memomate_user') || '{}');
+    return u.id || u._id || 'user_default';
+  } catch (e) {
+    return 'user_default';
+  }
+};
+
+const getProfileKey = (userId) => `memomate_profile_${userId || getCurrentUserId()}`;
+const getSessionsKey = (userId) => `memomate_game_sessions_${userId || getCurrentUserId()}`;
+const getRecommendationKey = (userId) => `memomate_recommendation_${userId || getCurrentUserId()}`;
 
 export const cognitiveService = {
-  // Retrieve profile or default to unassessed state
-  getProfile: () => {
-    const saved = localStorage.getItem(PROFILE_KEY);
+  // Retrieve profile or default to unassessed state for current user
+  getProfile: (userId) => {
+    const key = getProfileKey(userId);
+    const saved = localStorage.getItem(key);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -27,9 +37,10 @@ export const cognitiveService = {
     };
   },
 
-  // Retrieve recorded game sessions
-  getGameSessions: () => {
-    const saved = localStorage.getItem(SESSIONS_KEY);
+  // Retrieve recorded game sessions for current user
+  getGameSessions: (userId) => {
+    const key = getSessionsKey(userId);
+    const saved = localStorage.getItem(key);
     if (!saved) return [];
     try {
       return JSON.parse(saved);
@@ -39,18 +50,24 @@ export const cognitiveService = {
   },
 
   // Record a single game session performance deterministically
-  recordGameSession: (sessionData) => {
-    const sessions = cognitiveService.getGameSessions();
-    const currentProfile = cognitiveService.getProfile();
+  recordGameSession: (sessionData, userId) => {
+    const uId = userId || getCurrentUserId();
+    const sessionsKey = getSessionsKey(uId);
+    const profileKey = getProfileKey(uId);
+    const recommendationKey = getRecommendationKey(uId);
+
+    const sessions = cognitiveService.getGameSessions(uId);
+    const currentProfile = cognitiveService.getProfile(uId);
 
     const timestamp = new Date().toISOString();
     const rawScore = Number(sessionData.score) || 75;
     const accuracy = Number(sessionData.accuracy) || 80;
     const responseTimeMs = Number(sessionData.responseTimeMs) || 1200;
-    const category = sessionData.category || 'memory'; // 'memory' | 'attention' | 'recall' | 'reaction' | 'pattern'
+    const category = sessionData.category || 'memory';
 
     const newSession = {
       id: 'sess_' + Date.now(),
+      userId: uId,
       gameId: sessionData.gameId || 'game',
       gameTitle: sessionData.gameTitle || 'Cognitive Activity',
       category,
@@ -63,9 +80,8 @@ export const cognitiveService = {
     };
 
     const updatedSessions = [newSession, ...sessions].slice(0, 50);
-    localStorage.setItem(SESSIONS_KEY, JSON.stringify(updatedSessions));
+    localStorage.setItem(sessionsKey, JSON.stringify(updatedSessions));
 
-    // Update cognitive domain score using weighted exponential moving average
     const mapCategoryToKey = {
       memory: 'memoryScore',
       '3d-memory': 'memoryScore',
@@ -84,7 +100,6 @@ export const cognitiveService = {
 
     const targetKey = mapCategoryToKey[category] || 'memoryScore';
     
-    // Existing values or fallback to baseline rawScore
     const prevMemory = currentProfile.memoryScore;
     const prevAttention = currentProfile.attentionScore;
     const prevRecall = currentProfile.recallScore;
@@ -103,7 +118,6 @@ export const cognitiveService = {
     const validScores = [newMemory, newAttention, newRecall, newReaction].filter(s => s !== null);
     const overallScore = validScores.length > 0 ? Math.round(validScores.reduce((a, b) => a + b, 0) / validScores.length) : null;
 
-    // Calculate trends (+6, -4, etc) compared to 2 sessions ago
     const getTrend = (catKey) => {
       const catSessions = updatedSessions.filter(s => mapCategoryToKey[s.category] === catKey);
       if (catSessions.length < 2) return 0;
@@ -111,6 +125,7 @@ export const cognitiveService = {
     };
 
     const newProfile = {
+      userId: uId,
       assessed: true,
       memoryScore: newMemory,
       memoryTrend: getTrend('memoryScore'),
@@ -124,7 +139,7 @@ export const cognitiveService = {
       lastUpdated: timestamp
     };
 
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(newProfile));
+    localStorage.setItem(profileKey, JSON.stringify(newProfile));
 
     // Adaptive AI Engine: Identify Weakest Domain & Adjust Difficulty
     const scoreEntries = [
@@ -137,7 +152,6 @@ export const cognitiveService = {
     scoreEntries.sort((a, b) => a.score - b.score);
     const weakDomain = scoreEntries[0];
 
-    // Determine adaptive difficulty based on recent performance
     let recommendedDifficulty = 'Medium';
     let difficultyReason = '';
 
@@ -160,6 +174,7 @@ export const cognitiveService = {
     };
 
     const newRecommendation = {
+      userId: uId,
       weakArea: weakDomain.key,
       recommendedGameId: gameRecommendationMap[weakDomain.key] || '3d-memory',
       difficulty: recommendedDifficulty,
@@ -168,7 +183,7 @@ export const cognitiveService = {
       lastSessionScore: rawScore
     };
 
-    localStorage.setItem(RECOMMENDATION_KEY, JSON.stringify(newRecommendation));
+    localStorage.setItem(recommendationKey, JSON.stringify(newRecommendation));
 
     return {
       profile: newProfile,
@@ -178,8 +193,12 @@ export const cognitiveService = {
   },
 
   // Save full Baseline Assessment results for first-time users
-  saveBaselineAssessment: (baselineResults) => {
-    // baselineResults = { memoryScore, attentionScore, recallScore, reactionScore }
+  saveBaselineAssessment: (baselineResults, userId) => {
+    const uId = userId || getCurrentUserId();
+    const profileKey = getProfileKey(uId);
+    const sessionsKey = getSessionsKey(uId);
+    const recommendationKey = getRecommendationKey(uId);
+
     const memory = Math.min(100, Math.max(30, Math.round(baselineResults.memoryScore || 75)));
     const attention = Math.min(100, Math.max(30, Math.round(baselineResults.attentionScore || 70)));
     const recall = Math.min(100, Math.max(30, Math.round(baselineResults.recallScore || 72)));
@@ -188,6 +207,7 @@ export const cognitiveService = {
     const overall = Math.round((memory + attention + recall + reaction) / 4);
 
     const profile = {
+      userId: uId,
       assessed: true,
       memoryScore: memory,
       memoryTrend: 0,
@@ -201,19 +221,17 @@ export const cognitiveService = {
       lastUpdated: new Date().toISOString()
     };
 
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+    localStorage.setItem(profileKey, JSON.stringify(profile));
 
-    // Record baseline as initial sessions
     const baselineSessions = [
-      { id: 'base_1', gameTitle: 'Baseline Memory Test', category: 'memory', score: memory, timestamp: new Date().toISOString() },
-      { id: 'base_2', gameTitle: 'Baseline Attention Test', category: 'attention', score: attention, timestamp: new Date().toISOString() },
-      { id: 'base_3', gameTitle: 'Baseline Recall Test', category: 'recall', score: recall, timestamp: new Date().toISOString() },
-      { id: 'base_4', gameTitle: 'Baseline Reaction Test', category: 'reaction', score: reaction, timestamp: new Date().toISOString() }
+      { id: 'base_1', userId: uId, gameTitle: 'Baseline Memory Test', category: 'memory', score: memory, timestamp: new Date().toISOString() },
+      { id: 'base_2', userId: uId, gameTitle: 'Baseline Attention Test', category: 'attention', score: attention, timestamp: new Date().toISOString() },
+      { id: 'base_3', userId: uId, gameTitle: 'Baseline Recall Test', category: 'recall', score: recall, timestamp: new Date().toISOString() },
+      { id: 'base_4', userId: uId, gameTitle: 'Baseline Reaction Test', category: 'reaction', score: reaction, timestamp: new Date().toISOString() }
     ];
 
-    localStorage.setItem(SESSIONS_KEY, JSON.stringify(baselineSessions));
+    localStorage.setItem(sessionsKey, JSON.stringify(baselineSessions));
 
-    // Identify initial focus area
     const domains = [
       { key: 'memory', score: memory },
       { key: 'attention', score: attention },
@@ -230,13 +248,14 @@ export const cognitiveService = {
     };
 
     const recommendation = {
+      userId: uId,
       weakArea: initialWeak,
       recommendedGameId: gameRecommendationMap[initialWeak] || '3d-memory',
       difficulty: 'Medium',
       reason: `Your baseline cognitive profile is established! MemoMate recommends starting with ${initialWeak.toUpperCase()} exercises for optimal progress.`
     };
 
-    localStorage.setItem(RECOMMENDATION_KEY, JSON.stringify(recommendation));
+    localStorage.setItem(recommendationKey, JSON.stringify(recommendation));
 
     return { profile, recommendation };
   }

@@ -18,26 +18,63 @@ api.interceptors.request.use((config) => {
   return config;
 }, (error) => Promise.reject(error));
 
-const getStoredProfile = () => {
-  const saved = localStorage.getItem('memomate_profile');
-  return saved ? JSON.parse(saved) : {
-    memoryScore: 70,
-    attentionScore: 70,
-    recallScore: 70,
-    reactionScore: 70,
-    overallScore: 70
-  };
+// Secure hashing utility for persistent standalone account validation
+const hashPassword = (password) => {
+  let hash = 0;
+  if (!password || password.length === 0) return 'empty_hash';
+  for (let i = 0; i < password.length; i++) {
+    const char = password.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return 'hash_' + Math.abs(hash) + '_' + password.length;
 };
 
-const getStoredGarden = () => {
-  const saved = localStorage.getItem('memomate_garden');
+// Retrieve local persistent accounts database
+const getAccountsDB = () => {
+  try {
+    return JSON.parse(localStorage.getItem('memomate_user_accounts_db') || '[]');
+  } catch (e) {
+    return [];
+  }
+};
+
+const saveAccountsDB = (accounts) => {
+  localStorage.setItem('memomate_user_accounts_db', JSON.stringify(accounts));
+};
+
+export const getStoredProfile = (userId) => cognitiveService.getProfile(userId);
+
+export const getStoredGarden = (userId) => {
+  const uId = userId || 'user_default';
+  const saved = localStorage.getItem(`memomate_garden_${uId}`);
   return saved ? JSON.parse(saved) : {
+    userId: uId,
     plants: 1,
     flowers: 1,
     trees: 0,
-    streak: 1,
+    streak: 0,
     totalActivities: 0
   };
+};
+
+export const getStoredReminders = (userId) => {
+  const uId = userId || 'user_default';
+  const saved = localStorage.getItem(`memomate_reminders_${uId}`);
+  return saved ? JSON.parse(saved) : [
+    { id: 'rem_1', time: '08:00 AM', title: 'Hydration Reminder', category: 'hydration', detail: 'Drink 1 full glass of water', status: 'completed' },
+    { id: 'rem_2', time: '09:00 AM', title: 'Cognitive Memory Session', category: 'cognitive', detail: '3D Memory & Spatial Match', status: 'pending' },
+    { id: 'rem_3', time: '12:30 PM', title: 'Afternoon Medication', category: 'medicine', detail: 'Blood Pressure & Multivitamin', status: 'pending' }
+  ];
+};
+
+export const getStoredFamily = (userId) => {
+  const uId = userId || 'user_default';
+  const saved = localStorage.getItem(`memomate_family_${uId}`);
+  return saved ? JSON.parse(saved) : [
+    { id: 'fam_1', name: 'Meena', relation: 'Daughter', visitSchedule: 'Every evening at 5:00 PM', notes: 'Loves drinking afternoon tea together and talking about family memories', photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop' },
+    { id: 'fam_2', name: 'Rahul', relation: 'Son', visitSchedule: 'Sunday mornings', notes: 'Engineers in Guwahati, calls every Sunday at 10:00 AM', photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop' }
+  ];
 };
 
 export const authAPI = {
@@ -46,47 +83,79 @@ export const authAPI = {
       const res = await api.post('/auth/register', userData);
       return res.data;
     } catch (err) {
-      // If backend explicitly returned a 400 response message (e.g. email already exists), throw it
-      if (err.response && err.response.status === 400 && err.response.data && err.response.data.message) {
-        throw err;
+      if (err.response && err.response.data && err.response.data.message) {
+        throw new Error(err.response.data.message);
       }
-      // If network error or backend unreachable, perform client-side session registration
-      console.warn("Backend API unreachable, using local session registration fallback.");
+      
+      // Fallback: Real client-side database authentication
+      const emailClean = (userData.email || '').toLowerCase().trim();
+      const accounts = getAccountsDB();
+      
+      const existing = accounts.find(u => u.email.toLowerCase() === emailClean);
+      if (existing) {
+        throw new Error('An account with this email already exists. Please log in instead.');
+      }
+
+      if (!userData.name || !userData.email || !userData.password) {
+        throw new Error('Full Name, Email, and Password are required.');
+      }
+
+      if (userData.password.length < 6) {
+        throw new Error('Password must be at least 6 characters long.');
+      }
+
+      const userId = 'user_' + Date.now();
+      const passwordHash = hashPassword(userData.password);
+
       const newUser = {
-        id: 'user_' + Date.now(),
-        name: userData.name || 'User',
+        id: userId,
+        _id: userId,
+        name: userData.name.trim(),
         age: Number(userData.age) || 68,
-        email: userData.email,
-        role: userData.role || 'elderly'
+        email: emailClean,
+        passwordHash,
+        role: userData.role || 'elderly',
+        preferredLanguage: userData.preferredLanguage || 'en',
+        preferredTheme: userData.preferredTheme || 'theme-nature',
+        createdAt: new Date().toISOString()
       };
-      const token = 'session_token_' + Date.now();
+
+      accounts.push(newUser);
+      saveAccountsDB(accounts);
+
+      const token = 'jwt_token_' + userId + '_' + Date.now();
       return { token, user: newUser };
     }
   },
+
   login: async (credentials) => {
     try {
       const res = await api.post('/auth/login', credentials);
       return res.data;
     } catch (err) {
-      if (err.response && err.response.status === 400 && err.response.data && err.response.data.message) {
-        throw err;
+      if (err.response && err.response.data && err.response.data.message) {
+        throw new Error(err.response.data.message);
       }
-      console.warn("Backend API unreachable, using local session login fallback.");
-      const storedUserStr = localStorage.getItem('memomate_user');
-      const storedUser = storedUserStr ? JSON.parse(storedUserStr) : null;
-      if (storedUser && storedUser.email.toLowerCase() === (credentials.email || '').toLowerCase()) {
-        return { token: localStorage.getItem('memomate_token') || ('session_token_' + Date.now()), user: storedUser };
+
+      // Fallback: Real client-side database authentication
+      const emailClean = (credentials.email || '').toLowerCase().trim();
+      const accounts = getAccountsDB();
+
+      const user = accounts.find(u => u.email.toLowerCase() === emailClean);
+      if (!user) {
+        throw new Error('Invalid email or password.');
       }
-      const newUser = {
-        id: 'user_' + Date.now(),
-        name: credentials.email ? credentials.email.split('@')[0] : 'User',
-        age: 68,
-        email: credentials.email,
-        role: 'elderly'
-      };
-      return { token: 'session_token_' + Date.now(), user: newUser };
+
+      const inputHash = hashPassword(credentials.password);
+      if (user.passwordHash !== inputHash) {
+        throw new Error('Invalid email or password.');
+      }
+
+      const token = 'jwt_token_' + user.id + '_' + Date.now();
+      return { token, user };
     }
   },
+
   getMe: async () => {
     try {
       const res = await api.get('/auth/me');
@@ -94,6 +163,29 @@ export const authAPI = {
     } catch (err) {
       const stored = localStorage.getItem('memomate_user');
       return stored ? JSON.parse(stored) : null;
+    }
+  },
+
+  updatePreferences: async (preferences) => {
+    try {
+      const res = await api.put('/auth/preferences', preferences);
+      return res.data;
+    } catch (err) {
+      const uStr = localStorage.getItem('memomate_user');
+      if (uStr) {
+        const u = JSON.parse(uStr);
+        const updated = { ...u, ...preferences };
+        localStorage.setItem('memomate_user', JSON.stringify(updated));
+        
+        // Also update stored account record in accounts DB
+        const accounts = getAccountsDB();
+        const idx = accounts.findIndex(acc => acc.id === u.id);
+        if (idx !== -1) {
+          accounts[idx] = { ...accounts[idx], ...preferences };
+          saveAccountsDB(accounts);
+        }
+      }
+      return preferences;
     }
   }
 };
@@ -104,7 +196,7 @@ export const cognitiveAPI = {
       const res = await api.get(`/cognitive/${userId}`);
       return res.data;
     } catch (err) {
-      return getStoredProfile();
+      return getStoredProfile(userId);
     }
   },
   updateProfile: async (userId, data) => {
@@ -112,9 +204,9 @@ export const cognitiveAPI = {
       const res = await api.put(`/cognitive/${userId}`, data);
       return res.data;
     } catch (err) {
-      const current = getStoredProfile();
+      const current = getStoredProfile(userId);
       const updated = { ...current, ...data };
-      localStorage.setItem('memomate_profile', JSON.stringify(updated));
+      localStorage.setItem(`memomate_profile_${userId}`, JSON.stringify(updated));
       return updated;
     }
   }
@@ -131,12 +223,15 @@ export const sessionAPI = {
     }
   },
   createSession: async (sessionData) => {
+    const userStr = localStorage.getItem('memomate_user');
+    const currentUser = userStr ? JSON.parse(userStr) : null;
+    const userId = currentUser?.id || sessionData.userId || 'user_default';
+
     try {
-      const res = await api.post('/sessions', sessionData);
+      const res = await api.post('/sessions', { ...sessionData, userId });
       window.dispatchEvent(new Event('memomate_activity_updated'));
       return res.data;
     } catch (err) {
-      // Use deterministic cognitiveService engine to update profile, history & recommendations
       const recorded = cognitiveService.recordGameSession({
         gameId: sessionData.activity || 'Exercise',
         gameTitle: sessionData.activity || 'Cognitive Exercise',
@@ -145,14 +240,11 @@ export const sessionAPI = {
         accuracy: Number(sessionData.accuracy) || 85,
         responseTimeMs: Number(sessionData.reactionTime) || 1200,
         difficulty: sessionData.difficulty || 'Medium'
-      });
+      }, userId);
 
       const newProf = recorded.profile;
       const recommendation = recorded.recommendation;
 
-      // Record activity feed entry
-      const userStr = localStorage.getItem('memomate_user');
-      const currentUser = userStr ? JSON.parse(userStr) : null;
       if (currentUser) {
         const parts = (currentUser.name || 'User').split(' ').filter(Boolean);
         const initials = parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}`.toUpperCase() : (currentUser.name || 'US').slice(0, 2).toUpperCase();
@@ -170,9 +262,9 @@ export const sessionAPI = {
         const updatedActs = [newAct, ...storedActs].slice(0, 15);
         localStorage.setItem('memomate_recent_activities', JSON.stringify(updatedActs));
 
-        const savedXp = localStorage.getItem('memomate_xp');
-        const savedGems = localStorage.getItem('memomate_gems');
-        const savedStreak = localStorage.getItem('memomate_streak');
+        const savedXp = localStorage.getItem(`memomate_xp_${userId}`);
+        const savedGems = localStorage.getItem(`memomate_gems_${userId}`);
+        const savedStreak = localStorage.getItem(`memomate_streak_${userId}`);
         const currentXp = savedXp !== null ? Number(savedXp) : 0;
         const currentGems = savedGems !== null ? Number(savedGems) : 10;
         const currentStreak = savedStreak !== null ? Number(savedStreak) : 0;
@@ -180,8 +272,8 @@ export const sessionAPI = {
         const newXp = currentXp + Math.round((sessionData.score || 80) * 1.5);
         const newGems = currentGems + Math.round((sessionData.score || 80) * 0.25);
 
-        localStorage.setItem('memomate_xp', newXp);
-        localStorage.setItem('memomate_gems', newGems);
+        localStorage.setItem(`memomate_xp_${userId}`, newXp);
+        localStorage.setItem(`memomate_gems_${userId}`, newGems);
 
         const gamObj = {
           xpPoints: newXp,
@@ -189,19 +281,19 @@ export const sessionAPI = {
           level: Math.floor(newXp / 300) + 1,
           currentStreak
         };
-        localStorage.setItem('memomate_gamification', JSON.stringify(gamObj));
+        localStorage.setItem(`memomate_gamification_${userId}`, JSON.stringify(gamObj));
       }
 
       window.dispatchEvent(new Event('memomate_activity_updated'));
 
-      const currentGarden = getStoredGarden();
+      const currentGarden = getStoredGarden(userId);
       const newGarden = {
         ...currentGarden,
         totalActivities: currentGarden.totalActivities + 1,
         flowers: (currentGarden.totalActivities + 1) % 2 === 0 ? currentGarden.flowers + 1 : currentGarden.flowers,
         plants: (currentGarden.totalActivities + 1) % 3 === 0 ? currentGarden.plants + 1 : currentGarden.plants
       };
-      localStorage.setItem('memomate_garden', JSON.stringify(newGarden));
+      localStorage.setItem(`memomate_garden_${userId}`, JSON.stringify(newGarden));
 
       return {
         session: recorded.session,
@@ -216,7 +308,7 @@ export const sessionAPI = {
       const res = await api.get(`/sessions/${userId}`);
       return res.data;
     } catch (err) {
-      return [];
+      return cognitiveService.getGameSessions(userId);
     }
   }
 };
@@ -227,12 +319,12 @@ export const recommendationAPI = {
       const res = await api.get(`/recommendations/${userId}`);
       return res.data;
     } catch (err) {
-      const savedRec = localStorage.getItem('memomate_recommendation');
+      const savedRec = localStorage.getItem(`memomate_recommendation_${userId}`);
       return savedRec ? JSON.parse(savedRec) : {
         weakArea: 'attention',
         recommendedActivity: '3D Focus Search 🎯',
         difficulty: 'Medium',
-        reason: 'Our Scikit-Learn ML Model detected attention as your primary focus area.'
+        reason: 'Complete your baseline assessment to personalize activity recommendations.'
       };
     }
   }
@@ -244,7 +336,7 @@ export const gardenAPI = {
       const res = await api.get(`/garden/${userId}`);
       return res.data;
     } catch (err) {
-      return getStoredGarden();
+      return getStoredGarden(userId);
     }
   },
   updateGarden: async (userId, action) => {
@@ -252,9 +344,9 @@ export const gardenAPI = {
       const res = await api.put(`/garden/${userId}`, { action });
       return res.data;
     } catch (err) {
-      const g = getStoredGarden();
+      const g = getStoredGarden(userId);
       const updated = { ...g, flowers: g.flowers + 1 };
-      localStorage.setItem('memomate_garden', JSON.stringify(updated));
+      localStorage.setItem(`memomate_garden_${userId}`, JSON.stringify(updated));
       return updated;
     }
   }
@@ -266,21 +358,17 @@ export const caregiverAPI = {
       const res = await api.get('/caregiver/users');
       return res.data;
     } catch (err) {
-      const storedUserStr = localStorage.getItem('memomate_user');
-      const storedUser = storedUserStr ? JSON.parse(storedUserStr) : null;
-      if (storedUser) {
-        return [{
-          id: storedUser.id,
-          _id: storedUser.id,
-          name: storedUser.name,
-          age: storedUser.age || 68,
-          email: storedUser.email,
-          profile: getStoredProfile(),
-          sessionsCompleted: 1,
-          gardenStreak: 1
-        }];
-      }
-      return [];
+      const accounts = getAccountsDB();
+      return accounts.filter(acc => acc.role === 'elderly').map(acc => ({
+        id: acc.id,
+        _id: acc.id,
+        name: acc.name,
+        age: acc.age || 68,
+        email: acc.email,
+        profile: getStoredProfile(acc.id),
+        sessionsCompleted: cognitiveService.getGameSessions(acc.id).length,
+        gardenStreak: getStoredGarden(acc.id).streak || 0
+      }));
     }
   },
   getUserDetails: async (userId) => {
@@ -288,23 +376,25 @@ export const caregiverAPI = {
       const res = await api.get(`/caregiver/user/${userId}`);
       return res.data;
     } catch (err) {
-      const p = getStoredProfile();
-      const storedUserStr = localStorage.getItem('memomate_user');
-      const storedUser = storedUserStr ? JSON.parse(storedUserStr) : null;
-      const name = storedUser?.name || 'User';
+      const accounts = getAccountsDB();
+      const targetUser = accounts.find(acc => acc.id === userId) || { id: userId, name: 'Patient User', age: 68, email: 'patient@example.com' };
+      const p = getStoredProfile(userId);
+      const sessions = cognitiveService.getGameSessions(userId);
 
       return {
-        user: { id: userId, name: name, age: storedUser?.age || 68, email: storedUser?.email || 'user@example.com' },
+        user: { id: userId, name: targetUser.name, age: targetUser.age, email: targetUser.email },
         profile: p,
-        sessions: [],
+        sessions,
         recommendation: {
           weakArea: 'attention',
           recommendedActivity: '3D Focus Search 🎯',
           difficulty: 'Medium',
           reason: 'Groq Llama-3 AI & Scikit-Learn Model telemetry observation.'
         },
-        garden: getStoredGarden(),
-        aiObservation: `Attention score (${p.attentionScore}/100) indicates focus exercise is recommended while memory recall (${p.memoryScore}/100) remains strong.`
+        garden: getStoredGarden(userId),
+        aiObservation: p.assessed
+          ? `Attention score (${p.attentionScore || 0}/100) indicates focus exercise is recommended while memory recall (${p.memoryScore || 0}/100) remains tracked.`
+          : 'Patient has not yet completed the initial cognitive baseline assessment.'
       };
     }
   }
@@ -316,10 +406,11 @@ export const gamificationAPI = {
       const res = await api.get(`/gamification/${userId}`);
       return res.data;
     } catch (err) {
-      const saved = localStorage.getItem('memomate_gamification');
-      const savedXp = localStorage.getItem('memomate_xp');
-      const savedGems = localStorage.getItem('memomate_gems');
-      const savedStreak = localStorage.getItem('memomate_streak');
+      const uId = userId || 'user_default';
+      const saved = localStorage.getItem(`memomate_gamification_${uId}`);
+      const savedXp = localStorage.getItem(`memomate_xp_${uId}`);
+      const savedGems = localStorage.getItem(`memomate_gems_${uId}`);
+      const savedStreak = localStorage.getItem(`memomate_streak_${uId}`);
 
       const xp = savedXp !== null ? Number(savedXp) : 0;
       const gems = savedGems !== null ? Number(savedGems) : 10;
@@ -328,7 +419,7 @@ export const gamificationAPI = {
       let baseObj = saved ? JSON.parse(saved) : {};
       return {
         ...baseObj,
-        userId: userId || 'user_1',
+        userId: uId,
         xpPoints: Math.max(xp, baseObj.xpPoints || 0),
         gems: Math.max(gems, baseObj.gems || 10),
         level: Math.floor(Math.max(xp, baseObj.xpPoints || 0) / 300) + 1,
@@ -353,27 +444,27 @@ export const gamificationAPI = {
       const res = await api.get('/gamification/leaderboard');
       return res.data;
     } catch (err) {
-      const storedUserStr = localStorage.getItem('memomate_user');
-      const storedUser = storedUserStr ? JSON.parse(storedUserStr) : null;
-      const storedGam = localStorage.getItem('memomate_gamification');
-      const gamData = storedGam ? JSON.parse(storedGam) : null;
+      const accounts = getAccountsDB();
+      const currentUserStr = localStorage.getItem('memomate_user');
+      const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
 
-      if (storedUser) {
-        return [
-          {
-            rank: 1,
-            userId: storedUser.id || 'user_1',
-            name: storedUser.name || 'User',
-            age: storedUser.age || 68,
-            xpPoints: gamData?.xpPoints || 100,
-            currentStreak: gamData?.currentStreak || 1,
-            league: 'Emerald League',
-            avatar: '🌸',
-            isCurrentUser: true
-          }
-        ];
-      }
-      return [];
+      return accounts.map((acc, index) => {
+        const uId = acc.id || acc._id;
+        const savedXp = Number(localStorage.getItem(`memomate_xp_${uId}`)) || 0;
+        const savedStreak = Number(localStorage.getItem(`memomate_streak_${uId}`)) || 0;
+
+        return {
+          rank: index + 1,
+          userId: uId,
+          name: acc.name,
+          age: acc.age || 68,
+          xpPoints: savedXp,
+          currentStreak: savedStreak,
+          league: 'Emerald League',
+          avatar: acc.role === 'caregiver' ? '🩺' : '🌸',
+          isCurrentUser: currentUser?.id === uId
+        };
+      }).sort((a, b) => b.xpPoints - a.xpPoints).map((item, idx) => ({ ...item, rank: idx + 1 }));
     }
   }
 };

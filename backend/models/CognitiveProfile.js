@@ -7,25 +7,29 @@ const cognitiveProfileSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  assessed: {
+    type: Boolean,
+    default: false
+  },
   memoryScore: {
     type: Number,
-    default: 82
+    default: null
   },
   attentionScore: {
     type: Number,
-    default: 64
+    default: null
   },
   recallScore: {
     type: Number,
-    default: 76
+    default: null
   },
   reactionScore: {
     type: Number,
-    default: 71
+    default: null
   },
   overallScore: {
     type: Number,
-    default: 73
+    default: null
   },
   updatedAt: {
     type: Date,

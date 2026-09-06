@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema({
     enum: ['elderly', 'caregiver'],
     default: 'elderly'
   },
+  preferredLanguage: {
+    type: String,
+    default: 'en'
+  },
+  preferredTheme: {
+    type: String,
+    default: 'theme-nature'
+  },
   createdAt: {
     type: Date,
     default: Date.now

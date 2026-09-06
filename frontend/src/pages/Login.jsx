@@ -15,9 +15,15 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     soundFx.playClick();
+
+    if (!email.trim() || !password) {
+      setError('Please enter your email address and password');
+      return;
+    }
+
     try {
       setError('');
-      const data = await login({ email, password });
+      const data = await login({ email: email.trim().toLowerCase(), password });
       soundFx.playLevelUp();
       if (data?.user?.role === 'caregiver') {
         navigate('/caregiver');
@@ -25,8 +31,9 @@ const Login = () => {
         navigate('/dashboard');
       }
     } catch (err) {
-      console.error("Login auth failure:", err);
-      setError(err.response?.data?.message || 'Invalid email or password. Please register an account first.');
+      console.error('Login auth failure:', err);
+      const errMsg = err.message || err.response?.data?.message || 'Invalid email or password.';
+      setError(errMsg);
     }
   };
 
@@ -47,7 +54,7 @@ const Login = () => {
         backgroundColor: '#161B22',
         boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)'
       }}>
-        {/* Perfectly Dead-Centered Brain Emblem */}
+        {/* Brain Emblem */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div className="icon-box" style={{
             width: 56,
@@ -70,7 +77,7 @@ const Login = () => {
             Welcome Back
           </h1>
           <p style={{ fontSize: '0.9rem', color: '#9198A1', marginTop: '0.4rem', lineHeight: 1.4 }}>
-            Sign in with your registered email to continue
+            Sign in with your registered email and password
           </p>
         </div>
 

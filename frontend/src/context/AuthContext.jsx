@@ -98,15 +98,7 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const updateTheme = (newTheme) => {
-    setTheme(newTheme);
-    localStorage.setItem('memomate_theme', newTheme);
-  };
 
-  const updateLanguage = (langCode) => {
-    setLanguage(langCode);
-    localStorage.setItem('memomate_language', langCode);
-  };
 
   const toggleReminderStatus = (reminderId) => {
     setReminders((prev) => {
@@ -268,53 +260,64 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (user && user.role === 'elderly') {
+    if (user) {
       const userId = user.id || user._id;
+
+      if (user.preferredLanguage) {
+        setLanguage(user.preferredLanguage);
+        localStorage.setItem('memomate_language', user.preferredLanguage);
+      }
+      if (user.preferredTheme) {
+        setTheme(user.preferredTheme);
+        localStorage.setItem('memomate_theme', user.preferredTheme);
+      }
+
       cognitiveAPI.getProfile(userId).then((res) => {
         if (res) {
           setProfile(res);
-          localStorage.setItem('memomate_profile', JSON.stringify(res));
         }
       });
       recommendationAPI.getLatest(userId).then((res) => {
         if (res) {
           setRecommendation(res);
-          localStorage.setItem('memomate_recommendation', JSON.stringify(res));
         }
       });
       gardenAPI.getGarden(userId).then((res) => {
         if (res) {
           setGarden(res);
-          localStorage.setItem('memomate_garden', JSON.stringify(res));
         }
       });
       gamificationAPI.getGamification(userId).then((res) => {
         if (res) {
-          if (res.currentStreak !== undefined) {
-            setStreak((prev) => {
-              const maxS = Math.max(prev, res.currentStreak);
-              localStorage.setItem('memomate_streak', maxS);
-              return maxS;
-            });
-          }
-          if (res.xpPoints !== undefined) {
-            setXpPoints((prev) => {
-              const maxXp = Math.max(prev, res.xpPoints);
-              localStorage.setItem('memomate_xp', maxXp);
-              return maxXp;
-            });
-          }
-          if (res.gems !== undefined) {
-            setGems((prev) => {
-              const maxGems = Math.max(prev, res.gems);
-              localStorage.setItem('memomate_gems', maxGems);
-              return maxGems;
-            });
-          }
+          if (res.currentStreak !== undefined) setStreak(res.currentStreak);
+          if (res.xpPoints !== undefined) setXpPoints(res.xpPoints);
+          if (res.gems !== undefined) setGems(res.gems);
         }
       });
     }
   }, [user]);
+
+  const updateTheme = (newTheme) => {
+    setTheme(newTheme);
+    localStorage.setItem('memomate_theme', newTheme);
+    if (user) {
+      const updatedUser = { ...user, preferredTheme: newTheme };
+      setUser(updatedUser);
+      localStorage.setItem('memomate_user', JSON.stringify(updatedUser));
+      authAPI.updatePreferences({ preferredTheme: newTheme }).catch(() => {});
+    }
+  };
+
+  const updateLanguage = (langCode) => {
+    setLanguage(langCode);
+    localStorage.setItem('memomate_language', langCode);
+    if (user) {
+      const updatedUser = { ...user, preferredLanguage: langCode };
+      setUser(updatedUser);
+      localStorage.setItem('memomate_user', JSON.stringify(updatedUser));
+      authAPI.updatePreferences({ preferredLanguage: langCode }).catch(() => {});
+    }
+  };
 
   const login = async (credentials) => {
     setLoading(true);
@@ -324,6 +327,10 @@ export const AuthProvider = ({ children }) => {
       setToken(data.token);
       localStorage.setItem('memomate_token', data.token);
       localStorage.setItem('memomate_user', JSON.stringify(data.user));
+
+      if (data.user?.preferredLanguage) setLanguage(data.user.preferredLanguage);
+      if (data.user?.preferredTheme) setTheme(data.user.preferredTheme);
+
       return data;
     } finally {
       setLoading(false);
@@ -338,12 +345,16 @@ export const AuthProvider = ({ children }) => {
       setToken(data.token);
       localStorage.setItem('memomate_token', data.token);
       localStorage.setItem('memomate_user', JSON.stringify(data.user));
+
       // Reset XP, streak & cognitive profile to unassessed state for brand new account
       setXpPoints(0);
       setGems(10);
       setStreak(0);
       setHighestStreak(0);
+
+      const userId = data.user.id || data.user._id;
       const newProf = {
+        userId,
         assessed: false,
         memoryScore: null,
         attentionScore: null,
@@ -353,13 +364,10 @@ export const AuthProvider = ({ children }) => {
         history: []
       };
       setProfile(newProf);
-      localStorage.setItem('memomate_xp', '0');
-      localStorage.setItem('memomate_gems', '10');
-      localStorage.setItem('memomate_streak', '0');
-      localStorage.setItem('memomate_highest_streak', '0');
-      localStorage.setItem('memomate_profile', JSON.stringify(newProf));
-      localStorage.removeItem('memomate_game_sessions');
-      localStorage.setItem('memomate_gamification', JSON.stringify({ xpPoints: 0, gems: 10, currentStreak: 0 }));
+
+      if (data.user?.preferredLanguage) setLanguage(data.user.preferredLanguage);
+      if (data.user?.preferredTheme) setTheme(data.user.preferredTheme);
+
       return data;
     } finally {
       setLoading(false);
@@ -371,13 +379,6 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     localStorage.removeItem('memomate_token');
     localStorage.removeItem('memomate_user');
-    localStorage.removeItem('memomate_profile');
-    localStorage.removeItem('memomate_recommendation');
-    localStorage.removeItem('memomate_garden');
-    localStorage.removeItem('memomate_xp');
-    localStorage.removeItem('memomate_gems');
-    localStorage.removeItem('memomate_streak');
-    localStorage.removeItem('memomate_gamification');
   };
 
   const updateStateFromSession = (sessionResult) => {

@@ -27,9 +27,14 @@ const App = () => {
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
-  // Enforce auth requirement: if user is not logged in, force navigation to /login
+  // If user is not logged in and trying to access protected route, force navigation to /login
   if (!user && !isAuthPage) {
     return <Navigate to="/login" replace />;
+  }
+
+  // If user is logged in and trying to access auth pages, redirect to dashboard
+  if (user && isAuthPage) {
+    return <Navigate to={user.role === 'caregiver' ? '/caregiver' : '/dashboard'} replace />;
   }
 
   return (
