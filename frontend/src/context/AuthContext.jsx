@@ -132,9 +132,15 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const t = (key) => {
+  const t = (key, params) => {
     const dict = NER_TRANSLATIONS[language] || NER_TRANSLATIONS.en;
-    return dict[key] || NER_TRANSLATIONS.en[key] || key;
+    let str = dict[key] || NER_TRANSLATIONS.en[key] || key;
+    if (params && typeof params === 'object') {
+      Object.keys(params).forEach((k) => {
+        str = str.replace(new RegExp(`{\\s*${k}\\s*}`, 'g'), params[k]);
+      });
+    }
+    return str;
   };
 
   // Duolingo-Style Dynamic Streak Engine (Initial Streak = 0)
@@ -555,14 +561,47 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
-  const speakText = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95;
-      utterance.pitch = 1.0;
-      window.speechSynthesis.speak(utterance);
+  const speakText = (text, explicitLang) => {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+
+    const targetLangCode = explicitLang || language || 'en';
+
+    const langLocaleMap = {
+      en: 'en-US',
+      ta: 'ta-IN',
+      hi: 'hi-IN',
+      as: 'as-IN',
+      te: 'te-IN',
+      kn: 'kn-IN',
+      ml: 'ml-IN',
+      mr: 'mr-IN',
+      bn: 'bn-IN',
+      gu: 'gu-IN',
+      pa: 'pa-IN',
+      or: 'or-IN'
+    };
+
+    const targetLocale = langLocaleMap[targetLangCode] || 'en-US';
+    const langPrefix = targetLangCode.slice(0, 2);
+
+    const voices = window.speechSynthesis.getVoices();
+    const matchingVoice = voices.find(v => v.lang.toLowerCase().replace('_', '-').startsWith(langPrefix));
+
+    // If a non-English language is selected and no voice is available on device, display localized alert notice
+    if (!matchingVoice && targetLangCode !== 'en' && voices.length > 0) {
+      console.warn(`Speech synthesis voice for language '${targetLangCode}' is not available on this device.`);
+      return;
     }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = targetLocale;
+    if (matchingVoice) {
+      utterance.voice = matchingVoice;
+    }
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+    window.speechSynthesis.speak(utterance);
   };
 
   return (

@@ -119,7 +119,7 @@ const ThreeDReactionOrbs = () => {
       }
 
       soundFx.playSuccess();
-      if (voiceAssistance) speakText("TAP THE 3D ORB NOW!");
+      if (voiceAssistance) speakText(t('quantumSpeedTitle'));
     }, delay);
   };
 
@@ -127,7 +127,6 @@ const ThreeDReactionOrbs = () => {
     if (gameState === 'waiting') {
       clearTimeout(timerRef.current);
       soundFx.playCardMismatch();
-      alert("Wait for the 3D Orb to glow golden before tapping!");
       setGameState('idle');
     } else if (gameState === 'glow') {
       const ms = Date.now() - glowTimeRef.current;
@@ -174,7 +173,7 @@ const ThreeDReactionOrbs = () => {
         </div>
 
         <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#FFFFFF', fontWeight: 900 }}>
-          3D REACTION TEST COMPLETE! ⚡
+          {t('missionComplete') || '3D REACTION TEST COMPLETE!'} ⚡
         </h2>
 
         <div style={{
@@ -189,11 +188,11 @@ const ThreeDReactionOrbs = () => {
           textAlign: 'left'
         }}>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>Reaction Score</div>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>{t('reactionScore') || 'Reaction Score'}</div>
             <div style={{ fontSize: '2rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100</div>
           </div>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>Spatial Speed</div>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>{t('reactionScore') || 'Speed'}</div>
             <div style={{ fontSize: '2rem', fontWeight: 900, color: '#38BDF8' }}>{scoreResult.ms} ms</div>
           </div>
         </div>
@@ -201,10 +200,10 @@ const ThreeDReactionOrbs = () => {
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
           <button onClick={start3DTest} className="btn-secondary">
             <RotateCcw size={18} />
-            <span>Play Again</span>
+            <span>{t('playAgain') || 'Play Again'}</span>
           </button>
           <button onClick={() => navigate('/dashboard')} className="btn-flame">
-            <span>Dashboard</span>
+            <span>{t('navDashboard') || 'Dashboard'}</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -214,9 +213,9 @@ const ThreeDReactionOrbs = () => {
 
   return (
     <div className="garden-card animate-fade-in" style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
-      <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.4rem' }}>Quantum Speed Reflex Orbs ⚡</h2>
+      <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.4rem' }}>{t('quantumSpeedTitle') || 'Quantum Speed Reflex Orbs'} ⚡</h2>
       <p style={{ color: '#94A3B8', marginBottom: '1.25rem' }}>
-        Press START, then tap the center 3D sphere as soon as it glows golden!
+        {t('quantumSpeedDesc') || 'Press START, then tap center 3D sphere!'}
       </p>
 
       {/* 3D WebGL Canvas Container */}
@@ -234,25 +233,25 @@ const ThreeDReactionOrbs = () => {
           position: 'relative',
           display: 'flex',
           alignItems: 'center',
-          justify: 'center'
+          justifyContent: 'center'
         }}
       >
         {gameState === 'idle' && (
           <button onClick={start3DTest} className="btn-primary" style={{ padding: '1.1rem 2.25rem', fontSize: '1.2rem', zIndex: 10 }}>
             <Zap size={22} />
-            <span>START 3D TEST</span>
+            <span>{t('startMissionNow') || 'START 3D TEST'}</span>
           </button>
         )}
 
         {gameState === 'waiting' && (
           <div style={{ position: 'absolute', bottom: 20, fontWeight: 700, color: '#94A3B8', zIndex: 10 }}>
-            Wait for 3D Orb to glow golden...
+            ...
           </div>
         )}
 
         {gameState === 'glow' && (
           <div style={{ position: 'absolute', bottom: 20, fontWeight: 800, color: '#FBBF24', fontSize: '1.2rem', zIndex: 10 }}>
-            TAP THE GOLDEN 3D ORB NOW! ⚡
+            {t('tapTargetNow') || 'TAP THE GOLDEN 3D ORB NOW! ⚡'}
           </div>
         )}
       </div>

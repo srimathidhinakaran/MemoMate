@@ -44,7 +44,7 @@ const WordRecall = () => {
     setCountdown(5);
 
     if (voiceAssistance) {
-      speakText(`Remember these 3 items: ${targets.join(', ')}`);
+      speakText(`${t('wordRecallTitle')}. ${targets.join(', ')}`);
     }
   };
 
@@ -195,7 +195,7 @@ const WordRecall = () => {
         </div>
 
         <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#FFFFFF', fontWeight: 900 }}>
-          CATEGORICAL RECALL COMPLETE! 📖
+          {t('missionComplete') || 'CATEGORICAL RECALL COMPLETE!'}
         </h2>
 
         <div style={{
@@ -205,17 +205,17 @@ const WordRecall = () => {
           border: '1px solid #263142',
           marginBottom: '1.75rem'
         }}>
-          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 800 }}>RECALL SCORE</div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100 PTS</div>
+          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 800 }}>{t('wordRecallTitle').toUpperCase() || 'RECALL SCORE'}</div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100 {t('pts') || 'PTS'}</div>
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
           <button onClick={startNewGame} className="btn-secondary">
             <RotateCcw size={18} />
-            <span>PLAY AGAIN</span>
+            <span>{t('playAgain') || 'PLAY AGAIN'}</span>
           </button>
           <button onClick={() => navigate('/dashboard')} className="btn-flame">
-            <span>DASHBOARD</span>
+            <span>{t('navDashboard').toUpperCase() || 'DASHBOARD'}</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -227,12 +227,12 @@ const WordRecall = () => {
     <div className="garden-card animate-fade-in" style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
       <div className="garden-card-header">
         <div>
-          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>3D CATEGORICAL WORD RECALL 📖</h2>
+          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>{t('wordRecallTitle') || '3D CATEGORICAL WORD RECALL'}</h2>
           <p style={{ fontSize: '0.95rem', color: '#94A3B8' }}>
-            {phase === 'memorize' ? 'MEMORIZE THE 3 CATEGORICAL ITEMS BELOW!' : 'SELECT THE 3 ITEMS YOU SAW.'}
+            {phase === 'memorize' ? (t('wordRecallDesc') || 'Memorize the items below!') : (t('wordRecallTitle') || 'Select the items you saw.')}
           </p>
         </div>
-        <span className="badge badge-cyan">{phase === 'memorize' ? `HIDING IN ${countdown}s` : 'SELECT 3 ITEMS'}</span>
+        <span className="badge badge-cyan">{phase === 'memorize' ? `${countdown}s` : '3'}</span>
       </div>
 
       {/* 3D WebGL Revolving Word Spheres Scene */}

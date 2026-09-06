@@ -6,7 +6,7 @@ import { NER_LANGUAGES } from '../utils/nerLanguages';
 import { Brain, ArrowRight, Lock, Mail, User as UserIcon, Globe, Shield } from 'lucide-react';
 
 const Register = () => {
-  const { register, loading } = useAuth();
+  const { register, loading, t } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -19,16 +19,16 @@ const Register = () => {
   const [error, setError] = useState('');
 
   const validateForm = () => {
-    if (!name.trim()) return 'Full Name is required';
-    if (!email.trim()) return 'Email address is required';
+    if (!name.trim()) return t('valNameReq') || 'Full Name is required';
+    if (!email.trim()) return t('valEmailReq') || 'Email address is required';
 
     const emailRegex = /^\S+@\S+\.\S+$/;
-    if (!emailRegex.test(email.trim())) return 'Please enter a valid email address';
+    if (!emailRegex.test(email.trim())) return t('valEmailInvalid') || 'Please enter a valid email address';
 
-    if (!password) return 'Password is required';
-    if (password.length < 6) return 'Password must be at least 6 characters long';
+    if (!password) return t('valPassReq') || 'Password is required';
+    if (password.length < 6) return t('valPassMin') || 'Password must be at least 6 characters long';
 
-    if (password !== confirmPassword) return 'Passwords do not match';
+    if (password !== confirmPassword) return t('valPassMismatch') || 'Passwords do not match';
 
     return null;
   };
@@ -63,7 +63,7 @@ const Register = () => {
       }
     } catch (err) {
       console.error('Registration failure:', err);
-      const errMsg = err.message || err.response?.data?.message || 'Registration failed. Email may already be registered.';
+      const errMsg = err.message || err.response?.data?.message || t('regFailed') || 'Registration failed. Email may already be registered.';
       setError(errMsg);
     }
   };
@@ -105,10 +105,10 @@ const Register = () => {
             fontFamily: 'var(--font-heading)',
             margin: 0
           }}>
-            Create Account
+            {t('createAccount') || 'Create Account'}
           </h1>
           <p style={{ fontSize: '0.9rem', color: '#9198A1', marginTop: '0.4rem', lineHeight: 1.4 }}>
-            Register your official profile on MemoMate database
+            {t('registerSub') || 'Register your official profile on MemoMate database'}
           </p>
         </div>
 
@@ -146,7 +146,7 @@ const Register = () => {
                   textDecoration: 'none'
                 }}
               >
-                Log in with this account →
+                {t('logInWithThisAccount') || 'Log in with this account →'}
               </Link>
             )}
           </div>
@@ -155,7 +155,7 @@ const Register = () => {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.35rem' }}>
-              Full Name *
+              {t('fullNameLabel') || 'Full Name *'}
             </label>
             <div style={{ position: 'relative' }}>
               <input
@@ -182,7 +182,7 @@ const Register = () => {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.35rem' }}>
-                Age *
+                {t('ageLabel') || 'Age *'}
               </label>
               <input
                 type="number"
@@ -207,7 +207,7 @@ const Register = () => {
 
             <div>
               <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.35rem' }}>
-                Account Role *
+                {t('accountRoleLabel') || 'Account Role *'}
               </label>
               <select
                 value={role}
@@ -223,15 +223,15 @@ const Register = () => {
                   outline: 'none'
                 }}
               >
-                <option value="elderly" style={{ backgroundColor: '#161B22', color: '#FFFFFF' }}>Patient</option>
-                <option value="caregiver" style={{ backgroundColor: '#161B22', color: '#FFFFFF' }}>Caregiver</option>
+                <option value="elderly" style={{ backgroundColor: '#161B22', color: '#FFFFFF' }}>{t('patientRole') || 'Patient'}</option>
+                <option value="caregiver" style={{ backgroundColor: '#161B22', color: '#FFFFFF' }}>{t('caregiverRole') || 'Caregiver'}</option>
               </select>
             </div>
           </div>
 
           <div>
             <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.35rem' }}>
-              Preferred Language *
+              {t('preferredLangLabel') || 'Preferred Language *'}
             </label>
             <div style={{ position: 'relative' }}>
               <select
@@ -260,7 +260,7 @@ const Register = () => {
 
           <div>
             <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.35rem' }}>
-              Email Address *
+              {t('emailLabel') || 'Email Address *'}
             </label>
             <div style={{ position: 'relative' }}>
               <input
@@ -287,7 +287,7 @@ const Register = () => {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.35rem' }}>
-                Password *
+                {t('passwordLabel') || 'Password *'}
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -314,7 +314,7 @@ const Register = () => {
 
             <div>
               <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.35rem' }}>
-                Confirm Password *
+                {t('confirmPasswordLabel') || 'Confirm Password *'}
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -341,15 +341,15 @@ const Register = () => {
           </div>
 
           <button type="submit" disabled={loading} className="btn-primary" style={{ padding: '0.9rem', width: '100%', marginTop: '0.5rem' }}>
-            <span>{loading ? 'Creating Account...' : 'Register Account'}</span>
+            <span>{loading ? (t('creatingAccount') || 'Creating Account...') : (t('registerAccountBtn') || 'Register Account')}</span>
             <ArrowRight size={18} />
           </button>
         </form>
 
         <div style={{ textAlign: 'center', marginTop: '1.6rem', fontSize: '0.9rem', color: '#9198A1' }}>
-          Already registered?{' '}
+          {t('alreadyRegisteredText') || 'Already registered?'}{' '}
           <Link to="/login" style={{ color: '#38BDF8', fontWeight: 700, textDecoration: 'none' }}>
-            Log in here
+            {t('logInHereLink') || 'Log in here'}
           </Link>
         </div>
       </div>

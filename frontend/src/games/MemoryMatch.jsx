@@ -9,7 +9,7 @@ const CARD_ICONS = ['⚡', '🎯', '💎', '🛡️', '👑', '🔥', '🌌', '�
 
 const MemoryMatch = () => {
   const navigate = useNavigate();
-  const { user, updateStateFromSession, speakText, voiceAssistance, level } = useAuth();
+  const { user, updateStateFromSession, speakText, voiceAssistance, level, t } = useAuth();
 
   const [cards, setCards] = useState([]);
   const [flipped, setFlipped] = useState([]);
@@ -37,7 +37,7 @@ const MemoryMatch = () => {
     setGameStarted(true);
     setGameOver(false);
     setStartTime(Date.now());
-    if (voiceAssistance) speakText("Card Memory Matrix started! Match all pairs.");
+    if (voiceAssistance) speakText(t('cardMatchTitle') + ". " + t('cardMatchDesc'));
   };
 
   const handleCardClick = (index) => {
@@ -61,7 +61,6 @@ const MemoryMatch = () => {
         }
       } else {
         soundFx.playCardMismatch();
-        // Fast 400ms un-flip
         setTimeout(() => {
           setFlipped([]);
         }, 400);
@@ -97,10 +96,10 @@ const MemoryMatch = () => {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
         <button onClick={() => navigate('/assessment')} className="btn-secondary" style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem' }}>
-          <ArrowLeft size={16} /> Back to Exercises
+          <ArrowLeft size={16} /> {t('backToExercises') || 'Back to Exercises'}
         </button>
         <span className="badge badge-purple" style={{ fontSize: '0.85rem' }}>
-          <Brain size={14} /> CARD MEMORY MATRIX
+          <Brain size={14} /> {t('cardMatchTitle').toUpperCase() || 'CARD MEMORY MATRIX'}
         </span>
       </div>
 
@@ -111,13 +110,13 @@ const MemoryMatch = () => {
               <Brain size={32} color="#0B0E14" />
             </div>
             <h2 style={{ fontSize: '1.8rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.5rem' }}>
-              Card Memory Matrix
+              {t('cardMatchTitle') || 'Card Memory Matrix'}
             </h2>
             <p style={{ color: '#94A3B8', fontSize: '0.95rem', maxWidth: 500, margin: '0 auto 1.5rem', lineHeight: 1.5 }}>
-              Procedurally generated card matching game. Memorize positions and pair symbols to train visual recall.
+              {t('cardMatchDesc') || 'Procedurally generated card matching game. Memorize positions and pair symbols to train visual recall.'}
             </p>
             <button onClick={handleStartGame} className="btn-primary" style={{ padding: '0.85rem 2rem', fontSize: '1.05rem' }}>
-              START MISSION NOW
+              {t('startMissionNow') || 'START MISSION NOW'}
             </button>
           </div>
         ) : gameOver ? (
@@ -126,20 +125,20 @@ const MemoryMatch = () => {
               <Award size={36} color="#34D399" />
             </div>
             <h2 style={{ fontSize: '1.8rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.5rem' }}>
-              EXCELLENT RECALL!
+              {t('excellentRecall') || 'EXCELLENT RECALL!'}
             </h2>
             <div style={{ fontSize: '2.5rem', color: '#38BDF8', fontWeight: 900, margin: '0.5rem 0' }}>
-              {Math.min(100, Math.round(((cards.length / 2) / Math.max(cards.length / 2, moves)) * 100))} <span style={{ fontSize: '1rem', color: '#94A3B8' }}>/100 PTS</span>
+              {Math.min(100, Math.round(((cards.length / 2) / Math.max(cards.length / 2, moves)) * 100))} <span style={{ fontSize: '1rem', color: '#94A3B8' }}>/100 {t('pts') || 'PTS'}</span>
             </div>
             <p style={{ color: '#94A3B8', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-              Completed in {moves} moves. Profile memory score updated in MongoDB.
+              {t('completedInMoves', { moves }) || `Completed in ${moves} moves.`}
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
               <button onClick={handleStartGame} className="btn-primary">
-                <RotateCcw size={16} /> PLAY AGAIN
+                <RotateCcw size={16} /> {t('playAgain') || 'PLAY AGAIN'}
               </button>
               <button onClick={() => navigate('/dashboard')} className="btn-secondary">
-                DASHBOARD
+                {t('navDashboard').toUpperCase() || 'DASHBOARD'}
               </button>
             </div>
           </div>
@@ -148,10 +147,10 @@ const MemoryMatch = () => {
             {/* Stats Row */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', backgroundColor: '#0B0E14', padding: '0.75rem 1.25rem', borderRadius: '12px', border: '1px solid #263142' }}>
               <span style={{ fontWeight: 800, color: '#C084FC', fontSize: '0.9rem' }}>
-                MOVES: {moves}
+                {(t('moves') || 'MOVES').toUpperCase()}: {moves}
               </span>
               <span style={{ fontWeight: 800, color: '#34D399', fontSize: '0.9rem' }}>
-                MATCHED: {matched.length / 2} / {cards.length / 2}
+                {(t('matched') || 'MATCHED').toUpperCase()}: {matched.length / 2} / {cards.length / 2}
               </span>
             </div>
 
@@ -175,7 +174,7 @@ const MemoryMatch = () => {
                       fontSize: '2.2rem',
                       display: 'flex',
                       alignItems: 'center',
-                      justify: 'center',
+                      justifyContent: 'center',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease'
                     }}

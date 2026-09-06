@@ -53,7 +53,7 @@ const AttentionChallenge = () => {
       const opts = [target, ...distractors].sort(() => Math.random() - 0.5);
 
       return {
-        prompt: `Find the Symbol: ${target}`,
+        prompt: t('findSymbolPrompt', { symbol: target }) || `Find the Symbol: ${target}`,
         correct: target,
         options: opts,
         type: 'symbol'
@@ -83,7 +83,7 @@ const AttentionChallenge = () => {
     setCurrentProblem(prob);
     setOptions(prob.options);
     setStartTime(Date.now());
-    if (voiceAssistance) speakText("Focus Reflex Challenge started! Tap the correct answer as fast as possible.");
+    if (voiceAssistance) speakText(t('focusReflexTitle') + ". " + t('focusReflexDesc'));
   };
 
   const handleSelectOption = (selected) => {
@@ -97,13 +97,12 @@ const AttentionChallenge = () => {
       soundFx.playSuccess();
       points = Math.max(10, Math.round(15 - elapsed / 250));
       setScore(prev => prev + points);
-      setFeedback({ correct: true, text: `Correct! +${points} pts (${elapsed}ms)` });
+      setFeedback({ correct: true, text: t('correctFeedback', { points, time: elapsed }) || `Correct! +${points} pts (${elapsed}ms)` });
     } else {
       soundFx.playCardMismatch();
-      setFeedback({ correct: false, text: `Wrong! Correct answer: ${currentProblem.correct}` });
+      setFeedback({ correct: false, text: t('wrongFeedback', { answer: currentProblem.correct }) || `Wrong! Correct answer: ${currentProblem.correct}` });
     }
 
-    // Zero artificial delay - 350ms fast transition
     setTimeout(() => {
       setFeedback(null);
       const nextScore = isCorrect ? score + points : score;
@@ -142,10 +141,10 @@ const AttentionChallenge = () => {
       {/* Header Bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
         <button onClick={() => navigate('/assessment')} className="btn-secondary" style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem' }}>
-          <ArrowLeft size={16} /> Back to Exercises
+          <ArrowLeft size={16} /> {t('backToExercises') || 'Back to Exercises'}
         </button>
         <span className="badge badge-cyan" style={{ fontSize: '0.85rem' }}>
-          <Zap size={14} /> FOCUS REFLEX MATRIX
+          <Zap size={14} /> {t('focusReflexTitle').toUpperCase() || 'FOCUS REFLEX MATRIX'}
         </span>
       </div>
 
@@ -156,13 +155,13 @@ const AttentionChallenge = () => {
               <Zap size={32} color="#0B0E14" />
             </div>
             <h2 style={{ fontSize: '1.8rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.5rem' }}>
-              Focus Reflex & Math Matrix
+              {t('focusReflexTitle') || 'Focus Reflex & Math Matrix'}
             </h2>
             <p style={{ color: '#94A3B8', fontSize: '0.95rem', maxWidth: 500, margin: '0 auto 1.5rem', lineHeight: 1.5 }}>
-              Solve procedurally generated focus and mental math challenges rapidly. Tests speed, attention, and executive reflexes!
+              {t('focusReflexDesc') || 'Solve procedurally generated focus and mental math challenges rapidly. Tests speed, attention, and executive reflexes!'}
             </p>
             <button onClick={handleStartGame} className="btn-primary" style={{ padding: '0.85rem 2rem', fontSize: '1.05rem' }}>
-              START MISSION NOW
+              {t('startMissionNow') || 'START MISSION NOW'}
             </button>
           </div>
         ) : gameOver ? (
@@ -171,20 +170,20 @@ const AttentionChallenge = () => {
               <Award size={36} color="#34D399" />
             </div>
             <h2 style={{ fontSize: '1.8rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.5rem' }}>
-              MISSION COMPLETE!
+              {t('missionComplete') || 'MISSION COMPLETE!'}
             </h2>
             <div style={{ fontSize: '2.5rem', color: '#38BDF8', fontWeight: 900, margin: '0.5rem 0' }}>
-              {Math.min(100, Math.round((score / (totalRounds * 15)) * 100))} <span style={{ fontSize: '1rem', color: '#94A3B8' }}>/100 PTS</span>
+              {Math.min(100, Math.round((score / (totalRounds * 15)) * 100))} <span style={{ fontSize: '1rem', color: '#94A3B8' }}>/100 {t('pts') || 'PTS'}</span>
             </div>
             <p style={{ color: '#94A3B8', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-              Performance metrics saved to your profile & MongoDB dynamically.
+              {t('profileReady') || 'Performance metrics saved to your profile dynamically.'}
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
               <button onClick={handleStartGame} className="btn-primary">
-                <RotateCcw size={16} /> PLAY AGAIN
+                <RotateCcw size={16} /> {t('playAgain') || 'PLAY AGAIN'}
               </button>
               <button onClick={() => navigate('/dashboard')} className="btn-secondary">
-                DASHBOARD
+                {t('navDashboard').toUpperCase() || 'DASHBOARD'}
               </button>
             </div>
           </div>
@@ -193,10 +192,10 @@ const AttentionChallenge = () => {
             {/* Game Round Info */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', backgroundColor: '#0B0E14', padding: '0.75rem 1.25rem', borderRadius: '12px', border: '1px solid #263142' }}>
               <span style={{ fontWeight: 800, color: '#38BDF8', fontSize: '0.9rem' }}>
-                ROUND {round} / {totalRounds}
+                {t('roundInfo', { round, total: totalRounds }) || `ROUND ${round} / ${totalRounds}`}
               </span>
               <span style={{ fontWeight: 800, color: '#FBBF24', fontSize: '1rem' }}>
-                SCORE: {score}
+                {t('scoreText', { score }) || `SCORE: ${score}`}
               </span>
             </div>
 

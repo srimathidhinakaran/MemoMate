@@ -7,7 +7,7 @@ import { Zap, ArrowLeft, RotateCcw, Award } from 'lucide-react';
 
 const ReactionTest = () => {
   const navigate = useNavigate();
-  const { user, updateStateFromSession, speakText, voiceAssistance } = useAuth();
+  const { user, updateStateFromSession, speakText, voiceAssistance, t } = useAuth();
 
   const [state, setState] = useState('idle'); // 'idle' | 'waiting' | 'ready' | 'result'
   const [reactionTime, setReactionTime] = useState(0);
@@ -17,9 +17,8 @@ const ReactionTest = () => {
   const handleStart = () => {
     soundFx.playClick();
     setState('waiting');
-    if (voiceAssistance) speakText("Wait for green signal then tap as fast as possible.");
+    if (voiceAssistance) speakText(t('speedReactionTitle') + ". " + t('speedReactionDesc'));
 
-    // Random delay between 1.5s to 3.5s
     const delay = Math.floor(Math.random() * 2000) + 1500;
     timerRef.current = setTimeout(() => {
       setState('ready');
@@ -32,7 +31,6 @@ const ReactionTest = () => {
     if (state === 'waiting') {
       clearTimeout(timerRef.current);
       soundFx.playCardMismatch();
-      alert("Too early! Wait for green signal.");
       setState('idle');
     } else if (state === 'ready') {
       const elapsed = Date.now() - startTimeRef.current;
@@ -64,10 +62,10 @@ const ReactionTest = () => {
     <div style={{ maxWidth: 800, margin: '0 auto', width: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
         <button onClick={() => navigate('/assessment')} className="btn-secondary" style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem' }}>
-          <ArrowLeft size={16} /> Back to Exercises
+          <ArrowLeft size={16} /> {t('backToExercises') || 'Back to Exercises'}
         </button>
         <span className="badge badge-sage" style={{ fontSize: '0.85rem' }}>
-          <Zap size={14} /> SPEED REFLEX TEST
+          <Zap size={14} /> {t('speedReactionTitle').toUpperCase() || 'SPEED REFLEX TEST'}
         </span>
       </div>
 
@@ -94,27 +92,26 @@ const ReactionTest = () => {
               <Zap size={32} color="#0B0E14" />
             </div>
             <h2 style={{ fontSize: '1.8rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.5rem' }}>
-              Speed Reflex Reaction Test
+              {t('speedReactionTitle') || 'Speed Reflex Reaction Test'}
             </h2>
             <p style={{ color: '#94A3B8', fontSize: '0.95rem', maxWidth: 500, margin: '0 auto 1.5rem' }}>
-              Test your motor reaction speed. When the screen turns green, tap immediately!
+              {t('speedReactionDesc') || 'Test your motor reaction speed. When the screen turns green, tap immediately!'}
             </p>
             <button onClick={handleStart} className="btn-primary" style={{ padding: '0.85rem 2rem', fontSize: '1.05rem' }}>
-              START TEST NOW
+              {t('startMissionNow') || 'START TEST NOW'}
             </button>
           </div>
         )}
 
         {state === 'waiting' && (
           <div>
-            <h2 style={{ fontSize: '2.2rem', fontWeight: 900 }}>WAIT FOR GREEN...</h2>
-            <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>Don't tap yet!</p>
+            <h2 style={{ fontSize: '2.2rem', fontWeight: 900 }}>...</h2>
           </div>
         )}
 
         {state === 'ready' && (
           <div>
-            <h2 style={{ fontSize: '2.8rem', fontWeight: 900 }}>TAP NOW! ⚡</h2>
+            <h2 style={{ fontSize: '2.8rem', fontWeight: 900 }}>⚡</h2>
           </div>
         )}
 
@@ -124,20 +121,20 @@ const ReactionTest = () => {
               <Award size={36} color="#34D399" />
             </div>
             <h2 style={{ fontSize: '1.8rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.5rem' }}>
-              SPEED RECORDED!
+              {t('missionComplete') || 'SPEED RECORDED!'}
             </h2>
             <div style={{ fontSize: '2.8rem', color: '#34D399', fontWeight: 900, margin: '0.5rem 0' }}>
               {reactionTime} <span style={{ fontSize: '1rem', color: '#94A3B8' }}>ms</span>
             </div>
             <p style={{ color: '#94A3B8', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-              Reaction score updated in MongoDB.
+              {t('profileReady') || 'Reaction score updated.'}
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
               <button onClick={handleStart} className="btn-primary">
-                <RotateCcw size={16} /> TRY AGAIN
+                <RotateCcw size={16} /> {t('playAgain') || 'TRY AGAIN'}
               </button>
               <button onClick={() => navigate('/dashboard')} className="btn-secondary">
-                DASHBOARD
+                {t('navDashboard').toUpperCase() || 'DASHBOARD'}
               </button>
             </div>
           </div>

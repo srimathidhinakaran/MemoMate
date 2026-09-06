@@ -7,7 +7,7 @@ import { sessionAPI } from '../services/api';
 import { CheckCircle2, RotateCcw, ArrowRight, Grid } from 'lucide-react';
 
 const PatternRecall = () => {
-  const { user, updateStateFromSession, speakText, voiceAssistance } = useAuth();
+  const { user, updateStateFromSession, speakText, voiceAssistance, t } = useAuth();
   const navigate = useNavigate();
   const mountRef = useRef(null);
 
@@ -38,7 +38,7 @@ const PatternRecall = () => {
     setPhase('show');
 
     if (voiceAssistance) {
-      speakText("Memorize the glowing 3D matrix cubes.");
+      speakText(t('holographicTitle') + ". " + t('holographicDesc'));
     }
 
     setTimeout(() => {
@@ -212,7 +212,7 @@ const PatternRecall = () => {
         </div>
 
         <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#F8FAFC', fontWeight: 900 }}>
-          3D PATTERN RECALL COMPLETE! 🧩
+          {t('missionComplete') || '3D PATTERN RECALL COMPLETE!'}
         </h2>
 
         <div style={{
@@ -222,17 +222,17 @@ const PatternRecall = () => {
           border: '1px solid rgba(0, 242, 254, 0.3)',
           marginBottom: '1.75rem'
         }}>
-          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 800, fontFamily: 'var(--font-esports)' }}>PATTERN RECALL SCORE</div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFD700', fontFamily: 'var(--font-esports)' }}>{scoreResult.score} / 100 PTS</div>
+          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 800, fontFamily: 'var(--font-esports)' }}>{t('holographicTitle').toUpperCase() || 'PATTERN RECALL SCORE'}</div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFD700', fontFamily: 'var(--font-esports)' }}>{scoreResult.score} / 100 {t('pts') || 'PTS'}</div>
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
           <button onClick={startNewPattern} className="btn-secondary">
             <RotateCcw size={18} />
-            <span>PLAY AGAIN</span>
+            <span>{t('playAgain') || 'PLAY AGAIN'}</span>
           </button>
-          <button onClick={() => navigate('/analysis')} className="btn-flame">
-            <span>ANALYZE TELEMETRY</span>
+          <button onClick={() => navigate('/dashboard')} className="btn-flame">
+            <span>{t('navDashboard').toUpperCase() || 'DASHBOARD'}</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -244,12 +244,12 @@ const PatternRecall = () => {
     <div className="garden-card animate-fade-in" style={{ maxWidth: 680, margin: '0 auto', textAlign: 'center' }}>
       <div className="garden-card-header">
         <div>
-          <h2 style={{ fontSize: '1.6rem', color: '#F8FAFC', fontWeight: 900 }}>3D HOLOGRAPHIC PATTERN MATRIX 🧩</h2>
+          <h2 style={{ fontSize: '1.6rem', color: '#F8FAFC', fontWeight: 900 }}>{t('holographicTitle') || '3D HOLOGRAPHIC PATTERN MATRIX'}</h2>
           <p style={{ fontSize: '0.95rem', color: '#94A3B8' }}>
-            {phase === 'show' ? 'MEMORIZE THE HIGHLIGHTED 3D MATRIX CUBES!' : 'TAP THE 3D CUBES YOU SAW IN PATTERN.'}
+            {phase === 'show' ? (t('holographicDesc') || 'Memorize the highlighted 3D matrix cubes.') : (t('holographicTitle') || 'Tap the 3D cubes you saw in pattern.')}
           </p>
         </div>
-        <span className="badge badge-cyan">{phase === 'show' ? 'MEMORIZING...' : 'SELECT 3 CUBES'}</span>
+        <span className="badge badge-cyan">{phase === 'show' ? '...' : '3'}</span>
       </div>
 
       {/* 3D WebGL Matrix Grid Scene */}

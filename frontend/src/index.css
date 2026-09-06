@@ -504,3 +504,38 @@ button:active, .btn-primary:active, .btn-secondary:active, .btn-flame:active {
 ::-webkit-scrollbar-thumb:hover {
   background: #3B4A61;
 }
+
+/* Mobile Responsive & Elderly Touch Accessibility Overrides */
+@media (max-width: 768px) {
+  .main-content-layout {
+    flex-direction: column !important;
+    padding: 0.75rem !important;
+    gap: 1rem !important;
+  }
+
+  aside {
+    width: 100% !important;
+    order: 2;
+  }
+
+  .page-view {
+    order: 1;
+  }
+
+  /* Touch accessibility target >= 44px for elderly mobile users */
+  button, .btn-primary, .btn-secondary, .btn-flame, input, select {
+    min-height: 46px !important;
+    min-width: 44px !important;
+  }
+
+  /* Prevent translated scripts from overflowing or being clipped */
+  h1, h2, h3, h4, p, span, button, div {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .btn-primary, .btn-secondary, .btn-flame, .badge {
+    white-space: normal !important;
+    text-align: center;
+  }
+}

@@ -35,7 +35,7 @@ const NumberRecall = () => {
     setCountdown(4);
 
     if (voiceAssistance) {
-      speakText(`Remember this number sequence: ${numStr}`);
+      speakText(`${t('numberRecallTitle')}. ${numStr}`);
     }
   };
 
@@ -172,11 +172,8 @@ const NumberRecall = () => {
         </div>
 
         <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#FFFFFF', fontWeight: 900 }}>
-          3D NUMBER RECALL COMPLETE! 🔢
+          {t('missionComplete') || '3D NUMBER RECALL COMPLETE!'}
         </h2>
-        <p style={{ color: '#94A3B8', fontSize: '1.1rem', marginBottom: '1.5rem' }}>
-          Target sequence was: <strong style={{ color: '#38BDF8' }}>{scoreResult.targetNumber}</strong> (Your answer: {scoreResult.userInput})
-        </p>
 
         <div style={{
           backgroundColor: '#0B0E14',
@@ -185,17 +182,17 @@ const NumberRecall = () => {
           border: '1px solid #263142',
           marginBottom: '1.75rem'
         }}>
-          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 800 }}>RECALL SCORE</div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100 PTS</div>
+          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 800 }}>{t('numberRecallTitle').toUpperCase() || 'RECALL SCORE'}</div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100 {t('pts') || 'PTS'}</div>
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
           <button onClick={startNewGame} className="btn-secondary">
             <RotateCcw size={18} />
-            <span>PLAY AGAIN</span>
+            <span>{t('playAgain') || 'PLAY AGAIN'}</span>
           </button>
           <button onClick={() => navigate('/dashboard')} className="btn-flame">
-            <span>DASHBOARD</span>
+            <span>{t('navDashboard').toUpperCase() || 'DASHBOARD'}</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -207,12 +204,12 @@ const NumberRecall = () => {
     <div className="garden-card animate-fade-in" style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
       <div className="garden-card-header">
         <div>
-          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>3D DUAL-N-BACK & NUMBER RECALL 🔢</h2>
+          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>{t('numberRecallTitle') || '3D DUAL-N-BACK & NUMBER RECALL'}</h2>
           <p style={{ fontSize: '0.95rem', color: '#94A3B8' }}>
-            {stage === 'memorize' ? `MEMORIZE THE ${digitLength}-DIGIT SEQUENCE BELOW!` : `ENTER THE ${digitLength}-DIGIT SEQUENCE YOU RECALLED.`}
+            {stage === 'memorize' ? (t('numberRecallGameDesc') || 'Memorize sequence below.') : (t('numberRecallTitle') || 'Enter digits recalled.')}
           </p>
         </div>
-        <span className="badge badge-cyan">{stage === 'memorize' ? `HIDING IN ${countdown}s` : 'ENTER DIGITS'}</span>
+        <span className="badge badge-cyan">{stage === 'memorize' ? `${countdown}s` : '✓'}</span>
       </div>
 
       {/* 3D WebGL Floating Crystals Scene */}
@@ -247,7 +244,7 @@ const NumberRecall = () => {
             type="number"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
-            placeholder={`Enter ${digitLength} digits...`}
+            placeholder="..."
             autoFocus
             style={{
               width: '100%',
@@ -264,7 +261,7 @@ const NumberRecall = () => {
             }}
           />
           <button type="submit" className="btn-primary" style={{ width: '100%', padding: '0.85rem' }}>
-            SUBMIT ANSWER
+            {t('startMissionNow') || 'SUBMIT ANSWER'}
           </button>
         </form>
       )}

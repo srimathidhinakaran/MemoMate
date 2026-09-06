@@ -223,13 +223,13 @@ const ToneRhythmRecall = () => {
         {isPlayingSeq && (
           <div style={{ color: '#38BDF8', fontWeight: 800, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Volume2 size={18} className="animate-pulse" />
-            <span>LISTEN TO THE TONE SEQUENCE...</span>
+            <span>{t('toneRhythmDesc') || 'LISTEN TO THE TONE SEQUENCE...'}</span>
           </div>
         )}
 
         {!isPlayingSeq && gameState === 'PLAYING' && (
           <div style={{ color: '#34D399', fontWeight: 800, fontSize: '0.95rem' }}>
-            YOUR TURN! REPEAT THE SEQUENCE BY TAPPING THE PADS.
+            {t('toneRhythmTitle') || 'YOUR TURN! REPEAT THE SEQUENCE BY TAPPING THE PADS.'}
           </div>
         )}
       </div>
@@ -248,11 +248,8 @@ const ToneRhythmRecall = () => {
             <CheckCircle2 size={32} color="#C084FC" />
           </div>
           <h3 style={{ fontSize: '1.5rem', color: '#FFFFFF', fontWeight: 900, marginBottom: '0.4rem' }}>
-            ACOUSTIC SEQUENCE COMPLETED!
+            {t('missionComplete') || 'ACOUSTIC SEQUENCE COMPLETED!'}
           </h3>
-          <p style={{ color: '#94A3B8', fontSize: '0.95rem', marginBottom: '1.2rem' }}>
-            Auditory recall & sequential memory score recorded across profile metrics.
-          </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '1.5rem' }}>
             <div>
@@ -261,7 +258,7 @@ const ToneRhythmRecall = () => {
             </div>
             <div>
               <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>{t('cognitiveScore') || 'COGNITIVE SCORE'}</div>
-              <div style={{ fontSize: '2rem', color: '#38BDF8', fontWeight: 900 }}>+{score} PTS</div>
+              <div style={{ fontSize: '2rem', color: '#38BDF8', fontWeight: 900 }}>+{score} {t('pts') || 'PTS'}</div>
             </div>
           </div>
 

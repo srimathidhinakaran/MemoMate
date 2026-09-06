@@ -201,7 +201,7 @@ const ThreeDFlowerMatch = () => {
     setIsCompleted(true);
 
     if (voiceAssistance) {
-      speakText(`Spatial Node Recall Complete! Score ${score}.`);
+      speakText(`${t('spatialNodeTitle')}. ${score}.`);
     }
   };
 
@@ -215,7 +215,7 @@ const ThreeDFlowerMatch = () => {
           backgroundColor: 'rgba(56, 189, 248, 0.15)',
           display: 'flex',
           alignItems: 'center',
-          justify: 'center',
+          justifyContent: 'center',
           margin: '0 auto 1.25rem',
           border: '1px solid #38BDF8'
         }}>
@@ -223,7 +223,7 @@ const ThreeDFlowerMatch = () => {
         </div>
 
         <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#FFFFFF', fontWeight: 900 }}>
-          SPATIAL NODE MATRIX COMPLETE! 🧩
+          {t('missionComplete') || 'SPATIAL NODE MATRIX COMPLETE!'} 🧩
         </h2>
 
         <div style={{
@@ -238,22 +238,22 @@ const ThreeDFlowerMatch = () => {
           textAlign: 'left'
         }}>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>Memory Score</div>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>{t('memoryScore') || 'Memory Score'}</div>
             <div style={{ fontSize: '2rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100</div>
           </div>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>Moves Taken</div>
-            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#38BDF8' }}>{scoreResult.totalMoves} moves</div>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>{t('movesTaken') || 'Moves Taken'}</div>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#38BDF8' }}>{scoreResult.totalMoves}</div>
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
           <button onClick={() => window.location.reload()} className="btn-secondary">
             <RotateCcw size={18} />
-            <span>Play Again</span>
+            <span>{t('playAgain') || 'Play Again'}</span>
           </button>
           <button onClick={() => navigate('/dashboard')} className="btn-flame">
-            <span>Dashboard</span>
+            <span>{t('navDashboard') || 'Dashboard'}</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -265,9 +265,9 @@ const ThreeDFlowerMatch = () => {
     <div className="garden-card animate-fade-in" style={{ maxWidth: 750, margin: '0 auto', textAlign: 'center' }}>
       <div className="garden-card-header">
         <div>
-          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>Spatial Node Recall Matrix 🧩</h2>
+          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>{t('spatialNodeTitle') || 'Spatial Node Recall Matrix'} 🧩</h2>
           <p style={{ fontSize: '0.95rem', color: '#94A3B8' }}>
-            Click 3D Cyber Shields to flip them in 3D WebGL space and match quantum node color pairs!
+            {t('spatialNodeDesc') || 'Match quantum node color pairs in 3D WebGL space!'}
           </p>
         </div>
 

@@ -197,13 +197,13 @@ const UserDashboard = () => {
                 {t('myPeopleTitle') || 'My People & Family Memories'}
               </h3>
               <p style={{ color: '#94A3B8', fontSize: '0.85rem', margin: 0 }}>
-                Recognize daughter Meena, son Rahul & family members
+                {t('myPeopleTitle')}
               </p>
             </div>
           </div>
 
           <button className="btn-secondary" style={{ width: 'fit-content', padding: '0.6rem 1.1rem', fontSize: '0.85rem', marginTop: '0.5rem' }}>
-            <span>OPEN FAMILY RECOGNITION DRILLS</span>
+            <span>{t('myPeopleTitle') || 'OPEN FAMILY MEMORIES'}</span>
             <ArrowRight size={16} />
           </button>
         </div>

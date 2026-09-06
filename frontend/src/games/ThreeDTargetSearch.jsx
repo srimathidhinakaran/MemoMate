@@ -128,7 +128,7 @@ const ThreeDTargetSearch = () => {
             setIsCompleted(true);
 
             if (voiceAssistance) {
-              speakText(`Target Search complete! Score ${score}.`);
+              speakText(`${t('targetFocusTitle')}. ${score}`);
             }
           }
         } else {
@@ -192,7 +192,7 @@ const ThreeDTargetSearch = () => {
         </div>
 
         <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#FFFFFF', fontWeight: 900 }}>
-          3D TARGET SEARCH COMPLETE! 🎯
+          {t('missionComplete') || '3D TARGET SEARCH COMPLETE!'}
         </h2>
 
         <div style={{
@@ -207,22 +207,22 @@ const ThreeDTargetSearch = () => {
           textAlign: 'left'
         }}>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>Attention Score</div>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>{t('attentionScore') || 'Attention Score'}</div>
             <div style={{ fontSize: '2rem', fontWeight: 900, color: '#FBBF24' }}>{scoreResult.score} / 100</div>
           </div>
           <div>
-            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>Search Time</div>
-            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#38BDF8' }}>{scoreResult.timeSpent} sec</div>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 700 }}>{t('timeElapsed') || 'Search Time'}</div>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#38BDF8' }}>{scoreResult.timeSpent} s</div>
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
           <button onClick={() => window.location.reload()} className="btn-secondary">
             <RotateCcw size={18} />
-            <span>Play Again</span>
+            <span>{t('playAgain') || 'Play Again'}</span>
           </button>
           <button onClick={() => navigate('/dashboard')} className="btn-flame">
-            <span>Dashboard</span>
+            <span>{t('navDashboard') || 'Dashboard'}</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -234,13 +234,13 @@ const ThreeDTargetSearch = () => {
     <div className="garden-card animate-fade-in" style={{ maxWidth: 750, margin: '0 auto', textAlign: 'center' }}>
       <div className="garden-card-header">
         <div>
-          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>3D Target Focus Search 🎯</h2>
+          <h2 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900 }}>{t('targetFocusTitle') || '3D Target Focus Search'} 🎯</h2>
           <p style={{ fontSize: '0.95rem', color: '#94A3B8' }}>
-            Tap the glowing golden 3D Quantum Crystal in the matrix grid!
+            {t('targetFocusDesc') || 'Tap the glowing golden 3D Quantum Crystal in the matrix grid!'}
           </p>
         </div>
 
-        <span className="badge badge-cyan">Round {round} / 5</span>
+        <span className="badge badge-cyan">{t('roundInfo', { round, total: 5 }) || `Round ${round} / 5`}</span>
       </div>
 
       {/* 3D WebGL Canvas Container */}
@@ -248,10 +248,10 @@ const ThreeDTargetSearch = () => {
         ref={mountRef}
         style={{
           width: '100%',
-          height: 380,
-          borderRadius: '24px',
+          height: '320px',
+          borderRadius: '16px',
           backgroundColor: '#0B0E14',
-          border: '1px solid #263142',
+          border: '1px solid rgba(56, 189, 248, 0.3)',
           cursor: 'pointer',
           margin: '1rem 0',
           position: 'relative'

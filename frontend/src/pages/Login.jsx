@@ -5,7 +5,7 @@ import { soundFx } from '../utils/soundEffects';
 import { Brain, ArrowRight, Lock, Mail } from 'lucide-react';
 
 const Login = () => {
-  const { login, loading } = useAuth();
+  const { login, loading, t } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ const Login = () => {
     soundFx.playClick();
 
     if (!email.trim() || !password) {
-      setError('Please enter your email address and password');
+      setError(t('enterEmailPassword') || 'Please enter your email address and password');
       return;
     }
 
@@ -32,7 +32,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error('Login auth failure:', err);
-      const errMsg = err.message || err.response?.data?.message || 'Invalid email or password.';
+      const errMsg = err.message || err.response?.data?.message || t('invalidEmailPassword') || 'Invalid email or password.';
       setError(errMsg);
     }
   };
@@ -74,10 +74,10 @@ const Login = () => {
             fontFamily: 'var(--font-heading)',
             margin: 0
           }}>
-            Welcome Back
+            {t('welcomeBack') || 'Welcome Back'}
           </h1>
           <p style={{ fontSize: '0.9rem', color: '#9198A1', marginTop: '0.4rem', lineHeight: 1.4 }}>
-            Sign in with your registered email and password
+            {t('signInSub') || 'Sign in with your registered email and password'}
           </p>
         </div>
 
@@ -100,7 +100,7 @@ const Login = () => {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.4rem' }}>
-              Email Address
+              {t('emailLabel') || 'Email Address'}
             </label>
             <div style={{ position: 'relative' }}>
               <input
@@ -126,14 +126,14 @@ const Login = () => {
 
           <div>
             <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.4rem' }}>
-              Password
+              {t('passwordLabel') || 'Password'}
             </label>
             <div style={{ position: 'relative' }}>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
+                placeholder="••••••••"
                 required
                 style={{
                   width: '100%',
@@ -151,15 +151,15 @@ const Login = () => {
           </div>
 
           <button type="submit" disabled={loading} className="btn-primary" style={{ padding: '0.9rem', width: '100%', marginTop: '0.5rem' }}>
-            <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
+            <span>{loading ? (t('authenticating') || 'Authenticating...') : (t('signInBtn') || 'Sign In')}</span>
             <ArrowRight size={18} />
           </button>
         </form>
 
         <div style={{ textAlign: 'center', marginTop: '1.75rem', fontSize: '0.9rem', color: '#9198A1' }}>
-          Don't have an account?{' '}
+          {t('noAccountText') || "Don't have an account?"}{' '}
           <Link to="/register" style={{ color: '#38BDF8', fontWeight: 700, textDecoration: 'none' }}>
-            Register Now
+            {t('registerNowLink') || 'Register Now'}
           </Link>
         </div>
       </div>

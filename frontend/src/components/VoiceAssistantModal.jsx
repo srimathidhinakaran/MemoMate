@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Mic, MicOff, Volume2, X, Sparkles, Calendar, Gamepad2, Droplets, Pill } from 'lucide-react';
+import { Mic, MicOff, Volume2, X, Sparkles, Calendar, Gamepad2, Droplets, Pill, AlertTriangle } from 'lucide-react';
 
 const VoiceAssistantModal = ({ isOpen, onClose }) => {
-  const { speakText, language, t, reminders, recommendation, setVoiceModalOpen } = useAuth();
+  const { speakText, language, t, reminders, recommendation } = useAuth();
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [responseMsg, setResponseMsg] = useState('');
+  const [voiceNotice, setVoiceNotice] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,8 +16,19 @@ const VoiceAssistantModal = ({ isOpen, onClose }) => {
       setIsListening(false);
       setTranscript('');
       setResponseMsg('');
+      setVoiceNotice('');
+    } else {
+      // Check if system has a TTS voice for selected language
+      if ('speechSynthesis' in window) {
+        const voices = window.speechSynthesis.getVoices();
+        const langPrefix = (language || 'en').slice(0, 2);
+        const hasVoice = voices.some(v => v.lang.toLowerCase().replace('_', '-').startsWith(langPrefix));
+        if (!hasVoice && language !== 'en' && voices.length > 0) {
+          setVoiceNotice(t('voiceUnavailableNotice') || `Voice speech output for selected language (${language.toUpperCase()}) is not installed on this device.`);
+        }
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, language, t]);
 
   if (!isOpen) return null;
 
@@ -28,62 +40,67 @@ const VoiceAssistantModal = ({ isOpen, onClose }) => {
     { label: t('voiceCmdNext') || 'What is my next activity?', icon: Sparkles, action: 'next' }
   ];
 
-  const processCommandText = (cmd) => {
-    const text = cmd.toLowerCase();
+  const processCommandText = (cmdAction) => {
     let reply = '';
+    const pendingCount = reminders.filter(r => r.status === 'pending').length;
 
-    if (text.includes('today') || text.includes('schedule') || text.includes('have')) {
-      const pendingCount = reminders.filter(r => r.status === 'pending').length;
-      reply = `You have ${pendingCount} pending activities today. Your next activity is ${recommendation?.recommendedActivity || '3D Memory Exercise'}.`;
-      setResponseMsg(reply);
-      speakText(reply);
-    } else if (text.includes('water') || text.includes('drink') || text.includes('hydration')) {
-      reply = 'Hydration is essential for cognitive health. Please drink one glass of fresh water now.';
-      setResponseMsg(reply);
-      speakText(reply);
-    } else if (text.includes('medicine') || text.includes('pill') || text.includes('medication')) {
+    if (cmdAction === 'today') {
+      reply = t('voiceReplyToday') || `You have ${pendingCount} pending activities today. Your next recommended exercise is 3D Memory Matrix.`;
+    } else if (cmdAction === 'water') {
+      reply = t('voiceReplyWater') || 'Hydration is essential for cognitive health. Please drink one glass of fresh water now.';
+    } else if (cmdAction === 'medicine') {
       const med = reminders.find(r => r.category === 'medicine');
-      if (med) {
-        reply = `Your medication ${med.title} is scheduled for ${med.time}.`;
-      } else {
-        reply = 'Your afternoon blood pressure medicine is scheduled for 12:30 PM.';
-      }
+      reply = med ? `${t('medicationCheck')}: ${med.title} (${med.time})` : (t('voiceReplyMedicine') || 'Your afternoon blood pressure medicine is scheduled for 12:30 PM.');
+    } else if (cmdAction === 'game') {
+      reply = t('voiceReplyGame') || 'Starting your recommended cognitive memory exercise now.';
       setResponseMsg(reply);
-      speakText(reply);
-    } else if (text.includes('game') || text.includes('play') || text.includes('start')) {
-      reply = 'Starting your recommended cognitive memory exercise now.';
-      setResponseMsg(reply);
-      speakText(reply);
+      speakText(reply, language);
       setTimeout(() => {
         onClose();
         navigate('/assessment');
       }, 1500);
-    } else if (text.includes('next') || text.includes('recommend') || text.includes('activity')) {
-      reply = `MemoMate recommends ${recommendation?.recommendedActivity || '3D Target Focus Search'}. Target area: ${recommendation?.weakArea || 'attention'}.`;
-      setResponseMsg(reply);
-      speakText(reply);
+      return;
+    } else if (cmdAction === 'next') {
+      reply = t('voiceReplyNext') || `MemoMate recommends ${recommendation?.recommendedActivity || '3D Target Focus Search'} to strengthen your attention.`;
     } else {
-      reply = `I heard: "${cmd}". MemoMate is here to assist with your daily schedule, medicine reminders, and cognitive exercises.`;
-      setResponseMsg(reply);
-      speakText(reply);
+      reply = `${t('voiceHeard') || 'I heard:'} "${cmdAction}". ${t('voiceReplyHelp') || 'MemoMate is here to assist with your daily schedule, medicine reminders, and cognitive exercises.'}`;
     }
+
+    setResponseMsg(reply);
+    speakText(reply, language);
   };
 
   const startListening = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Speech recognition is not natively supported in this browser. You can tap any of the quick action buttons below!");
+      alert(t('speechNotSupported') || "Speech recognition is not natively supported in this browser. You can tap any of the quick action buttons below!");
       return;
     }
 
     try {
       const recognition = new SpeechRecognition();
-      recognition.lang = language === 'hi' ? 'hi-IN' : (language === 'as' ? 'as-IN' : 'en-US');
+
+      const langLocaleMap = {
+        en: 'en-US',
+        ta: 'ta-IN',
+        hi: 'hi-IN',
+        as: 'as-IN',
+        te: 'te-IN',
+        kn: 'kn-IN',
+        ml: 'ml-IN',
+        mr: 'mr-IN',
+        bn: 'bn-IN',
+        gu: 'gu-IN',
+        pa: 'pa-IN',
+        or: 'or-IN'
+      };
+
+      recognition.lang = langLocaleMap[language] || 'en-US';
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
 
       setIsListening(true);
-      setTranscript('Listening to your voice...');
+      setTranscript(t('voiceListening') || 'Listening... Speak now');
 
       recognition.onresult = (event) => {
         const text = event.results[0][0].transcript;
@@ -95,7 +112,7 @@ const VoiceAssistantModal = ({ isOpen, onClose }) => {
       recognition.onerror = (event) => {
         console.warn("Speech recognition error:", event.error);
         setIsListening(false);
-        setTranscript("Could not hear clearly. Tap a quick command button below.");
+        setTranscript(t('voiceCouldNotHear') || "Could not hear clearly. Tap a quick command button below.");
       };
 
       recognition.onend = () => {
@@ -118,7 +135,7 @@ const VoiceAssistantModal = ({ isOpen, onClose }) => {
       zIndex: 1000,
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
+      justify: 'center',
       padding: '1.5rem',
       animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards'
     }}>
@@ -152,7 +169,7 @@ const VoiceAssistantModal = ({ isOpen, onClose }) => {
                 {t('talkToMemoMate') || 'Talk to MemoMate'}
               </h2>
               <p style={{ color: '#94A3B8', fontSize: '0.85rem', margin: 0 }}>
-                Voice-First Personal Cognitive Companion
+                {t('voiceSubtitle') || 'Voice-First Personal Cognitive Companion'}
               </p>
             </div>
           </div>
@@ -167,13 +184,31 @@ const VoiceAssistantModal = ({ isOpen, onClose }) => {
               height: 36,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              justify: 'center',
               cursor: 'pointer'
             }}
           >
             <X size={20} />
           </button>
         </div>
+
+        {voiceNotice && (
+          <div style={{
+            backgroundColor: 'rgba(251, 146, 60, 0.12)',
+            border: '1px solid rgba(251, 146, 60, 0.4)',
+            color: '#FB923C',
+            padding: '0.75rem 1rem',
+            borderRadius: '12px',
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem'
+          }}>
+            <AlertTriangle size={18} color="#FB923C" style={{ flexShrink: 0 }} />
+            <span>{voiceNotice}</span>
+          </div>
+        )}
 
         {/* Listening Circle / Mic Action */}
         <div style={{
@@ -194,7 +229,7 @@ const VoiceAssistantModal = ({ isOpen, onClose }) => {
               border: isListening ? '2px solid #EF4444' : '2px solid #38BDF8',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              justify: 'center',
               cursor: 'pointer',
               boxShadow: isListening ? '0 0 30px rgba(239, 68, 68, 0.4)' : '0 0 30px rgba(56, 189, 248, 0.3)',
               transition: 'all 0.2s ease'
@@ -209,7 +244,7 @@ const VoiceAssistantModal = ({ isOpen, onClose }) => {
           
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '1rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '0.3rem' }}>
-              {isListening ? 'Listening... Speak now' : 'Tap Microphone to Speak'}
+              {isListening ? (t('voiceListening') || 'Listening... Speak now') : (t('voiceTapToSpeak') || 'Tap Microphone to Speak')}
             </div>
             <div style={{ fontSize: '0.85rem', color: '#38BDF8', minHeight: '24px' }}>
               {transcript}
@@ -238,7 +273,7 @@ const VoiceAssistantModal = ({ isOpen, onClose }) => {
         {/* Quick Action Commands */}
         <div>
           <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', marginBottom: '0.75rem', letterSpacing: '0.05em' }}>
-            Or Tap Quick Voice Command:
+            {t('voiceOrTapQuick') || 'Or Tap Quick Voice Command:'}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
             {quickCommands.map((cmd, idx) => {

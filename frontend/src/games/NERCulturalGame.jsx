@@ -237,7 +237,7 @@ const NERCulturalGame = () => {
               className="btn-primary"
               style={{ padding: '0.85rem 1.8rem', fontSize: '0.95rem', alignSelf: 'center' }}
             >
-              <span>SUBMIT RECALL ANSWERS</span>
+              <span>{t('startMissionNow') || 'SUBMIT RECALL ANSWERS'}</span>
               <CheckCircle2 size={18} />
             </button>
           )}
@@ -268,15 +268,15 @@ const NERCulturalGame = () => {
           </div>
 
           <h3 style={{ fontSize: '1.6rem', color: '#FFFFFF', fontWeight: 900, margin: 0, fontFamily: 'var(--font-heading)' }}>
-            Cultural Memory Recall Complete!
+            {t('missionComplete') || 'Cultural Memory Recall Complete!'}
           </h3>
 
           <div style={{ fontSize: '1.2rem', color: '#34D399', fontWeight: 800 }}>
-            Accuracy Score: {score} / 100 PTS
+            {t('scoreMessage', { score }) || `Accuracy Score: ${score} / 100 PTS`}
           </div>
 
           <p style={{ color: '#94A3B8', fontSize: '0.9rem', maxWidth: 460 }}>
-            Great job! Engaging with familiar regional cultural heritage items reinforces long-term visual recall and emotional memory connection.
+            {t('profileReady') || 'Great job! Engaging with familiar regional cultural heritage items reinforces long-term visual recall.'}
           </p>
 
           <button
@@ -285,7 +285,7 @@ const NERCulturalGame = () => {
             style={{ padding: '0.8rem 1.6rem', fontSize: '0.9rem' }}
           >
             <RotateCcw size={18} />
-            <span>PLAY AGAIN (NEW PROCEDURAL ITEMS)</span>
+            <span>{t('playAgain') || 'PLAY AGAIN'}</span>
           </button>
         </div>
       )}
